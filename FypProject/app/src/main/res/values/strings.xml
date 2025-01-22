@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">FypProject</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to login</string>
+    <string name="no_account_click_to_create">No account? Click to create.</string>
+    <string name="what_are_you_looking_for">What are you looking for?</string>
+    <string name="looking_for_employer">I\'m looking for\n an employer</string>
+    <string name="looking_for_DH">I\'m looking for\na domestic helper</string>
+    <string name="logout">Logout</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="login_to_continue">Login to Continue</string>
+</resources>

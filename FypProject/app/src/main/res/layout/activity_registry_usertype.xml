@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="15dp"
+    tools:context=".activities.Registry_usertype">
+
+    <TextView
+        android:text="@string/what_are_you_looking_for"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/lookingForEmployer"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="15sp"
+        android:text="@string/looking_for_employer"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:cornerRadius="8sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/lookingForDH"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="15sp"
+        android:text="@string/looking_for_DH"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:cornerRadius="8sp"/>
+
+
+</LinearLayout>
