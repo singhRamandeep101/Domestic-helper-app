@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textAlignment="center"
+        android:background="#DEA1A1"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#DEA1A1"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/WorkingCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Working Country"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/tvWorkingCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAUDI"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_below="@+id/WorkingCountry"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Salary"
+            android:text="Salary"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="120dp"
+            android:layout_toEndOf="@+id/WorkingCountry"/>
+
+        <TextView
+            android:id="@+id/tvSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$2000"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="275dp"
+            android:layout_below="@+id/Salary"/>
+
+        <TextView
+            android:id="@+id/Duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_below="@+id/tvWorkingCountry"/>
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAUDI"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_below="@+id/Duration"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/NoOfServer"
+            android:text="No. Of Server"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="195dp"
+            android:layout_toEndOf="@+id/Duration"
+            android:layout_below="@id/tvSalary"/>
+
+        <TextView
+            android:id="@+id/tvNoOfServe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="280dp"
+            android:layout_below="@+id/NoOfServer"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ReasonLeave"
+            android:text="Reason to Leave"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_below="@id/tvDuration" />
+
+        <TextView
+            android:id="@+id/tvReasonLeave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_below="@+id/ReasonLeave"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Work Content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:background="#DEA1A1"/>
+
+    <GridLayout
+        android:id="@+id/glWork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="1"
+        android:text="Strengths" />
+
+</LinearLayout>

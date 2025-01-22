@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="3dp"
+    android:layout_margin="3dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imgUser"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:src="@drawable/load_image_icon" />
+
+                <ImageView
+                    android:id="@+id/imgName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:src="@drawable/name_icon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvName"
+                    android:text="Name"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_toEndOf="@+id/imgName"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvAge"
+                    android:text="Age"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toEndOf="@+id/tvName"/>
+
+                <ImageView
+                    android:id="@+id/imgNation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:layout_below="@+id/imgName"
+                    android:src="@drawable/nat_loc_icon"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvNation"
+                    android:text="Nation"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@+id/imgNation"
+                    android:layout_below="@+id/tvName" />
+
+                <ImageView
+                    android:id="@+id/imgWorkExp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:layout_below="@+id/imgNation"
+                    android:src="@drawable/work_icon"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvWork"
+                    android:text="WorkExp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="4dp"
+                    android:layout_toEndOf="@+id/imgWorkExp"
+                    android:layout_below="@+id/tvNation"/>
+
+                <ImageView
+                    android:id="@+id/imgPostDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:layout_below="@+id/imgWorkExp"
+                    android:src="@drawable/date_icon"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvPostDate"
+                    android:text="PostDate"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="7dp"
+                    android:layout_toEndOf="@+id/imgPostDate"
+                    android:layout_below="@+id/tvWork" />
+        </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

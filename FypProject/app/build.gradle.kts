@@ -44,5 +44,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.rounded.image.view)
-
+    implementation(libs.glide)
+    implementation (libs.pdfbox.android)
 }

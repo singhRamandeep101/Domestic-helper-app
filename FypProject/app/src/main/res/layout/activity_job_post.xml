@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".JobPostActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#33ECFF"
+            app:title="Job Post Form" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Job Post Form"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"/>
+
+            <ImageView
+                android:id="@+id/imUser"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:src="@drawable/image_icon"
+                android:layout_marginTop="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/border"
+                android:padding="10dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/evAbout"
+                    android:hint="About"
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
+                    android:layout_marginTop="10dp"
+                    android:padding="10dp"
+                    android:background="@drawable/border"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Personal Information"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nationality"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nationality"
+                    android:background="@drawable/border"
+                    android:id="@+id/edNationality"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gender"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgGender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="F"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="M"/>
+
+                </RadioGroup>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date of Birth"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_border"
+                    android:text="SELECT DATE"
+                    android:id="@+id/btnBirth"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Expected Salary"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Expected Salary"
+                    android:id="@+id/evES"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Education"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Education"
+                    android:id="@+id/evEducation"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Religion"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Religion"
+                    android:id="@+id/evReligion"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Marital Status"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Marital Status"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/spMS"
+                    android:spinnerMode="dropdown"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Height"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Height"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:id="@+id/evHeight"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Weight"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Weight"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:id="@+id/evWeight"
+                    android:layout_marginTop="3dp"
+                    android:inputType="numberDecimal"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ranking by age"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ranking by age"
+                    android:background="@drawable/border"
+                    android:padding="5dp"
+                    android:id="@+id/evRkAge"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No. of brother"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No. of brother"
+                    android:background="@drawable/border"
+                    android:id="@+id/evNoBrother"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No. of sister"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No. of sister"
+                    android:background="@drawable/border"
+                    android:id="@+id/evNoSister"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Son No."
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Son No."
+                    android:background="@drawable/border"
+                    android:id="@+id/evSonNo"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/layoutSAge">
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Daughter No."
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Daughter No."
+                    android:background="@drawable/border"
+                    android:id="@+id/evDaughterNo"
+                    android:padding="5dp"
+                    android:layout_marginTop="3dp"
+                    android:inputType="number"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/layoutDAge">
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/border"
+                android:padding="10dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="My Strengths"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareBabies1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Babies"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareToddler1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Toddler(1-3)"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareChildren1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Children(4-12)"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareElderly1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Elderly"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareDisabled1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Disabled"/>
+
+                <CheckBox
+                    android:id="@+id/cbCareBedridden1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Bedridden"/>
+
+                <CheckBox
+                    android:id="@+id/cbCarePet1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Care of Pet"/>
+
+                <CheckBox
+                    android:id="@+id/cbHousehold1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Household Works"/>
+
+                <CheckBox
+                    android:id="@+id/cbCar1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Car Washing"/>
+
+                <CheckBox
+                    android:id="@+id/cbGardening1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gardening"/>
+
+                <CheckBox
+                    android:id="@+id/cbCooking1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cooking"/>
+
+                <CheckBox
+                    android:id="@+id/cbDriving1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Driving"/>
+
+                <CheckBox
+                    android:id="@+id/cbOther1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Other"/>
+
+                <EditText
+                    android:id="@+id/edOther1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Other Strengths"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/border"
+                android:padding="10dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Language Skills"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"/>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mandarin"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgMandarin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdMandarinPoor"
+                        android:text="Poor"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvMandarinFair"
+                        android:text="Fair"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvMandarinGood"
+                        android:text="Good"/>
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cantonese"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgCantonese"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdCantonesePoor"
+                        android:text="Poor"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvCantoneseFair"
+                        android:text="Fair"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvCantoneseGood"
+                        android:text="Good"/>
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="English"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgEnglish"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdEnglishPoor"
+                        android:text="Poor"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvEnglishFair"
+                        android:text="Fair"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvEnglishGood"
+                        android:text="Good"/>
+                </RadioGroup>
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADD PREVIOUS DUTIES"
+                android:background="@drawable/button_border"
+                android:layout_marginTop="10dp"
+                android:id="@+id/btnAddPre"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/border"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/layPreCont"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/border"
+                android:padding="13dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Other Question"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"/>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q1.Do you eat pork?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ1Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ1No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q2.Accept Day-off not on Sunday?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ2Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ2No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q3.Sharing a room with babies / children / elder?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ3Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ3No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q4.Are you afraid of dog or cat?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ4Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ4No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q5.Do you smoke?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ5Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ5No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q6.Do you drink alcohol?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rdQ6Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ6No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Q7.Have you any prolonged illnesses/undergone surgery?"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgQ7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ7Yes"
+                        android:text="Yes"/>
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rvQ7No"
+                        android:text="No"/>
+
+                </RadioGroup>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="illnesses or surgery"
+                    android:id="@+id/edQ7Yes"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="SUBMIT"
+                    android:background="@drawable/button_border"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/btnSubmit"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

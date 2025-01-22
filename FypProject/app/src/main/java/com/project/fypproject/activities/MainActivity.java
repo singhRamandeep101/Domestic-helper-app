@@ -19,7 +19,7 @@ import com.project.fypproject.R;
 public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
-    Button btnLogout;
+    Button btnLogout, btnChat, btnTest;
     TextView textView;
     FirebaseUser user;
 
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         btnLogout = findViewById(R.id.Logout);
+        btnChat = findViewById(R.id.Chat);
+        btnTest = findViewById(R.id.Test);
         textView = findViewById(R.id.userDetail);
         user = auth.getCurrentUser();
         if (user == null) {
@@ -53,6 +55,17 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
 
                 Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
                 startActivity(intent);
                 finish();
             }
