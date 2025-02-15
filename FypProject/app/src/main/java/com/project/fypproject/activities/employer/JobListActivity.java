@@ -1,4 +1,4 @@
-package com.project.fypproject.activities;
+package com.project.fypproject.activities.employer;
 
 import android.os.Bundle;
 import android.text.Editable;

@@ -9,22 +9,25 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:background="@drawable/card">
 
                 <ImageView
                     android:id="@+id/imgUser"
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
                     android:src="@drawable/load_image_icon" />
 
                 <ImageView
-                    android:id="@+id/imgName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginTop="11dp"
-                    android:layout_toEndOf="@+id/imgUser"
-                    android:src="@drawable/name_icon"/>
+                    android:id="@+id/imgBookmark"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/icon_bookmark_outline" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -32,87 +35,96 @@
                     android:id="@+id/tvName"
                     android:text="Name"
                     android:layout_marginTop="10dp"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:layout_toEndOf="@+id/imgName"/>
+                    android:layout_toEndOf="@+id/imgUser"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvAge"
                     android:text="Age"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:layout_marginTop="10dp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="7dp"
                     android:layout_toEndOf="@+id/tvName"/>
-
-                <ImageView
-                    android:id="@+id/imgNation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@+id/imgUser"
-                    android:layout_below="@+id/imgName"
-                    android:src="@drawable/nat_loc_icon"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvNation"
-                    android:text="Nation"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:id="@+id/tvStatus"
+                    android:text="Domestic helper - Status"
+                    android:textSize="15sp"
                     android:textColor="@color/black"
                     android:layout_marginTop="3dp"
-                    android:layout_toEndOf="@+id/imgNation"
+                    android:layout_toEndOf="@+id/imgUser"
                     android:layout_below="@+id/tvName" />
 
                 <ImageView
-                    android:id="@+id/imgWorkExp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:id="@+id/imgLocation"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_marginTop="8dp"
+                    android:src="@drawable/icon_location"
                     android:layout_toEndOf="@+id/imgUser"
-                    android:layout_below="@+id/imgNation"
-                    android:src="@drawable/work_icon"/>
+                    android:layout_below="@+id/tvStatus" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvLocation"
+                    android:text="Location"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/imgLocation"
+                    android:layout_below="@+id/tvStatus" />
+
+                <ImageView
+                    android:id="@+id/imgExperience"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/icon_book"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:layout_below="@+id/imgLocation" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvWork"
                     android:text="WorkExp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textSize="15sp"
                     android:textColor="@color/black"
-                    android:layout_marginTop="4dp"
-                    android:layout_toEndOf="@+id/imgWorkExp"
-                    android:layout_below="@+id/tvNation"/>
+                    android:layout_marginTop="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/imgExperience"
+                    android:layout_below="@+id/tvLocation"/>
+
 
                 <ImageView
-                    android:id="@+id/imgPostDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:id="@+id/startDate"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_marginTop="8dp"
+                    android:src="@drawable/icon_date_black"
                     android:layout_toEndOf="@+id/imgUser"
-                    android:layout_below="@+id/imgWorkExp"
-                    android:src="@drawable/date_icon"/>
+                    android:layout_below="@+id/imgExperience" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvPostDate"
                     android:text="PostDate"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textSize="15sp"
                     android:textColor="@color/black"
-                    android:layout_marginTop="7dp"
-                    android:layout_toEndOf="@+id/imgPostDate"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/startDate"
                     android:layout_below="@+id/tvWork" />
         </RelativeLayout>
 

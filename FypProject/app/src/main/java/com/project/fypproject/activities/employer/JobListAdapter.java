@@ -1,4 +1,4 @@
-package com.project.fypproject.activities;
+package com.project.fypproject.activities.employer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.project.fypproject.models.HelperInfo;
 
 import com.project.fypproject.R;
@@ -40,7 +39,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
 
 //        Glide.with(context).load(helperInfo.getImg_url()).into(holder.imageView);
         holder.name.setText(helperInfo.getLastName() +" "+ helperInfo.getFirstName());
-        holder.age.setText("("+ helperInfo.getAge()+"yr)");
+        holder.age.setText("("+ helperInfo.getAge()+" years)");
         holder.nation.setText(helperInfo.getNationality());
 
         String experience = helperInfo.getTotalExperienceDuration();

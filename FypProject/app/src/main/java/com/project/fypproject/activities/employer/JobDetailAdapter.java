@@ -1,4 +1,4 @@
-package com.project.fypproject.activities;
+package com.project.fypproject.activities.employer;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.List;
 import java.util.Map;

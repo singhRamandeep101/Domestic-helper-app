@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:clipToPadding="false"
     android:overScrollMode="never"
-    android:padding="24sp"
     android:scrollbars="none"
     tools:context=".activities.Register">
 
@@ -15,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:padding="24sp"
         android:orientation="vertical">
 
         <TextView

@@ -1,4 +1,4 @@
-package com.project.fypproject.activities;
+package com.project.fypproject.activities.employer;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
