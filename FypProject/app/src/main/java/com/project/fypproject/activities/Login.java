@@ -36,46 +36,6 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     TextView textView;
 
-    String userType = "";
-
-
-
-    public void ChangeActivity(String userType){
-        Intent intent;
-        switch (userType){
-            case "Employer":
-                intent = new Intent(getApplicationContext(), EmployerMainActivity.class);
-                break;
-            default:
-                intent = new Intent(getApplicationContext(), EmployerMainActivity.class);
-                break;
-        }
-
-        startActivity(intent);
-        finish();
-    }
-
-    public void Login_UserTypeChecking(String email){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("users").document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        userType = document.getString("userType");
-                        ChangeActivity(userType);
-                    } else {
-                        userType = "";
-                    }
-                } else {
-                    userType = "";
-                }
-            }
-        });
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -144,8 +104,9 @@ public class Login extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Toast.makeText(Login.this, "Login success.",
                                             Toast.LENGTH_SHORT).show();
-
-
+                                    Intent intent = new Intent(getApplicationContext(), EmployerMainActivity.class);
+                                    startActivity(intent);
+                                    finish();
 
                                 } else {
                                     // If sign in fails, display a message to the user.

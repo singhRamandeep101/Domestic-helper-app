@@ -7,14 +7,17 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.Material3.Light"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.HelperPDF_Upload_Activity"
+            android:exported="false" />
         <activity
             android:name=".activities.Registry_usertype"
             android:exported="false" />
@@ -24,12 +27,11 @@
             android:theme="@style/Theme.Material3.Light.NoActionBar" />
         <activity
             android:name=".activities.employer.JobPostActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activities.employer.EmployerMainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="false">
-        </activity>
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".activities.UserUpdateProfileActivity"
             android:exported="false" />
@@ -46,11 +48,11 @@
             android:name=".activities.Login"
             android:exported="true"
             android:theme="@style/Theme.Material3.Light.NoActionBar">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

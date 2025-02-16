@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
@@ -15,16 +18,66 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 import com.project.fypproject.R;
+import com.project.fypproject.activities.AgentHomeFragment;
 import com.project.fypproject.activities.Login;
 
 public class EmployerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    TextView txtUserName, txtUserType;
+
     private DrawerLayout drawerLayout;
+    FirebaseAuth auth;
+    FirebaseUser user;
+
+    String userType = "";
+
+    public void SelectUserTypeHomeFragment(String userType){
+        switch (userType){
+            case "Employer":
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
+                break;
+            case "Agent":
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new AgentHomeFragment()).commit();
+                break;
+            default:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
+                break;
+        }
+    }
+
+    public void ChangeHomeActivity(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        userType = document.getString("userType");
+                        txtUserName.setText(document.getString("firstName") + " " + document.getString("lastName"));
+                        txtUserType.setText(userType);
+                        SelectUserTypeHomeFragment(userType);
+                    } else {
+                        userType = "";
+                    }
+                } else {
+                    userType = "";
+                }
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +92,32 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.getHeaderView(0);
+        txtUserName = headerView.findViewById(R.id.userName);
+        txtUserType = headerView.findViewById(R.id.userType);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav,
                 R.string.close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
         if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
+            ChangeHomeActivity();
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
+
+
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
+            ChangeHomeActivity();
         } else if (id == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new ProfileFragment()).commit();
         } else if (id == R.id.nav_language) {
