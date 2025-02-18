@@ -56,6 +56,12 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         }
     }
 
+    public void loadData(NavigationView navigationView){
+        View headerView = navigationView.getHeaderView(0);
+        txtUserName = headerView.findViewById(R.id.userName);
+        txtUserType = headerView.findViewById(R.id.userType);
+    }
+
     public void ChangeHomeActivity(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(user.getEmail());
@@ -79,6 +85,29 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
+    public void ReloadProfileActivity(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        userType = document.getString("userType");
+                        txtUserName.setText(document.getString("firstName") + " " + document.getString("lastName"));
+                        txtUserType.setText(userType);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new ProfileFragment()).commit();
+                    } else {
+                        userType = "";
+                    }
+                } else {
+                    userType = "";
+                }
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,9 +121,8 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        View headerView = navigationView.getHeaderView(0);
-        txtUserName = headerView.findViewById(R.id.userName);
-        txtUserType = headerView.findViewById(R.id.userType);
+        //Load the user name and the user type
+        loadData(navigationView);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav,
                 R.string.close_nav);
@@ -103,6 +131,11 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
+        }
 
         if(savedInstanceState == null){
             ChangeHomeActivity();

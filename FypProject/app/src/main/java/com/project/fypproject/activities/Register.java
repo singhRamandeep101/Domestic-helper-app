@@ -31,12 +31,13 @@ public class Register extends AppCompatActivity {
     public static class newUser{
 
 
-        public newUser(String userType, String firstName, String lastName, String email, String availability) {
+        public newUser(String userType, String firstName, String lastName, String email, String availability, String telephone) {
             this.userType = userType;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
             this.availability = availability;
+            this.telephone = telephone;
         }
 
         public String getUserType() {
@@ -58,6 +59,9 @@ public class Register extends AppCompatActivity {
         public String getAvailability() {
             return availability;
         }
+        public String getTelephone() {
+            return telephone;
+        }
 
         public void setUserType(String userType) {
             this.userType = userType;
@@ -78,6 +82,9 @@ public class Register extends AppCompatActivity {
         public void setAvailability(String availability) {
             this.availability = availability;
         }
+        public void setTelephone(String telephone) {
+            this.telephone = telephone;
+        }
         private String userType;
 
         private String firstName;
@@ -85,6 +92,7 @@ public class Register extends AppCompatActivity {
         private String lastName;
         private String email;
         private String availability;
+        private String telephone;
     }
 
     EditText editTextEmail, editTextPassword,editTextConfirmPassword ,editTextFirstName, editTextLastName;
@@ -187,7 +195,7 @@ public class Register extends AppCompatActivity {
                                     Toast.makeText(Register.this, "Account Created.",
                                             Toast.LENGTH_SHORT).show();
 
-                                    newUser data = new newUser(Type, firstName, lastName, email, "available");
+                                    newUser data = new newUser(Type, firstName, lastName, email, "available", "'");
 
                                     db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(data);
 

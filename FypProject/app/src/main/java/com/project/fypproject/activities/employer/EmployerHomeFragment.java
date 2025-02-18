@@ -19,9 +19,9 @@ import com.project.fypproject.activities.Login;
 
 public class EmployerHomeFragment extends Fragment {
 
-    FirebaseAuth auth;
     Button btnLogout;
     LinearLayout llPublicHoliday, llJobList, llJobPost;
+    FirebaseAuth auth;
     FirebaseUser user;
 
     @Override
@@ -50,8 +50,6 @@ public class EmployerHomeFragment extends Fragment {
             requireActivity().finish();
         }else{
             // Implement the code the here!
-
-
         }
 
         return view;
