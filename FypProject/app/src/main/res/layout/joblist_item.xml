@@ -14,12 +14,13 @@
             android:padding="5dp"
             android:background="@drawable/card">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgUser"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="10dp"
-                    android:src="@drawable/load_image_icon" />
+                    android:src="@drawable/icon_domestic_helper"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"/>
 
                 <ImageView
                     android:id="@+id/imgBookmark"
@@ -55,8 +56,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvStatus"
-                    android:text="Domestic helper - Status"
+                    android:id="@+id/WorkTitle"
+                    android:text="Domestic helper"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:layout_marginTop="3dp"
@@ -70,28 +71,50 @@
                     android:layout_marginTop="8dp"
                     android:src="@drawable/icon_location"
                     android:layout_toEndOf="@+id/imgUser"
-                    android:layout_below="@+id/tvStatus" />
+                    android:layout_below="@+id/WorkTitle" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvLocation"
-                    android:text="Location"
+                    android:id="@+id/tvNationality"
+                    android:text="Nationality"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_toEndOf="@+id/imgLocation"
-                    android:layout_below="@+id/tvStatus" />
+                    android:layout_below="@+id/WorkTitle" />
 
                 <ImageView
                     android:id="@+id/imgExperience"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/icon_book"
+                    android:src="@drawable/icon_temple"
                     android:layout_toEndOf="@+id/imgUser"
                     android:layout_below="@+id/imgLocation" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvReligion"
+                    android:text="Religion"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/imgExperience"
+                    android:layout_below="@+id/tvNationality"/>
+
+
+                <ImageView
+                    android:id="@+id/startDate"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/icon_book"
+                    android:layout_toEndOf="@+id/imgUser"
+                    android:layout_below="@+id/imgExperience" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -100,32 +123,10 @@
                     android:text="WorkExp"
                     android:textSize="15sp"
                     android:textColor="@color/black"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toEndOf="@+id/imgExperience"
-                    android:layout_below="@+id/tvLocation"/>
-
-
-                <ImageView
-                    android:id="@+id/startDate"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/icon_date_black"
-                    android:layout_toEndOf="@+id/imgUser"
-                    android:layout_below="@+id/imgExperience" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvPostDate"
-                    android:text="PostDate"
-                    android:textSize="15sp"
-                    android:textColor="@color/black"
                     android:layout_marginTop="12dp"
                     android:layout_marginLeft="10dp"
                     android:layout_toEndOf="@+id/startDate"
-                    android:layout_below="@+id/tvWork" />
+                    android:layout_below="@+id/tvReligion" />
         </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

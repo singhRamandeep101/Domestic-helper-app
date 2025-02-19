@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Material3.Light"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ResumeDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.HelperPDF_Upload_Activity"
             android:exported="false" />
         <activity
@@ -31,7 +34,7 @@
         <activity
             android:name=".activities.employer.EmployerMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activities.UserUpdateProfileActivity"
             android:exported="false" />

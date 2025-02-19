@@ -11,19 +11,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.fypproject.models.HelperInfo;
+import com.project.fypproject.models.MaidInfo;
 
 import com.project.fypproject.R;
 import java.util.List;
+import java.util.Map;
 
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHolder> {
 
     Context context;
-    List<HelperInfo> helperInfoList;
+    List<MaidInfo> maidInfoList;
+    Map<String, Object> overseasExperience;
+    String[] locatoin = {"hong_kong", "singapore", "taiwan", "malaysia", "middle_east", "macau", "other", "home_country"};
 
-    public JobListAdapter(Context context, List<HelperInfo> helperInfoList) {
+    public JobListAdapter(Context context, List<MaidInfo> maidInfoList) {
         this.context = context;
-        this.helperInfoList = helperInfoList;
+        this.maidInfoList = maidInfoList;
     }
 
     @NonNull
@@ -35,20 +38,41 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        HelperInfo helperInfo = helperInfoList.get(position);
+        MaidInfo maidInfo = maidInfoList.get(position);
 
-//        Glide.with(context).load(helperInfo.getImg_url()).into(holder.imageView);
-        holder.name.setText(helperInfo.getLastName() +" "+ helperInfo.getFirstName());
-        holder.age.setText("("+ helperInfo.getAge()+" years)");
-        holder.nation.setText(helperInfo.getNationality());
+//        Glide.with(context).load(maidInfo.getImg_url()).into(holder.imageView);
 
-        String experience = helperInfo.getTotalExperienceDuration();
-        String[] exp = experience.split(" ");
-        String year = exp[0];
-        String month = exp[1];
+        String firstName = "Maria";
+        String lastName = "Ceres";
 
-        int years = Integer.parseInt(year.replace("year", ""));
-        int months = Integer.parseInt(month.replace("month",  ""));
+        if (maidInfo.getFirstName() != null)
+            firstName = maidInfo.getFirstName();
+        if (maidInfo.getLastName() != null)
+            lastName = maidInfo.getLastName();
+
+        holder.name.setText(firstName +" "+ lastName);
+        holder.age.setText("("+ maidInfo.getAge()+" years)");
+        holder.nationality.setText(maidInfo.getNationality());
+        holder.religion.setText(maidInfo.getReligion());
+
+        overseasExperience = maidInfo.getOverseasExperience();
+
+        int years = 0;
+        int months = 0;
+
+        if (overseasExperience != null){
+            for (Object value : overseasExperience.values()) {
+                if (value.toString().contains("YEARS")) {
+                    years += Integer.parseInt(value.toString().replaceAll("[^0-9]", ""));
+                } else if (value.toString().contains("MONTHS")) {
+                    months += Integer.parseInt(value.toString().replaceAll("[^0-9]", ""));
+                    if (months >= 12){
+                        years += 1;
+                        months -= 12;
+                    }
+                }
+            }
+        }
 
         if(years > 0 && months >0){
             holder.workExp.setText(years + " year " + months +" month experience");
@@ -60,13 +84,10 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
             holder.workExp.setText("No experience");
         }
 
-        holder.postDate.setText("PostDate:"+ helperInfo.getPostTime().split(" ")[0]);
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, JobDetailActivity.class);
-                intent.putExtra("userEmail",helperInfo.getUserEmail());
                 context.startActivity(intent);
             }
         });
@@ -75,21 +96,22 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return helperInfoList.size();
+        return maidInfoList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView name, age, nation, workExp, postDate;
+        TextView name, age, nationality, workExp, religion;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.imgUser);
             name = itemView.findViewById(R.id.tvName);
             age = itemView.findViewById(R.id.tvAge);
-            nation = itemView.findViewById(R.id.tvNation);
+            nationality = itemView.findViewById(R.id.tvNationality);
+            religion = itemView.findViewById(R.id.tvReligion);
             workExp = itemView.findViewById(R.id.tvWork);
-            postDate = itemView.findViewById(R.id.tvPostDate);
+
         }
     }
 }

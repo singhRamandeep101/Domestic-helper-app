@@ -24,6 +24,12 @@ public class EmployerHomeFragment extends Fragment {
     FirebaseAuth auth;
     FirebaseUser user;
 
+    public void changeActivity(Class<?> cls){
+        Intent intent = new Intent(getActivity(), cls);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +51,17 @@ public class EmployerHomeFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         if (user == null) {
-            Intent intent = new Intent(getActivity(), Login.class);
-            startActivity(intent);
-            requireActivity().finish();
+            changeActivity(Login.class);
         }else{
             // Implement the code the here!
         }
+
+        llJobList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeActivity(JobListActivity.class);
+            }
+        });
 
         return view;
     }

@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.ResumeDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="700px"
+            android:background="@drawable/header"
+            android:gravity="center|bottom">
+
+            <LinearLayout
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:orientation="vertical"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/userIcon"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:src="@drawable/icon_domestic_helper"
+                app:strokeWidth="1dp"
+                app:shapeAppearanceOverlay="@style/roundedImageView"/>
+
+            <LinearLayout
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:gravity="center|bottom"
+                android:orientation="vertical">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/btnBookInterview"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/icon_interview"
+                    android:background="#AFF"
+                    app:strokeWidth="1dp"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Appoint\nan interview"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <!-- First Level: Name (?? years)-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/dhName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FirstName LastName"
+                    android:textSize="16dp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  ("
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@+id/dhName"/>
+                <TextView
+                    android:id="@+id/Age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="29"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@+id/open"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" years)"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@+id/Age"/>
+            </RelativeLayout>
+            <!-- Second Level: Gender | Marital Status | ? Kids-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/Gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Female"
+                    android:textSize="16dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/AfterGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" | "
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/Gender"/>
+
+                <TextView
+                    android:id="@+id/MaritalStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Single"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/AfterGender"/>
+
+                <TextView
+                    android:id="@+id/AfterMaritalStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" | "
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/MaritalStatus"/>
+
+                <TextView
+                android:id="@+id/NumOfKids"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/AfterMaritalStatus"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Kids"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/NumOfKids"/>
+
+            </RelativeLayout>
+            <!-- Third Level: Nationality | Religion-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/Nationality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Filipino"
+                    android:textSize="16dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/AfterNationality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" | "
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/Nationality"/>
+
+                <TextView
+                    android:id="@+id/Religion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Catholic"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/AfterNationality"/>
+
+
+
+            </RelativeLayout>
+            <!-- fourth Level: Nationality | Religion-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/imgZodiac"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icon_virgo"/>
+
+
+                <TextView
+                    android:id="@+id/Zodiac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virgo"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toEndOf="@id/imgZodiac"/>
+
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Work Experience:"
+                android:layout_marginHorizontal="20dp"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/WorkExp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skills / Duties:"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="20dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="5dp">
+
+                <ImageView
+                    android:id="@+id/imgLanguage"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/nav_language"/>
+
+                <TextView
+                    android:id="@+id/subtitleLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:text="Language"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_toEndOf="@id/imgLanguage"/>
+
+                <TextView
+                    android:id="@+id/Mandarin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mandarin:"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/imgLanguage"
+                    android:layout_below="@id/subtitleLanguage"/>
+
+                <TextView
+                    android:id="@+id/MandarinLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Poor"
+                    android:textColor="@color/black"
+                    android:background="@drawable/language_level_poor"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingHorizontal="5dp"
+                    android:elevation="5dp"
+                    android:layout_toEndOf="@id/Cantonese"
+                    android:layout_below="@id/subtitleLanguage"/>
+
+                <TextView
+                    android:id="@+id/Cantonese"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cantonese:"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/imgLanguage"
+                    android:layout_below="@id/Mandarin"/>
+
+                <TextView
+                    android:id="@+id/CantoneseLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fair"
+                    android:textColor="@color/black"
+                    android:background="@drawable/language_level_fair"
+                    android:layout_marginStart="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:elevation="5dp"
+                    android:layout_toEndOf="@id/Cantonese"
+                    android:layout_below="@id/Mandarin"/>
+
+                <TextView
+                    android:id="@+id/English"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="English:\t"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_toEndOf="@id/imgLanguage"
+                    android:layout_below="@id/Cantonese"/>
+
+                <TextView
+                    android:id="@+id/EnglishLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:textColor="@color/black"
+                    android:background="@drawable/language_level_good"
+                    android:layout_marginStart="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:elevation="4dp"
+                    android:layout_toEndOf="@id/Cantonese"
+                    android:layout_below="@id/Cantonese"/>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="30dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="5dp">
+
+                <ImageView
+                    android:id="@+id/imgWorkingSkills"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/nav_language"/>
+
+                <TextView
+                    android:id="@+id/subtitleWorkingSkills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:text="Working Skills"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_toEndOf="@id/imgWorkingSkills"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/WorkingSkills"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_toEndOf="@+id/imgWorkingSkills"
+                    android:layout_below="@+id/subtitleWorkingSkills"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remark:"
+                android:layout_marginHorizontal="20dp"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginHorizontal="30dp"
+                android:padding="15dp"
+                android:background="@drawable/card">
+
+                <TextView
+                    android:id="@+id/Remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SHE IS DEDICATED WHEN IT COMES TO WORK AND FAMILY ORIENTED, SHE TAKING CARE A NEW BORN BABY FROM HER OWN BABY AND ALSO SHE'S WILLING TO ACCEPT THE DIFFICULT TASK. MS. FRESIA IS WILLING TO WORK IN HONGKONG BECAUSE SHE WANT TO EARN MONEY FOR HER FAMILY ESPECIALLY TO HER TWO DAUGHTER FUTURE."
+                    />
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

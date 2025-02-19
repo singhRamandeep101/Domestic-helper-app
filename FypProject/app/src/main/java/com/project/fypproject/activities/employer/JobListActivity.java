@@ -26,15 +26,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import com.project.fypproject.R;
-import com.project.fypproject.models.HelperInfo;
+import com.project.fypproject.models.MaidInfo;
 
 public class JobListActivity extends AppCompatActivity {
     FirebaseFirestore firestore;
     RecyclerView recyclerView;
     JobListAdapter jobListAdapter;
-    List<HelperInfo> helperInfoList;
-    Toolbar toolbar;
-    EditText search_bar;
+    List<MaidInfo> maidInfoList;
+//    Toolbar toolbar;
+//    EditText search_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,33 +46,33 @@ public class JobListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rv_job_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        helperInfoList = new ArrayList<>();
-        jobListAdapter = new JobListAdapter(this, helperInfoList);
+        maidInfoList = new ArrayList<>();
+        jobListAdapter = new JobListAdapter(this, maidInfoList);
         recyclerView.setAdapter(jobListAdapter);
         AllData();
 
-        search_bar = findViewById(R.id.search_bar);
-        search_bar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        search_bar = findViewById(R.id.search_bar);
+//        search_bar.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
+//            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = s.toString().toUpperCase();
-                if(text.isEmpty()){
-                    AllData();
-                }else{
-                    searchData(text);
-                }
-            }
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                String text = s.toString().toUpperCase();
+//                if(text.isEmpty()){
+//                    AllData();
+//                }else{
+//                    searchData(text);
+//                }
+//            }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
 
 
@@ -83,15 +83,15 @@ public class JobListActivity extends AppCompatActivity {
         });
     }
     private void AllData() {
-        firestore.collection("HelperInfo").whereEqualTo("availability","Available").orderBy("postTime", Query.Direction.DESCENDING)
+        firestore.collection("MaidInfo").whereEqualTo("gender","F")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            helperInfoList.clear();
+                            maidInfoList.clear();
                             for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
-                                HelperInfo helperInfo = documentSnapshot.toObject(HelperInfo.class);
-                                helperInfoList.add(helperInfo);
+                                MaidInfo maidInfo = documentSnapshot.toObject(MaidInfo.class);
+                                maidInfoList.add(maidInfo);
                             }
                             jobListAdapter.notifyDataSetChanged();
                         } else {
@@ -101,22 +101,22 @@ public class JobListActivity extends AppCompatActivity {
                 });
     }
 
-    private void searchData(String s) {
-        firestore.collection("HelperInfo").whereEqualTo("availability","Available").orderBy("nationality").startAt(s).endAt(s + "\uf8ff")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            helperInfoList.clear();
-                            for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
-                                HelperInfo helperInfo = documentSnapshot.toObject(HelperInfo.class);
-                                helperInfoList.add(helperInfo);
-                            }
-                            jobListAdapter.notifyDataSetChanged();
-                        }else{
-                            Log.e("FireStore", "FireStore get error", task.getException());
-                        }
-                    }
-                });
-    }
+//    private void searchData(String s) {
+//        firestore.collection("HelperInfo").whereEqualTo("availability","Available").orderBy("nationality").startAt(s).endAt(s + "\uf8ff")
+//                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            maidInfoList.clear();
+//                            for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+//                                MaidInfo helperInfo = documentSnapshot.toObject(MaidInfo.class);
+//                                maidInfoList.add(helperInfo);
+//                            }
+//                            jobListAdapter.notifyDataSetChanged();
+//                        }else{
+//                            Log.e("FireStore", "FireStore get error", task.getException());
+//                        }
+//                    }
+//                });
+//    }
 }
