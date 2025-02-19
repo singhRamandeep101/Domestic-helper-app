@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.AgentHomeFragment;
+import com.project.fypproject.activities.DhHomeFragment;
 import com.project.fypproject.activities.Login;
 
 public class EmployerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +49,9 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case "Agent":
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new AgentHomeFragment()).commit();
+                break;
+            case "DomesticHelper":
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new DhHomeFragment()).commit();
                 break;
             default:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
@@ -105,6 +109,29 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
                 }
             }
         });
+    }
+
+
+    String reselt = "";
+    public String getUserInfo(String field){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        reselt = document.getString(field);
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
+        });
+        return reselt;
     }
 
     @Override

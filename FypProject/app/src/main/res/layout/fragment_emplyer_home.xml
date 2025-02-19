@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.employer.EmployerHomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -181,13 +181,25 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/MyDomesticHelper_Container"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/block"
+            android:layout_margin="20dp">
 
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="300dp"
-            android:text="@string/logout"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage your\ndomestic Helper"
+                android:textStyle="bold"
+                android:layout_marginVertical="10dp"
+                android:gravity="center"/>
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
