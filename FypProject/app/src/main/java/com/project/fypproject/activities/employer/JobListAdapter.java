@@ -62,9 +62,9 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
 
         if (overseasExperience != null){
             for (Object value : overseasExperience.values()) {
-                if (value.toString().contains("year")) {
+                if (value.toString().contains("YEARS")) {
                     years += Integer.parseInt(value.toString().replaceAll("[^0-9]", ""));
-                } else if (value.toString().contains("months")) {
+                } else if (value.toString().contains("MONTHS")) {
                     months += Integer.parseInt(value.toString().replaceAll("[^0-9]", ""));
                     if (months >= 12){
                         years += 1;

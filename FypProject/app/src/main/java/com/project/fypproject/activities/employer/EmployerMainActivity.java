@@ -39,6 +39,7 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
     private DrawerLayout drawerLayout;
     FirebaseAuth auth;
     FirebaseUser user;
+
     String userType = "";
 
     public void SelectUserTypeHomeFragment(String userType){
