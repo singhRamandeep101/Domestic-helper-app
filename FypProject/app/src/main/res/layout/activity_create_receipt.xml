@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".CreateReceiptActivity">
+
+    <EditText
+        android:id="@+id/employerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Employer Name" />
+
+    <EditText
+        android:id="@+id/employeeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Employee Name" />
+
+    <EditText
+        android:id="@+id/holidays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number of Holidays" />
+
+    <EditText
+        android:id="@+id/salary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Salary" />
+
+    <EditText
+        android:id="@+id/bonus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Bonus" />
+
+    <TextView
+        android:id="@+id/totalSalary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Salary: "
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/fromDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="From Date"
+        android:focusable="false"
+        android:clickable="true" />
+
+    <EditText
+        android:id="@+id/toDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="To Date"
+        android:focusable="false"
+        android:clickable="true" />
+
+    <Button
+        android:id="@+id/previewButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Preview Receipt"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/payButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Export Receipt as PDF"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+</LinearLayout>

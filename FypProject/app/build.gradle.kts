@@ -46,4 +46,9 @@ dependencies {
     implementation(libs.rounded.image.view)
     implementation(libs.glide)
     implementation (libs.pdfbox.android)
+
+    // jitsi
+    implementation("org.jitsi.react:jitsi-meet-sdk:10.3.0") {
+        isTransitive = true
+    }
 }

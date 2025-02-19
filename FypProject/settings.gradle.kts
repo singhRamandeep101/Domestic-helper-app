@@ -16,6 +16,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            setUrl("https://github.com/jitsi/jitsi-maven-repository/raw/master/releases")
+        }
+        maven {
+            setUrl("https://maven.google.com")
+        }
     }
 }
 
