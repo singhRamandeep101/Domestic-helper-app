@@ -10,19 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.project.fypproject.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.models.Receipt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 public class ReceiptActivity extends AppCompatActivity {
-    private DatabaseReference databaseReference;
+    private DocumentReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,7 @@ public class ReceiptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receipt);
 
         // Initialize Firebase
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("receipt");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
         String employer = intent.getStringExtra("EMPLOYER_NAME");
@@ -74,8 +75,8 @@ public class ReceiptActivity extends AppCompatActivity {
 
                 // Store receipt in Firebase
                 Receipt receipt = new Receipt(employer, employee, holidays, salary, bonus, total, fromDate, toDate);
-                String receiptId = databaseReference.push().getKey();
-                databaseReference.child(receiptId).setValue(receipt);
+
+                db.collection("receipt").document().set(receipt);
             }
         });
     }

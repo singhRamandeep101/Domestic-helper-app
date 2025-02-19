@@ -11,16 +11,17 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.project.fypproject.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 
 public class CreateReceiptActivity extends AppCompatActivity {
-    private DatabaseReference databaseReference;
+    private DocumentReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_receipt);
 
         // Initialize Firebase
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("receipt");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         final EditText employerName = findViewById(R.id.employerName);
         final EditText employeeName = findViewById(R.id.employeeName);
