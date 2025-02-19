@@ -151,7 +151,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                     LinearLayout rowLayout = null;
 
                     for (String experience : experienceList) {
-                        if (count % 3 == 0) {
+                        if (count % 2 == 0) {
                             rowLayout = new LinearLayout(ResumeDetailActivity.this);
                             rowLayout.setOrientation(LinearLayout.HORIZONTAL);
                             rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
