@@ -78,26 +78,16 @@
                     android:text="FirstName LastName"
                     android:textSize="16dp"
                     android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  ("
-                    android:textStyle="bold"
-                    android:layout_toEndOf="@+id/dhName"/>
+
                 <TextView
                     android:id="@+id/Age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="29"
+                    android:text="(29 years)"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@+id/open"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" years)"
-                    android:textStyle="bold"
-                    android:layout_toEndOf="@+id/Age"/>
+                    android:layout_marginLeft="2dp"
+                    android:layout_toEndOf="@+id/dhName"/>
+
             </RelativeLayout>
             <!-- Second Level: Gender | Marital Status | ? Kids-->
             <RelativeLayout
@@ -141,13 +131,13 @@
                     android:layout_toEndOf="@id/MaritalStatus"/>
 
                 <TextView
-                android:id="@+id/NumOfKids"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:layout_toEndOf="@id/AfterMaritalStatus"/>
+                    android:id="@+id/NumOfKids"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/AfterMaritalStatus"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -222,6 +212,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layWorkExp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -245,12 +236,16 @@
                 android:textStyle="bold"/>
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/WorkExp"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvNoExperience"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="No Experience"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="5dp" />
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
