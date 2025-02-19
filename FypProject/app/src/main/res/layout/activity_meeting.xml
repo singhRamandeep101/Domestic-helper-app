@@ -5,11 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< Updated upstream
-    tools:context=".MeetingActivity">
-=======
-    tools:context=".CreateReceiptActivity">
->>>>>>> Stashed changes
+    tools:context=".activities.CreateReceiptActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -11,27 +11,30 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.project.fypproject.R;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.project.fypproject.R;
 
 import java.util.Calendar;
-//a
-//Hello Raman
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateReceiptActivity extends AppCompatActivity {
-    private DocumentReference databaseReference;
+    private FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_receipt);
 
-        // Initialize Firebase
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance();
 
         final EditText employerName = findViewById(R.id.employerName);
         final EditText employeeName = findViewById(R.id.employeeName);
@@ -78,6 +81,33 @@ public class CreateReceiptActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validateInput(employerName, employeeName, holidays, salary, bonus, fromDate, toDate)) {
                     String total = calculateTotal(salary.getText().toString(), bonus.getText().toString());
+
+                    // Create a receipt object
+                    Map<String, Object> receipt = new HashMap<>();
+                    receipt.put("employerName", employerName.getText().toString());
+                    receipt.put("employeeName", employeeName.getText().toString());
+                    receipt.put("holidays", holidays.getText().toString());
+                    receipt.put("salary", salary.getText().toString());
+                    receipt.put("bonus", bonus.getText().toString());
+                    receipt.put("fromDate", fromDate.getText().toString());
+                    receipt.put("toDate", toDate.getText().toString());
+
+                    // Save the receipt to Firestore
+                    firestore.collection("receipts")
+                            .add(receipt)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(CreateReceiptActivity.this, "Receipt saved successfully!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(CreateReceiptActivity.this, "Error saving receipt", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                     Intent intent = new Intent(CreateReceiptActivity.this, ReceiptActivity.class);
                     intent.putExtra("EMPLOYER_NAME", employerName.getText().toString());
                     intent.putExtra("EMPLOYEE_NAME", employeeName.getText().toString());
