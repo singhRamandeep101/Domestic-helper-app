@@ -108,24 +108,24 @@
 
 
                 <ImageView
-                    android:id="@+id/startDate"
+                    android:id="@+id/zodiac"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/icon_book"
+                    android:src="@drawable/icon_virgo"
                     android:layout_toEndOf="@+id/imgUser"
                     android:layout_below="@+id/imgExperience" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvWork"
-                    android:text="WorkExp"
+                    android:id="@+id/tvZodiac"
+                    android:text="Zodiac"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:layout_marginTop="12dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_toEndOf="@+id/startDate"
+                    android:layout_toEndOf="@+id/zodiac"
                     android:layout_below="@+id/tvReligion" />
         </RelativeLayout>
 

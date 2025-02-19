@@ -167,7 +167,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                         skillView.setTextSize(16);
                         skillView.setTextColor(getResources().getColor(R.color.black));
                         skillView.setPadding(8, 8, 8, 8);
-//                        skillView.setBackground(getResources().getDrawable(R.drawable.label_background));
+                        skillView.setBackground(getResources().getDrawable(R.drawable.label_background));
                         skillView.setTypeface(Typeface.DEFAULT_BOLD);
 
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

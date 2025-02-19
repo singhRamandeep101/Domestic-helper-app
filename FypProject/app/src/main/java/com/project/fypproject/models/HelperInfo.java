@@ -1,12 +1,12 @@
 package com.project.fypproject.models;
 
-public class MaidInfo {
+public class HelperInfo {
     String name, nationality, zodiac, img_url, email, age;
 
-    public MaidInfo() {
+    public HelperInfo() {
     }
 
-    public MaidInfo(String name, String nationality, String zodiac, String img_url, String email, String age) {
+    public HelperInfo(String name, String nationality, String zodiac, String img_url, String email, String age) {
         this.name = name;
         this.nationality = nationality;
         this.zodiac = zodiac;
