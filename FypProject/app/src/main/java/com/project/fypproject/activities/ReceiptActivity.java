@@ -14,25 +14,43 @@ import com.project.fypproject.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+<<<<<<< Updated upstream
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+=======
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.project.fypproject.R;
+>>>>>>> Stashed changes
 import com.project.fypproject.models.Receipt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+<<<<<<< Updated upstream
 import java.util.Locale;
 
 public class ReceiptActivity extends AppCompatActivity {
     private DocumentReference databaseReference;
+=======
+import java.util.HashMap;
+import java.util.Map;
+
+public class ReceiptActivity extends AppCompatActivity {
+    private FirebaseFirestore firestore;
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt);
 
+<<<<<<< Updated upstream
         // Initialize Firebase
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+=======
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance();
+>>>>>>> Stashed changes
 
         Intent intent = getIntent();
         String employer = intent.getStringExtra("EMPLOYER_NAME");
@@ -73,10 +91,30 @@ public class ReceiptActivity extends AppCompatActivity {
             public void onClick(View v) {
                 exportReceiptAsPDF(receiptContent);
 
+<<<<<<< Updated upstream
                 // Store receipt in Firebase
                 Receipt receipt = new Receipt(employer, employee, holidays, salary, bonus, total, fromDate, toDate);
 
                 db.collection("receipt").document().set(receipt);
+=======
+                // Store receipt in Firestore
+                Map<String, Object> receipt = new HashMap<>();
+                receipt.put("employerName", employer);
+                receipt.put("employeeName", employee);
+                receipt.put("holidays", holidays);
+                receipt.put("salary", salary);
+                receipt.put("bonus", bonus);
+                receipt.put("total", total);
+                receipt.put("fromDate", fromDate);
+                receipt.put("toDate", toDate);
+
+                firestore.collection("receipts")
+                        .add(receipt)
+                        .addOnSuccessListener(documentReference ->
+                                Toast.makeText(ReceiptActivity.this, "Receipt saved successfully!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(ReceiptActivity.this, "Error saving receipt", Toast.LENGTH_SHORT).show());
+>>>>>>> Stashed changes
             }
         });
     }
