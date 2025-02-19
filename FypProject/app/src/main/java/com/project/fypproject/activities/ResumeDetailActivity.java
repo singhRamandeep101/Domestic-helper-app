@@ -1,5 +1,6 @@
 package com.project.fypproject.activities;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -21,13 +22,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobDetailActivity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeDetailActivity extends AppCompatActivity {
 
     TextView tvName,tvAge,tvGender,tvMaritalStatus,tvNumOfKids,tvNationality,tvReligion,tvZodiac,tvRemark,tvNoExperience;
     Toolbar toolbar;
-    LinearLayout layWorkExp;
+    LinearLayout layWorkExp,layWorkSkill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +49,10 @@ public class ResumeDetailActivity extends AppCompatActivity {
         tvRemark = findViewById(R.id.Remark);
         tvNoExperience = findViewById(R.id.tvNoExperience);
         layWorkExp = findViewById(R.id.layWorkExp);
+        layWorkSkill = findViewById(R.id.layWorkSkill);
 
 
-//        String email = getIntent().getStringExtra("email");
-
-
-        String email = "abcd@gmail.com";
-
+        String email = getIntent().getStringExtra("email");
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("MaidInfo").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -62,24 +62,6 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
                 tvName.setText(doc.getString("name"));
 
-//                String totalExperience = doc.getString("totalExperienceDuration");
-//                String[] tExp = totalExperience.split(" ");
-//                String year = tExp[0];
-//                String month = tExp[1];
-//
-//                int years = Integer.parseInt(year.replace("year", ""));
-//                int months = Integer.parseInt(month.replace("month", ""));
-//
-//                if (years > 0 && months > 0) {
-//                    tvTotWorkExpYear.setText("Work Experience:" + years + " Year " + months + " Month");
-//                } else if (years > 0) {
-//                    tvTotWorkExpYear.setText("Work Experience:" + years + " Year");
-//                } else if (months > 0) {
-//                    tvTotWorkExpYear.setText("Work Experience:" + months + " Month");
-//                } else {
-//                    tvTotWorkExpYear.setText("No experience");
-//                }
-//
                 Map<String, Object> oExperience = (Map<String, Object>) doc.get("overseas_experience");
                 if (oExperience == null || oExperience.isEmpty()) {
                     tvNoExperience.setVisibility(View.VISIBLE);
@@ -88,7 +70,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                     boolean hasExperience = false;
 
                     for (Map.Entry<String, Object> entry : oExperience.entrySet()) {
-                        String loc = entry.getKey();
+                        String loc = entry.getKey().toUpperCase();
                         Object exp = entry.getValue();
                         if (exp != null) {
                             hasExperience = true;
@@ -99,7 +81,6 @@ public class ResumeDetailActivity extends AppCompatActivity {
                             expTV.setTextSize(16);
                             expTV.setTextColor(getResources().getColor(R.color.black));
                             expTV.setPadding(20, 10, 20, 10);
-                            expTV.setTypeface(null, Typeface.BOLD);
                             expTV.setGravity(Gravity.CENTER);
 
                             layWorkExp.addView(expTV);
@@ -113,10 +94,14 @@ public class ResumeDetailActivity extends AppCompatActivity {
                         tvNoExperience.setVisibility(View.GONE);
                     }
                 }
-//
-//                tvExpSalary.setText("Expected Salary:$"+ doc.getString("expectedSalary"));
+
                 tvAge.setText("(" + doc.getString("age")+"years)");
-                tvGender.setText(doc.getString("gender"));
+                String gender = doc.getString("gender");
+                if (gender.equals("M")){
+                    tvGender.setText("Male");
+                }else{
+                    tvGender.setText("Female");
+                }
                 tvMaritalStatus.setText(doc.getString("marital_status"));
                 tvNationality.setText(doc.getString("nationality"));
                 tvReligion.setText(doc.getString("religion"));
@@ -147,106 +132,119 @@ public class ResumeDetailActivity extends AppCompatActivity {
                     }
                 }
 
+                Map<String, Object> workingExperience = (Map<String, Object>) doc.get("working_experience");
+
+                if (workingExperience != null && !workingExperience.isEmpty()) {
+                    List<String> experienceList = new ArrayList<>();
+
+                    for (Map.Entry<String, Object> entry : workingExperience.entrySet()) {
+                        String skill = entry.getKey();
+                        Object value = entry.getValue();
+
+                        if (value != null) {
+                            String formattedSkill = formatSkillName(skill);
+                            experienceList.add(formattedSkill);
+                        }
+                    }
+
+                    int count = 0;
+                    LinearLayout rowLayout = null;
+
+                    for (String experience : experienceList) {
+                        if (count % 3 == 0) {
+                            rowLayout = new LinearLayout(ResumeDetailActivity.this);
+                            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                            rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            ));
+                            rowLayout.setPadding(0, 30, 0, 16);
+                            layWorkSkill.addView(rowLayout);
+                        }
+
+                        TextView skillView = new TextView(ResumeDetailActivity.this);
+                        skillView.setText(experience);
+                        skillView.setTextSize(16);
+                        skillView.setTextColor(getResources().getColor(R.color.black));
+                        skillView.setPadding(8, 8, 8, 8);
+//                        skillView.setBackground(getResources().getDrawable(R.drawable.label_background));
+                        skillView.setTypeface(Typeface.DEFAULT_BOLD);
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        params.setMargins(8, 0, 8, 0);
+                        skillView.setLayoutParams(params);
+
+                        if (rowLayout != null) {
+                            rowLayout.addView(skillView);
+                        }
+
+                        count++;
+                    }
+                } else {
+                    TextView noExperienceView = new TextView(ResumeDetailActivity.this);
+                    noExperienceView.setText("No Working Skll");
+                    noExperienceView.setTextSize(18);
+                    noExperienceView.setTextColor(getResources().getColor(R.color.black));
+                    noExperienceView.setTypeface(Typeface.DEFAULT_BOLD);
+                    noExperienceView.setGravity(Gravity.CENTER);
+
+                    layWorkSkill.addView(noExperienceView);
+                }
+
                 int totalKids = sonNo + daughterNo;
                 tvNumOfKids.setText(String.valueOf(totalKids));
+                    Map<String, Object> languageSkills = (Map<String, Object>) doc.get("language_skills");
+                    if (languageSkills != null) {
+                        for (Map.Entry<String, Object> entry : languageSkills.entrySet()) {
+                            String language = entry.getKey();
+                            String level = formatSkillName(entry.getValue().toString());
 
-//                Map<String,Object> strengths = (Map<String, Object>) doc.get("strengths");
-//                GridLayout glStrengths =findViewById(R.id.glStrengths);
-//                for(Map.Entry<String,Object> entry: strengths.entrySet()) {
-//                    if(entry.getValue() instanceof Boolean && (Boolean) entry.getValue()){
-//                        TextView textView = new TextView(JobDetailActivity.this);
-//                        textView.setText(entry.getKey());
-//                        textView.setTextSize(18);
-//                        textView.setTextColor(Color.BLACK);
-//                        textView.setBackgroundColor(Color.parseColor("#DEA1A1"));
-//                        textView.setPadding(30, 30, 30, 30);
-//
-//                        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-//                        params.columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f);
-//                        params.setMargins(60, 10, 60, 10);
-//                        textView.setLayoutParams(params);
-//
-//                        glStrengths.addView(textView);
-//                    }
-//                }
-//
-//                if((Boolean) strengths.get("OtherStrengths")){
-//                    TextView textView = new TextView(JobDetailActivity.this);
-//                    textView.setText(doc.getString("OtherText"));
-//                    textView.setTextSize(18);
-//                    textView.setTextColor(Color.BLACK);
-//                    textView.setBackgroundColor(Color.parseColor("#DEA1A1"));
-//                    textView.setPadding(30, 30, 30, 30);
-//
-//                    GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-//                    params.columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f);
-//                    params.setMargins(60, 10, 60, 10);
-//                    textView.setLayoutParams(params);
-//
-//                    glStrengths.addView(textView);
-//                }
-//
-//                Map<String,Object> lSkill = (Map<String, Object>) doc.get("languageSkills");
-//                GridLayout gl =findViewById(R.id.glLSkill);
-//                for(Map.Entry<String,Object> entry: lSkill.entrySet()){
-//                    TextView textView = new TextView(JobDetailActivity.this);
-//                    textView.setText(entry.getKey()+": "+entry.getValue().toString());
-//                    textView.setTextSize(18);
-//                    textView.setTextColor(Color.BLACK);
-//                    textView.setBackgroundColor(Color.parseColor("#DEA1A1"));
-//                    textView.setPadding(30,30,30,30);
-//
-//                    GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-//                    params.setMargins(10,10,10,10);
-//                    textView.setLayoutParams(params);
-//
-//                    gl.addView(textView);
-//                }
-//                tvNation.setText(doc.getString("nationality"));
-//                tvAge.setText(doc.getString("age"));
-//                tvGender.setText(doc.getString("gender"));
-//                tvDateOfBirth.setText(doc.getString("birthDate"));
-//                tvEducation.setText(doc.getString("education"));
-//                tvMaritalStatus.setText(doc.getString("maritalStatus"));
-//                tvReligion.setText(doc.getString("religion"));
-//                tvHeight.setText(doc.getString("height")+"CM");
-//                tvRankAge.setText(doc.getString("rankingByAge"));
-//                tvWeight.setText(doc.getString("weight")+"KG");
-//                tvNoOfBrother.setText(doc.getString("noOfBrothers"));
-//                tvNoOfSister.setText(doc.getString("noOfSisters"));
-//                tvPostTime.setText(doc.getString("postTime"));
-//                tvConstellation.setText(doc.getString("constellation"));
-//
-//                List<String> sonAges = (List<String>) doc.get("sonAges");
-//                if(sonAges.isEmpty()){
-//                    tvSonNo.setText(doc.getString("sonNo")+" / 0 ");
-//                }else{
-//                    String sonAgesS = String.join(", ",sonAges);
-//                    tvSonNo.setText(doc.getString("sonNo")+" / " + sonAgesS);
-//                }
-//
-//                List<String> daughtAges = (List<String>) doc.get("daughterAges");
-//                if(daughtAges.isEmpty()){
-//                    tvDaughtNo.setText(doc.getString("daughterNo")+" / 0");
-//                }else{
-//                    String daughtAgesS = String.join(", ",daughtAges);
-//                    tvDaughtNo.setText(doc.getString("daughterNo")+" / " + daughtAgesS);
-//                }
-//
-//                Map<String,Object> otherQuestion = (Map<String, Object>) doc.get("otherQuestions");
-//                tvQ1.setText(otherQuestion.get("Q1.Do you eat pork?").toString());
-//                tvQ2.setText(otherQuestion.get("Q2.Accept Day-off not on Sunday?").toString());
-//                tvQ3.setText(otherQuestion.get("Q3.Sharing a room with babies / children / elder?").toString());
-//                tvQ4.setText(otherQuestion.get("Q4.Are you afraid of dog or cat?").toString());
-//                tvQ5.setText(otherQuestion.get("Q5.Do you smoke?").toString());
-//                tvQ6.setText(otherQuestion.get("Q6.Do you drink alcohol?").toString());
-//                tvQ7.setText(otherQuestion.get("Q7.Have you any prolonged illnesses/undergone surgery?").toString());
-//                if(doc.contains("illnessDetails")){
-//                    tvQ7Ans.setText("7.Ans: " + doc.getString("illnessDetails"));
-//                    tvQ7Ans.setVisibility(View.VISIBLE);
-//                }
-
+                            if (language.equalsIgnoreCase("Mandarin")) {
+                                TextView mandarinTextView = findViewById(R.id.MandarinLevel);
+                                mandarinTextView.setText(level);
+                                updateLanguageBackground(mandarinTextView, level);
+                            } else if (language.equalsIgnoreCase("Cantonese")) {
+                                TextView cantoneseTextView = findViewById(R.id.CantoneseLevel);
+                                cantoneseTextView.setText(level);
+                                updateLanguageBackground(cantoneseTextView, level);
+                            }else{
+                                TextView EnglishTextView = findViewById(R.id.EnglishLevel);
+                                EnglishTextView.setText(level);
+                                updateLanguageBackground(EnglishTextView, level);
+                            }
+                        }
+                    }
             }
+
+                private void updateLanguageBackground(TextView textView, String level) {
+                    if (level.equalsIgnoreCase("Poor")) {
+                        textView.setBackground(getResources().getDrawable(R.drawable.language_level_poor));
+                    } else if (level.equalsIgnoreCase("Fair")) {
+                        textView.setBackground(getResources().getDrawable(R.drawable.language_level_fair));
+                    } else{
+                        textView.setBackground(getResources().getDrawable(R.drawable.language_level_good));
+
+                    }
+                }
+
+
+                    private String formatSkillName(String skillName) {
+                        String[] words = skillName.split("_");
+                        StringBuilder formattedName = new StringBuilder();
+
+                        for (String word : words) {
+                            if (!word.isEmpty()) {
+                                formattedName.append(Character.toUpperCase(word.charAt(0)))
+                                        .append(word.substring(1).toLowerCase())
+                                        .append(" ");
+                            }
+                        }
+
+                        return formattedName.toString().trim();
+                    }
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
