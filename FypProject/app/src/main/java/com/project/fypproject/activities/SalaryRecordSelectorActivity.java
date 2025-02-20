@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,7 +32,6 @@ import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobDetailActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -118,8 +116,25 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         for (int i = 0; i < 12; i++) {
             final int i1 = i;
-            CollectionReference allReceipt = db.collection("receipts");
+            db.collection("receipts")
+                .whereEqualTo("employerEmail", user.getEmail())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                if (task.getResult().isEmpty()) {
+                                    Log.d("Dennis", "Employer Email:" + user.getEmail() +
+                                            "\nEmployee Email:" + MyDHEmail +
+                                            "\nyear :" + year +
+                                            "\nmonth :" + Months[i1]);
+                                    return;
+                                } else {
+                                    DocumentSnapshot doc = task.getResult().getDocuments().get(0);
 
+                                }
+                            }
+                        }
+                    });
 
 //            if (Objects.equals(doc.getString("status"), "pending")) {
 //                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
