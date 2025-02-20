@@ -221,6 +221,7 @@ public class JobListActivity extends AppCompatActivity {
             return insets;
         });
     }
+
     private void AllData() {
         firestore.collection("MaidInfo").whereEqualTo("availability","Available")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
