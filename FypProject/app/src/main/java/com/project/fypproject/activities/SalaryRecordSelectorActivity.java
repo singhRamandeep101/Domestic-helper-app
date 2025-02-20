@@ -33,6 +33,7 @@ import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobDetailActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,6 +49,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
     int year;
     String numberStr, MyDHEmail;
     String[] Months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private Map<String, Integer> monthStatusMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,20 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        monthStatusMap = new HashMap<>();
+        monthStatusMap.put("Jan", R.id.month_status_1);
+        monthStatusMap.put("Feb", R.id.month_status_2);
+        monthStatusMap.put("Mar", R.id.month_status_3);
+        monthStatusMap.put("Apr", R.id.month_status_4);
+        monthStatusMap.put("May", R.id.month_status_5);
+        monthStatusMap.put("Jun", R.id.month_status_6);
+        monthStatusMap.put("Jul", R.id.month_status_7);
+        monthStatusMap.put("Aug", R.id.month_status_8);
+        monthStatusMap.put("Sep", R.id.month_status_9);
+        monthStatusMap.put("Oct", R.id.month_status_10);
+        monthStatusMap.put("Nov", R.id.month_status_11);
+        monthStatusMap.put("Dec", R.id.month_status_12);
 
         Bundle b = getIntent().getExtras();
         if(b != null){
@@ -116,45 +132,53 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         // 獲取當前月份（1 ~ 12）
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 
-        // 禁用過去的月份按鈕
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("receipt")
+                .whereEqualTo("employeeEmail", "oliphia@gmail.com")
+                .whereEqualTo("employerEmail", user)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String month = document.getString("month");
+                            String status = document.getString("status");
+
+                            // 更新對應月份的圖標
+                            updateMonthStatusIcon(month, status);
+                        }
+                    } else {
+                        // 處理錯誤
+                        task.getException().printStackTrace();
+                    }
+                });
+    }
+
+    // 禁用過去的月份按鈕
 //        for (int i = 0; i < currentMonth - 1; i++) {
 //            llMonthButtons[i].setEnabled(false);
 //        }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        for (int i = 0; i < 12; i++) {
-//            final int i1 = i;
-//            db.collection("receipts")
-//                .whereEqualTo("employerEmail", user.getEmail())
-//                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                            if (task.isSuccessful()) {
-//                                if (task.getResult().isEmpty()) {
-//                                    Log.d("Dennis", "Employer Email:" + user.getEmail() +
-//                                            "\nEmployee Email:" + MyDHEmail +
-//                                            "\nyear :" + year +
-//                                            "\nmonth :" + Months[i1]);
-//                                    return;
-//                                } else {
-//                                    DocumentSnapshot doc = task.getResult().getDocuments().get(0);
-//
-//                                }
-//                            }
-//                        }
-//                    });
-//
-////            if (Objects.equals(doc.getString("status"), "pending")) {
-////                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
-////            } else if (Objects.equals(doc.getString("status"), "confirmed")) {
-////                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
-////            }
-//
-//
-//
-//        }
+    private void updateMonthStatusIcon(String month, String status) {
+        if (monthStatusMap.containsKey(month)) {
+            // 獲取對應的 ImageView ID
+            int imageViewId = monthStatusMap.get(month);
+            ImageView imageView = findViewById(imageViewId);
 
-
-
+            // 根據狀態設置圖標
+            switch (status) {
+                case "pending":
+                    imageView.setImageResource(R.drawable.icon_horizontal_rule);
+                    break;
+                case "abc":
+//                    imageView.setImageResource(R.drawable.icon_horizontal);
+                    break;
+                case "done":
+                    imageView.setImageResource(R.drawable.baseline_done_24);
+                    break;
+                default:
+//                    imageView.setImageResource(R.drawable.icon_unknown); // 默認圖標
+                    break;
+            }
+        }
     }
 }
