@@ -15,7 +15,7 @@ import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh,llJobList;
+    LinearLayout llAdd_dh,llJobList, llPublicholiday;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +25,7 @@ public class AgentHomeFragment extends Fragment {
 
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
         llJobList = view.findViewById(R.id.btn_Find);
+        llPublicholiday = view.findViewById(R.id.btn_meeting);
 
         llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,6 +39,14 @@ public class AgentHomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Pdfbox.class);
+                startActivity(intent);
+            }
+        });
+
+        llPublicholiday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MeetingActivity.class);
                 startActivity(intent);
             }
         });

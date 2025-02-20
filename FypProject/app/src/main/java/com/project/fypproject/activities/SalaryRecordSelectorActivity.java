@@ -2,6 +2,7 @@ package com.project.fypproject.activities;
 
 import static com.iab.omid.library.giphy.walking.c.b;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Bundle;
@@ -97,12 +98,19 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
             }
         });
 
-
         for (int i = 0; i < 12; i++) {
             int resID = getResources().getIdentifier("month_" + (i + 1), "id", getPackageName());
             llMonthButtons[i] = findViewById(resID);
             resID = getResources().getIdentifier("month_status_" + (i + 1), "id", getPackageName());
             imgStatus[i] = findViewById(resID);
+
+            llMonthButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), CreateReceiptActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
 
         // 獲取當前月份（1 ~ 12）
@@ -114,37 +122,37 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 //        }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        for (int i = 0; i < 12; i++) {
-            final int i1 = i;
-            db.collection("receipts")
-                .whereEqualTo("employerEmail", user.getEmail())
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                if (task.getResult().isEmpty()) {
-                                    Log.d("Dennis", "Employer Email:" + user.getEmail() +
-                                            "\nEmployee Email:" + MyDHEmail +
-                                            "\nyear :" + year +
-                                            "\nmonth :" + Months[i1]);
-                                    return;
-                                } else {
-                                    DocumentSnapshot doc = task.getResult().getDocuments().get(0);
-
-                                }
-                            }
-                        }
-                    });
-
-//            if (Objects.equals(doc.getString("status"), "pending")) {
-//                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
-//            } else if (Objects.equals(doc.getString("status"), "confirmed")) {
-//                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
-//            }
-
-
-
-        }
+//        for (int i = 0; i < 12; i++) {
+//            final int i1 = i;
+//            db.collection("receipts")
+//                .whereEqualTo("employerEmail", user.getEmail())
+//                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                if (task.getResult().isEmpty()) {
+//                                    Log.d("Dennis", "Employer Email:" + user.getEmail() +
+//                                            "\nEmployee Email:" + MyDHEmail +
+//                                            "\nyear :" + year +
+//                                            "\nmonth :" + Months[i1]);
+//                                    return;
+//                                } else {
+//                                    DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+//
+//                                }
+//                            }
+//                        }
+//                    });
+//
+////            if (Objects.equals(doc.getString("status"), "pending")) {
+////                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
+////            } else if (Objects.equals(doc.getString("status"), "confirmed")) {
+////                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
+////            }
+//
+//
+//
+//        }
 
 
 

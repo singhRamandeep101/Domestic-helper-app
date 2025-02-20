@@ -28,7 +28,22 @@
             android:name=".activities.Registry_usertype"
             android:exported="false" />
         <activity
+            android:name=".activities.MeetingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.Register"
+            android:exported="false"
+            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+        <activity
+            android:name=".activities.SalaryRecordSelectorActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+        <activity
+            android:name=".activities.CreateReceiptActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+        <activity
+            android:name=".activities.ReceiptActivity"
             android:exported="false"
             android:theme="@style/Theme.Material3.Light.NoActionBar" />
         <activity
