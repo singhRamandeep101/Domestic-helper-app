@@ -135,7 +135,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("receipt")
                 .whereEqualTo("employeeEmail", "oliphia@gmail.com")
-                .whereEqualTo("employerEmail", user)
+                .whereEqualTo("employerEmail", "youtube@gmail.com")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -167,13 +167,13 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
             // 根據狀態設置圖標
             switch (status) {
                 case "pending":
-                    imageView.setImageResource(R.drawable.icon_horizontal_rule);
+                    imageView.setImageResource(R.drawable.baseline_done_24);
                     break;
                 case "abc":
 //                    imageView.setImageResource(R.drawable.icon_horizontal);
                     break;
                 case "done":
-                    imageView.setImageResource(R.drawable.baseline_done_24);
+                    imageView.setImageResource(R.drawable.icon_horizontal_rule);
                     break;
                 default:
 //                    imageView.setImageResource(R.drawable.icon_unknown); // 默認圖標
