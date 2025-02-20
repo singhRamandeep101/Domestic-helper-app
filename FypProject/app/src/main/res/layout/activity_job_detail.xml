@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:background="#33ECFF"
             app:title="Job Detail"/>
-        
+
             <ImageView
                 android:id="@+id/imgUser"
                 android:layout_width="100dp"

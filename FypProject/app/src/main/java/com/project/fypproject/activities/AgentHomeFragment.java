@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.project.fypproject.R;
+import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh, llPublicHoliday;
+    LinearLayout llAdd_dh,llJobList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,21 +24,21 @@ public class AgentHomeFragment extends Fragment {
         View view  = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
-        llPublicHoliday = view.findViewById(R.id.btn_meeting);
+        llJobList = view.findViewById(R.id.btn_Find);
 
-        llAdd_dh.setOnClickListener(new View.OnClickListener() {
+        llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HelperPDF_Upload_Activity.class);
+                Intent intent = new Intent(getActivity(), JobListActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
             }
         });
 
-        llPublicHoliday.setOnClickListener(new View.OnClickListener() {
+        llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
+                Intent intent = new Intent(getActivity(), Pdfbox.class);
                 startActivity(intent);
                 requireActivity().finish();
             }

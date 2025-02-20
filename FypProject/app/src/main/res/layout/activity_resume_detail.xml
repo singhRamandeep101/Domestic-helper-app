@@ -78,26 +78,16 @@
                     android:text="FirstName LastName"
                     android:textSize="16dp"
                     android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  ("
-                    android:textStyle="bold"
-                    android:layout_toEndOf="@+id/dhName"/>
+
                 <TextView
                     android:id="@+id/Age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="29"
+                    android:text="(29 years)"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@+id/open"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" years)"
-                    android:textStyle="bold"
-                    android:layout_toEndOf="@+id/Age"/>
+                    android:layout_marginLeft="2dp"
+                    android:layout_toEndOf="@+id/dhName"/>
+
             </RelativeLayout>
             <!-- Second Level: Gender | Marital Status | ? Kids-->
             <RelativeLayout
@@ -141,13 +131,13 @@
                     android:layout_toEndOf="@id/MaritalStatus"/>
 
                 <TextView
-                android:id="@+id/NumOfKids"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:layout_toEndOf="@id/AfterMaritalStatus"/>
+                    android:id="@+id/NumOfKids"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/AfterMaritalStatus"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -222,6 +212,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layWorkExp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -245,12 +236,16 @@
                 android:textStyle="bold"/>
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/WorkExp"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvNoExperience"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="No Experience"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="5dp" />
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
@@ -313,7 +308,7 @@
                     android:id="@+id/MandarinLevel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Poor"
+                    android:text=""
                     android:textColor="@color/black"
                     android:background="@drawable/language_level_poor"
                     android:layout_marginStart="10dp"
@@ -337,7 +332,7 @@
                     android:id="@+id/CantoneseLevel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fair"
+                    android:text=""
                     android:textColor="@color/black"
                     android:background="@drawable/language_level_fair"
                     android:layout_marginStart="10dp"
@@ -360,7 +355,7 @@
                     android:id="@+id/EnglishLevel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Good"
+                    android:text=""
                     android:textColor="@color/black"
                     android:background="@drawable/language_level_good"
                     android:layout_marginStart="10dp"
@@ -399,13 +394,164 @@
                     android:layout_marginHorizontal="5dp"
                     android:layout_toEndOf="@id/imgWorkingSkills"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/WorkingSkills"
+                <LinearLayout
+                    android:id="@+id/layWorkSkill"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_toEndOf="@+id/imgWorkingSkills"
-                    android:layout_below="@+id/subtitleWorkingSkills"/>
+                    android:orientation="vertical"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="16dp"/>
+
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCooking"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Cooking"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfBabies"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care of Babies"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfToddler"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care of Toddler"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_marginTop="60dp"-->
+<!--                    android:layout_marginBottom="16dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceGardening"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Gardening"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfChildren"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care of Children"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfElderly"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care of Elderly"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:layout_marginTop="100dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceDriving"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Driving"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfDisabled"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care Of Disabled"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfBedridden"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care Of Bedridden"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_marginTop="140dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    >-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCareOfPet"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Care Of Pet"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceHouseholdWorks"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Household Works"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/labelWorkingExperienceCarWashing"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Car Washing"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:background="@drawable/label_background"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_marginEnd="8dp" />-->
+<!--                </LinearLayout>-->
+
             </RelativeLayout>
         </LinearLayout>
 
