@@ -14,7 +14,7 @@ import com.project.fypproject.R;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh;
+    LinearLayout llAdd_dh, llPublicHoliday;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,11 +23,21 @@ public class AgentHomeFragment extends Fragment {
         View view  = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
+        llPublicHoliday = view.findViewById(R.id.btn_meeting);
 
         llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HelperPDF_Upload_Activity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+        });
+
+        llPublicHoliday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MeetingActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
             }

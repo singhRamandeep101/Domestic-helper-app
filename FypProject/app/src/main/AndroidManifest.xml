@@ -25,6 +25,9 @@
             android:name=".activities.ResumeDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.MeetingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.HelperPDF_Upload_Activity"
             android:exported="false" />
         <activity

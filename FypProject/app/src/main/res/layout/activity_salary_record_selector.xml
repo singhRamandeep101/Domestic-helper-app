@@ -67,6 +67,8 @@
                 android:gravity="center"
                 android:padding="10dp">
 
+
+
                 <LinearLayout
                     android:id="@+id/month_1"
                     android:layout_width="wrap_content"
@@ -80,9 +82,10 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_1"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:src="@drawable/baseline_done_24" />
+                        android:src="@drawable/icon_horizontal_rule" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -106,9 +109,10 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_2"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:src="@drawable/baseline_done_24" />
+                        android:src="@drawable/icon_edit_light_primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -132,9 +136,10 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_3"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:src="@drawable/baseline_done_24" />
+                        android:src="@drawable/icon_add_circle" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -168,6 +173,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_4"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -194,6 +200,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_5"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -220,6 +227,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_6"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -256,6 +264,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_7"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -282,6 +291,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_8"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -308,6 +318,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_9"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -345,6 +356,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_10"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -371,6 +383,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_11"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />
@@ -397,6 +410,7 @@
                     android:elevation="4dp">
 
                     <ImageView
+                        android:id="@+id/month_status_12"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/baseline_done_24" />

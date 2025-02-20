@@ -111,9 +111,12 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-
+    public interface FirestoreCallback {
+        void onCallback(String result);
+    }
     String reselt = "";
     public String getUserInfo(String field){
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(user.getEmail());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -122,12 +125,26 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        reselt = document.getString(field);
-                    } else {
-
+                        reselt = document.getString("domesticHelper");
                     }
-                } else {
+                }
+            }
+        });
+        Log.d("Dennis", "The reselt is " + reselt);
+        return reselt;
+    }
 
+    public String getOtherUserInfo(String userGmail, String field){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(userGmail);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        reselt = document.getString(field);
+                    }
                 }
             }
         });
