@@ -95,7 +95,7 @@ public class JobListActivity extends AppCompatActivity {
                             }
                             jobListAdapter.notifyDataSetChanged();
                         } else {
-                            Log.e("FireStore", "FireStore get error", task.getException());
+                            Log.e("FireStore", "FireStore get error ", task.getException());
                         }
                     }
                 });

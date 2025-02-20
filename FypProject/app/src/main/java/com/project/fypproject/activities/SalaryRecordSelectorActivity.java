@@ -5,6 +5,7 @@ import static com.iab.omid.library.giphy.walking.c.b;
 import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -123,11 +124,16 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                        if (Objects.equals(doc.getString("status"), "pending")){
-                            imgStatus[i].setImageResource(R.drawable.icon_edit_light_primary);
-                        } else if (Objects.equals(doc.getString("status"), "confirmed")){
-                            imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
+                        if(doc.exists()){
+                            if (Objects.equals(doc.getString("status"), "pending")){
+                                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
+                            } else if (Objects.equals(doc.getString("status"), "confirmed")){
+                                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
+                            }
+                        }else {
+                            Log.d("Dennis", "you can't do this.");
                         }
+
                     }
                 });
         }
