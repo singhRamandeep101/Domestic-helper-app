@@ -102,9 +102,9 @@ public class JobListActivity extends AppCompatActivity {
         labelWorkingExperienceGardening= findViewById(R.id. labelWorkingExperienceGardening);
         labelWorkingExperienceCooking= findViewById(R.id.labelWorkingExperienceCooking);
         labelWorkingExperienceDriving= findViewById(R.id.labelWorkingExperienceDriving);
-        labelAgeUnder30 = findViewById(R.id.labelAgeUnder30);
-        labelAge30to50 = findViewById(R.id.labelAge30to50);
-        labelAgeOver50 = findViewById(R.id.labelAgeOver50);
+//        labelAgeUnder30 = findViewById(R.id.labelAgeUnder30);
+//        labelAge30to50 = findViewById(R.id.labelAge30to50);
+//        labelAgeOver50 = findViewById(R.id.labelAgeOver50);
         labelOverseasHongKong = findViewById(R.id.labelOverseasHongKong);
         labelOverseasMalaysia = findViewById(R.id.labelOverseasMalaysia);
         labelOverseasMiddleEast = findViewById(R.id.labelOverseasMiddleEast);

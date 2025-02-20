@@ -49,6 +49,7 @@ public class Pdfbox extends AppCompatActivity {
     private EditText emailInput;
     private TextView pdfFileName;
     private String selectedPdfName;
+    EditText name_input;
 
     String extractedName;
 
@@ -68,6 +69,7 @@ public class Pdfbox extends AppCompatActivity {
         jsonFormContainer = findViewById(R.id.json_form_container);
         emailInput = findViewById(R.id.email_input);
         pdfFileName = findViewById(R.id.pdf_file_name);
+        name_input = findViewById(R.id.name_input);
 
         btnDelete.setVisibility(View.GONE);
 
@@ -92,7 +94,7 @@ public class Pdfbox extends AppCompatActivity {
                 Toast.makeText(Pdfbox.this, "No data to submit!", Toast.LENGTH_SHORT).show();
             }
         });
-        btnDelete.setOnClickListener(view -> deletePdf());
+        btnDelete.setOnClickListener(view -> deletePdf("Delete"));
     }
 
     private Map<String, Object> collectJsonData(LinearLayout container) {
@@ -156,6 +158,9 @@ public class Pdfbox extends AppCompatActivity {
     }
 
     private void displayJsonForm(Map<String, Object> jsonMap, LinearLayout container) {
+        emailInput.setVisibility(View.VISIBLE);
+        name_input.setText(extractedName);
+        name_input.setVisibility(View.VISIBLE);
         container.removeAllViews();
 
         for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
@@ -325,10 +330,10 @@ public class Pdfbox extends AppCompatActivity {
                     String fileName = getFileName(pdfUri);
                     if (fileName != null) {
 
-                        extractedName = extractNameFromFile(fileName);
-                        selectedPdfName = extractedName;
-                        Log.d(TAG, "Extracted file name: " + extractedName);
-                        pdfFileName.setText(extractedName);
+                       extractedName = extractNameFromFile(fileName);
+//                        selectedPdfName = extractedName;
+//                        Log.d(TAG, "Extracted file name: " + extractedName);
+                       pdfFileName.setText(fileName);
                     }
 
                     selectedPdfData = loadPdfFile(pdfUri);
@@ -424,7 +429,7 @@ public class Pdfbox extends AppCompatActivity {
         }
     }
 
-    private void deletePdf() {
+    private void deletePdf(String type) {
         selectedPdfData = null;
         formattedJson = null;
 
@@ -432,11 +437,19 @@ public class Pdfbox extends AppCompatActivity {
         jsonFormContainer.removeAllViews();
         pdfFileName.setText("");
         emailInput.setText("");
+        name_input.setText("");
+        emailInput.setVisibility(View.GONE);
+        name_input.setVisibility(View.GONE);
 
         btnUpload.setVisibility(View.VISIBLE);
         btnDelete.setVisibility(View.GONE);
-
-        Toast.makeText(this, "PDF deleted successfully!", Toast.LENGTH_SHORT).show();
+        if(type.equals("Submit")){
+            Toast.makeText(Pdfbox.this, "Data saved successfully!", Toast.LENGTH_SHORT).show();
+        }else if(type.equals("Delete")) {
+            Toast.makeText(this, "PDF deleted successfully!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(Pdfbox.this, "Please Upload Again!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -473,10 +486,10 @@ public class Pdfbox extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Log.e(TAG, "API request failed: " + response.message());
+                    deletePdf("Again");
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Error sending PDF to FormX.ai: " + e.getMessage());
+                deletePdf("Again");
             }
         }).start();
     }
@@ -622,7 +635,7 @@ public class Pdfbox extends AppCompatActivity {
 
         formattedData.put("remark", data.get("remark"));
         formattedData.put("email", data.get("email"));
-        formattedData.put("name", extractedName);
+        formattedData.put("name", name_input.getText().toString());
         formattedData.put("availability", "Available");
 
         return formattedData;
@@ -632,7 +645,11 @@ public class Pdfbox extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("MaidInfo")
                 .add(data)
-                .addOnSuccessListener(documentReference -> Toast.makeText(Pdfbox.this, "Data saved successfully!", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(documentReference -> {
+                    deletePdf("Submit");
+                    Toast.makeText(Pdfbox.this, "Data saved successfully!", Toast.LENGTH_SHORT).show();
+                })
+
                 .addOnFailureListener(e -> Toast.makeText(Pdfbox.this, "Failed to save data!", Toast.LENGTH_SHORT).show());
     }
 }
