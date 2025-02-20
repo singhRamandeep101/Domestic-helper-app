@@ -31,7 +31,6 @@ public class AgentHomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), JobListActivity.class);
                 startActivity(intent);
-                requireActivity().finish();
             }
         });
 
@@ -40,7 +39,6 @@ public class AgentHomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Pdfbox.class);
                 startActivity(intent);
-                requireActivity().finish();
             }
         });
 
