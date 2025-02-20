@@ -24,13 +24,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobDetailActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -115,27 +118,17 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         for (int i = 0; i < 12; i++) {
             final int i1 = i;
-            db.collection("receipts")
-                .whereEqualTo("employerEmail", user.getEmail())
-                .whereEqualTo("employee", MyDHEmail)
-                .whereEqualTo("year", year)
-                .whereEqualTo("month", Months[i])
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                        if(doc.exists()){
-                            if (Objects.equals(doc.getString("status"), "pending")){
-                                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
-                            } else if (Objects.equals(doc.getString("status"), "confirmed")){
-                                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
-                            }
-                        }else {
-                            Log.d("Dennis", "you can't do this.");
-                        }
+            CollectionReference allReceipt = db.collection("receipts");
 
-                    }
-                });
+
+//            if (Objects.equals(doc.getString("status"), "pending")) {
+//                imgStatus[i1].setImageResource(R.drawable.icon_edit_light_primary);
+//            } else if (Objects.equals(doc.getString("status"), "confirmed")) {
+//                imgStatus[i1].setImageResource(R.drawable.baseline_done_24);
+//            }
+
+
+
         }
 
 

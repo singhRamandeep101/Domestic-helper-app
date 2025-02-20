@@ -112,7 +112,7 @@
                         android:id="@+id/month_status_2"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:src="@drawable/icon_edit_light_primary" />
+                        android:src="@drawable/icon_add_circle" />
 
                     <TextView
                         android:layout_width="wrap_content"
