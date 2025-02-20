@@ -134,15 +134,14 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("receipt")
-                .whereEqualTo("employeeEmail", "oliphia@gmail.com")
-                .whereEqualTo("employerEmail", "youtube@gmail.com")
+                .whereEqualTo("employeeEmail", MyDHEmail)
+                .whereEqualTo("employerEmail", user.getEmail() )
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String month = document.getString("month");
                             String status = document.getString("status");
-
                             // 更新對應月份的圖標
                             updateMonthStatusIcon(month, status);
                         }
@@ -167,13 +166,13 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
             // 根據狀態設置圖標
             switch (status) {
                 case "pending":
-                    imageView.setImageResource(R.drawable.baseline_done_24);
+                    imageView.setImageResource(R.drawable.icon_edit_light_primary);
                     break;
                 case "abc":
 //                    imageView.setImageResource(R.drawable.icon_horizontal);
                     break;
                 case "done":
-                    imageView.setImageResource(R.drawable.icon_horizontal_rule);
+                    imageView.setImageResource(R.drawable.baseline_done_24);
                     break;
                 default:
 //                    imageView.setImageResource(R.drawable.icon_unknown); // 默認圖標
