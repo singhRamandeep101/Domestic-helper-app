@@ -103,5 +103,9 @@ public class Receipt {
         this.bonus = bonus;
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.year = year;
+        this.month = month;
+        this.status = status;
+
     }
 }

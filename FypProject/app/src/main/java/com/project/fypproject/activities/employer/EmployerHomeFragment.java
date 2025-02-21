@@ -125,7 +125,6 @@ public class EmployerHomeFragment extends Fragment {
                                     b.putString("employerEmail", user.getEmail());
                                     intent.putExtras(b);
                                     startActivity(intent);
-                                    requireActivity().finish();
                                 }
                             });
 

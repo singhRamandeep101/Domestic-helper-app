@@ -6,12 +6,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.print.PrintAttributes;
 import android.print.pdf.PrintedPdfDocument;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.project.fypproject.R;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -50,6 +55,21 @@ public class ReceiptActivity extends AppCompatActivity {
         String employeeEmail = intent.getStringExtra("employeeEmail");
         String employerEmail = intent.getStringExtra("employerEmail");
         String userType = intent.getStringExtra("userType");
+        String status = intent.getStringExtra("status");
+        String documentId = intent.getStringExtra("documentId");
+
+
+
+        Receipt receipt = new Receipt(employerEmail,
+                employeeEmail,
+                holidays,
+                salary,
+                bonus,
+                fromDate,
+                toDate,
+                year,
+                month,
+                "pending");
 
         String receiptContent = "I, " + employee + " received the following salary in cash from " + employer +
                 " for the period from (" + fromDate + " to " + toDate + ").\n\n" +
@@ -69,19 +89,30 @@ public class ReceiptActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Store receipt in Firebase
-                Receipt receipt = new Receipt(employerEmail,
-                        employeeEmail,
-                        holidays,
-                        salary,
-                        bonus,
-                        fromDate,
-                        toDate,
-                        year,
-                        month,
-                        "pending");
+                Log.d("Dennis", receipt.getYear() + " " + receipt.getMonth());
 
-                //create a record into database
-                db.collection("receipt").document().set(receipt);
+                if(status == null){
+                    //create a record into database
+                    db.collection("receipt").document().set(receipt);
+
+                }else if (status.equals("pending")){
+                    db.collection("receipt").document(documentId)
+                            .update("numOfHoliday", receipt.getNumOfHoliday(),
+                                    "salary", receipt.getSalary(),
+                                    "bonus", receipt.getBonus(),
+                                    "fromDate", receipt.getFromDate(),
+                                    "toDate", receipt.getToDate()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("Dennis", "Update Successful");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                }
+                            });
+                }
 
                 Intent intent = new Intent(ReceiptActivity.this, SalaryRecordSelectorActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

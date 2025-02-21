@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -34,7 +35,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
-    String userType, employeeEmail, employerEmail, month, year, status;
+    String userType, employeeEmail, employerEmail, month, year, status, documentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +116,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
                             fromDate.setText(document.getString("fromDate"));
                             toDate.setText(document.getString("toDate"));
                             status = document.getString("status");
+                            documentId = document.getId();
                         }
                     } else {
                         // 處理錯誤
@@ -175,6 +177,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
                     intent.putExtra("employerEmail", employerEmail);
                     intent.putExtra("userType", userType);
                     intent.putExtra("status", status);
+                    intent.putExtra("documentId", documentId);
 
                     startActivity(intent);
                 } else {
