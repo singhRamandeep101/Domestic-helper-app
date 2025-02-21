@@ -45,6 +45,12 @@ public class ReceiptActivity extends AppCompatActivity {
         String fromDate = intent.getStringExtra("FROM_DATE");
         String toDate = intent.getStringExtra("TO_DATE");
 
+        String month = intent.getStringExtra("month");
+        String year = intent.getStringExtra("year");
+        String employeeEmail = intent.getStringExtra("employeeEmail");
+        String employerEmail = intent.getStringExtra("employerEmail");
+        String userType = intent.getStringExtra("userType");
+
         String receiptContent = "I, " + employee + " received the following salary in cash from " + employer +
                 " for the period from (" + fromDate + " to " + toDate + ").\n\n" +
                 "Salary amount = " + salary + "\n" +
@@ -61,9 +67,27 @@ public class ReceiptActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Store receipt in Firebase
+                Receipt receipt = new Receipt(employerEmail,
+                        employeeEmail,
+                        holidays,
+                        salary,
+                        bonus,
+                        fromDate,
+                        toDate,
+                        year,
+                        month,
+                        "pending");
+
+                //create a record into database
+                db.collection("receipt").document().set(receipt);
+
                 Intent intent = new Intent(ReceiptActivity.this, SalaryRecordSelectorActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+
+
             }
         });
 
@@ -72,11 +96,6 @@ public class ReceiptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 exportReceiptAsPDF(receiptContent);
-
-                // Store receipt in Firebase
-                Receipt receipt = new Receipt(employer, employee, holidays, salary, bonus, total, fromDate, toDate);
-
-                db.collection("receipt").document().set(receipt);
             }
         });
     }

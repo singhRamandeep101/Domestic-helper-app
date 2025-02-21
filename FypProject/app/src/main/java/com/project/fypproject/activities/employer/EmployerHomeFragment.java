@@ -121,7 +121,8 @@ public class EmployerHomeFragment extends Fragment {
                                 public void onClick(View v) {
                                     Intent intent = new Intent(getActivity(), SalaryRecordSelectorActivity.class);
                                     Bundle b = new Bundle();
-                                    b.putString("MyDHEmail", MyDomesticHelper);
+                                    b.putString("employeeEmail", MyDomesticHelper);
+                                    b.putString("employerEmail", user.getEmail());
                                     intent.putExtras(b);
                                     startActivity(intent);
                                     requireActivity().finish();

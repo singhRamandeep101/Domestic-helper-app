@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,9 +48,10 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
     ImageView[] imgStatus = new ImageView[12];
     TextView txtYear;
     int year;
-    String numberStr, MyDHEmail;
+    String numberStr, employerEmail, employeeEmail, userType;
     String[] Months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    private Map<String, Integer> monthStatusMap;
+    private Map<String, Integer> monthIdMap;
+    private Map<String, String> monthStatusMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,25 +67,41 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+        monthIdMap = new HashMap<>();
+        monthIdMap.put("Jan", R.id.month_status_1);
+        monthIdMap.put("Feb", R.id.month_status_2);
+        monthIdMap.put("Mar", R.id.month_status_3);
+        monthIdMap.put("Apr", R.id.month_status_4);
+        monthIdMap.put("May", R.id.month_status_5);
+        monthIdMap.put("Jun", R.id.month_status_6);
+        monthIdMap.put("Jul", R.id.month_status_7);
+        monthIdMap.put("Aug", R.id.month_status_8);
+        monthIdMap.put("Sep", R.id.month_status_9);
+        monthIdMap.put("Oct", R.id.month_status_10);
+        monthIdMap.put("Nov", R.id.month_status_11);
+        monthIdMap.put("Dec", R.id.month_status_12);
+
         monthStatusMap = new HashMap<>();
-        monthStatusMap.put("Jan", R.id.month_status_1);
-        monthStatusMap.put("Feb", R.id.month_status_2);
-        monthStatusMap.put("Mar", R.id.month_status_3);
-        monthStatusMap.put("Apr", R.id.month_status_4);
-        monthStatusMap.put("May", R.id.month_status_5);
-        monthStatusMap.put("Jun", R.id.month_status_6);
-        monthStatusMap.put("Jul", R.id.month_status_7);
-        monthStatusMap.put("Aug", R.id.month_status_8);
-        monthStatusMap.put("Sep", R.id.month_status_9);
-        monthStatusMap.put("Oct", R.id.month_status_10);
-        monthStatusMap.put("Nov", R.id.month_status_11);
-        monthStatusMap.put("Dec", R.id.month_status_12);
 
         Bundle b = getIntent().getExtras();
         if(b != null){
-            MyDHEmail = b.getString("MyDHEmail"); //Get the user type from last activity
+            employeeEmail = b.getString("employeeEmail"); //Get the user type from last activity
+            employerEmail = b.getString("employerEmail");
         }
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        userType = document.getString("userType");
+                    }
+                }
+            }
+        });
 
         btnLastYear = findViewById(R.id.btnLastYear);
         btnNextyear = findViewById(R.id.btnNextYear);
@@ -120,10 +138,22 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
             resID = getResources().getIdentifier("month_status_" + (i + 1), "id", getPackageName());
             imgStatus[i] = findViewById(resID);
 
+            final int i1 = i;
             llMonthButtons[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    Log.d("Dennis", userType);
+
+                    Bundle b = new Bundle();
+                    b.putString("userType", userType);
+                    b.putString("employeeEmail", employeeEmail);
+                    b.putString("employerEmail", employerEmail);
+                    b.putInt("year", year);
+                    b.putString("month", Months[i1]);
+
                     Intent intent = new Intent(getApplicationContext(), CreateReceiptActivity.class);
+                    intent.putExtras(b);
                     startActivity(intent);
                 }
             });
@@ -132,10 +162,9 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
         // 獲取當前月份（1 ~ 12）
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("receipt")
-                .whereEqualTo("employeeEmail", MyDHEmail)
-                .whereEqualTo("employerEmail", user.getEmail() )
+                .whereEqualTo("employeeEmail", employeeEmail)
+                .whereEqualTo("employerEmail", employerEmail)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -150,6 +179,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
                         task.getException().printStackTrace();
                     }
                 });
+
     }
 
     // 禁用過去的月份按鈕
@@ -158,24 +188,22 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 //        }
 
     private void updateMonthStatusIcon(String month, String status) {
-        if (monthStatusMap.containsKey(month)) {
+        if (monthIdMap.containsKey(month)) {
             // 獲取對應的 ImageView ID
-            int imageViewId = monthStatusMap.get(month);
+            int imageViewId = monthIdMap.get(month);
             ImageView imageView = findViewById(imageViewId);
+            monthStatusMap.put(month, status);
 
             // 根據狀態設置圖標
             switch (status) {
                 case "pending":
                     imageView.setImageResource(R.drawable.icon_edit_light_primary);
                     break;
-                case "abc":
-//                    imageView.setImageResource(R.drawable.icon_horizontal);
-                    break;
-                case "done":
+                case "confirmed":
                     imageView.setImageResource(R.drawable.baseline_done_24);
                     break;
                 default:
-//                    imageView.setImageResource(R.drawable.icon_unknown); // 默認圖標
+                        imageView.setImageResource(R.drawable.icon_add_circle); // 默認圖標
                     break;
             }
         }
