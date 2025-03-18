@@ -8,13 +8,14 @@
 
     <!-- TabLayout -->
     <com.google.android.material.tabs.TabLayout
+        android:layout_marginTop="50dp"
         android:id="@+id/tabLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/purple_500"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:tabIndicatorColor="@android:color/white"
-        app:tabIndicatorHeight="2dp"
+        app:tabIndicatorHeight="5dp"
         app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,7 +48,7 @@
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rw_bookRecord"
+        android:id="@+id/rv_bookRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="1dp"

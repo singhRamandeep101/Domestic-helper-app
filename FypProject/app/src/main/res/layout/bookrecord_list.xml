@@ -59,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="12:00 AM to 12:00 AM"
                 android:textColor="@color/black"
+                android:layout_gravity="center"
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
