@@ -35,12 +35,6 @@
             android:text="ALL"/>
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabNW"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NEXT WEEK"/>
-
-        <com.google.android.material.tabs.TabItem
             android:id="@+id/tabNM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

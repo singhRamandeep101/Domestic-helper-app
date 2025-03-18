@@ -15,16 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BookRecordActivity extends AppCompatActivity {
+    List<Map<String, Object>> records;
+    FirebaseFirestore db;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,28 +41,53 @@ public class BookRecordActivity extends AppCompatActivity {
 
         String employerEmail = getIntent().getStringExtra("employerEmail");
 
-        RecyclerView recyclerView = findViewById(R.id.rv_bookRecord);
+        recyclerView = findViewById(R.id.rv_bookRecord);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        List<Map<String, Object>> records = new ArrayList<>();
+        db = FirebaseFirestore.getInstance();
+        records = new ArrayList<>();
 
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
+        upcoming();
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                String tabText = tab.getText().toString();
+
+                if (tabText.equalsIgnoreCase("UPCOMING")) {
+                    upcoming();
+                } else if (tabText.equalsIgnoreCase("NEXT MONTH")) {
+                    nextMonth();
+                } else{
+                    allData();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    private void allData() {
+        records.clear();
         db.collection("bookings")
-                .whereEqualTo("employeeEmail", "a") // 替換為您的查詢條件
+                .whereEqualTo("employeeEmail", "a")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if (!queryDocumentSnapshots.isEmpty()) {
-                            // 遍歷 HelperInfo 集合中的數據
                             for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> record = document.getData();
 
-                                // 獲取 employeeEmail
                                 String employeeEmail = (String) record.get("employeeEmail");
 
                                 if (employeeEmail != null) {
-                                    // 查詢 MaidInfo 集合以獲取對應的員工名稱
                                     db.collection("MaidInfo")
                                             .whereEqualTo("email", employeeEmail)
                                             .get()
@@ -63,21 +95,15 @@ public class BookRecordActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(QuerySnapshot maidSnapshots) {
                                                     if (!maidSnapshots.isEmpty()) {
-                                                        // 假設每個 email 只對應一名員工
                                                         DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
                                                         String employeeName = (String) maidDocument.get("name");
 
-                                                        // 將員工名稱添加到 jobDetail
                                                         record.put("employeeName", employeeName);
                                                     } else {
-                                                        // 如果找不到對應的員工名稱，設置為 "Unknown"
                                                         record.put("employeeName", "Unknown");
                                                     }
-
-                                                    // 最後將 jobDetail 添加到 previousDuties 列表
                                                     records.add(record);
 
-                                                    // 如果所有數據加載完成，創建適配器
                                                     if (records.size() == queryDocumentSnapshots.size()) {
                                                         BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
                                                         recyclerView.setAdapter(bookRecordlAdapter);
@@ -87,18 +113,15 @@ public class BookRecordActivity extends AppCompatActivity {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    // MaidInfo 查詢失敗處理
                                                     Log.e("Firestore", "Error fetching MaidInfo", e);
                                                 }
                                             });
                                 } else {
-                                    // 如果 employeeEmail 為空，直接添加到列表
                                     record.put("employeeName", "Unknown");
                                     records.add(record);
                                 }
                             }
                         } else {
-                            // 如果沒有匹配的文檔
                             Log.d("Firestore", "No booking found.");
                         }
                     }
@@ -106,8 +129,144 @@ public class BookRecordActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // HelperInfo 查詢失敗處理
                         Log.e("Firestore", "Error fetching MaidInfo", e);
+                    }
+                });
+    }
+
+    private void upcoming() {
+        records.clear();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        String today = dateFormat.format(calendar.getTime());
+
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        String sevenDaysLater = dateFormat.format(calendar.getTime());
+
+        db.collection("bookings")
+                .whereEqualTo("employeeEmail", "a")
+                .whereGreaterThanOrEqualTo("date", today)
+                .whereLessThanOrEqualTo("date", sevenDaysLater)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                                Map<String, Object> record = document.getData();
+
+                                String employeeEmail = (String) record.get("employeeEmail");
+
+                                if (employeeEmail != null) {
+                                    db.collection("MaidInfo")
+                                            .whereEqualTo("email", "a")
+                                            .get()
+                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onSuccess(QuerySnapshot maidSnapshots) {
+                                                    if (!maidSnapshots.isEmpty()) {
+                                                        DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
+                                                        String employeeName = (String) maidDocument.get("name");
+
+                                                        record.put("employeeName", employeeName);
+                                                    } else {
+                                                        record.put("employeeName", "Unknown");
+                                                    }
+
+                                                    records.add(record);
+
+                                                    if (records.size() == queryDocumentSnapshots.size()) {
+                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
+                                                        recyclerView.setAdapter(bookRecordlAdapter);
+                                                    }
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("Firestore", "Error fetching MaidInfo", e);
+                                                }
+                                            });
+                                } else {
+                                    record.put("employeeName", "Unknown");
+                                    records.add(record);
+                                }
+                            }
+                        } else {
+                            Log.d("Firestore", "No upcoming bookings found.");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Error fetching bookings", e);
+                    }
+                });
+    }
+    private void nextMonth() {
+        records.clear();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        String today = dateFormat.format(calendar.getTime());
+
+        calendar.add(Calendar.MONTH, 1);
+        String oneMonthLater = dateFormat.format(calendar.getTime());
+
+
+        db.collection("bookings")
+                .whereEqualTo("employeeEmail", "a")
+                .whereGreaterThanOrEqualTo("date", today)
+                .whereLessThanOrEqualTo("date", oneMonthLater)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                                Map<String, Object> record = document.getData();
+
+                                db.collection("MaidInfo")
+                                        .whereEqualTo("email", "a")
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot maidSnapshots) {
+                                                if (!maidSnapshots.isEmpty()) {
+                                                    DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
+                                                    String employeeName = (String) maidDocument.get("name");
+
+                                                    record.put("employeeName", employeeName);
+                                                } else {
+                                                    record.put("employeeName", "Unknown");
+                                                }
+
+                                                records.add(record);
+
+                                                if (records.size() == queryDocumentSnapshots.size()) {
+                                                    BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
+                                                    recyclerView.setAdapter(bookRecordlAdapter);
+                                                }
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("Firestore", "Error fetching MaidInfo", e);
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d("Firestore", "No bookings found for the next month.");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Error fetching bookings", e);
                     }
                 });
     }
