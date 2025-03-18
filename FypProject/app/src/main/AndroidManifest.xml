@@ -19,6 +19,9 @@
         android:theme="@style/Theme.Material3.Light"
         tools:targetApi="31">
         <activity
+            android:name=".activities.BookRecordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AgentBookSuccessActivity"
             android:exported="false" />
         <activity
