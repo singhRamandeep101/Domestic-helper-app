@@ -7,15 +7,14 @@ import android.view.View;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,6 +31,9 @@ public class BookRecordActivity extends AppCompatActivity {
     List<Map<String, Object>> records;
     FirebaseFirestore db;
     RecyclerView recyclerView;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    String userType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +49,25 @@ public class BookRecordActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         records = new ArrayList<>();
 
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
-        upcoming();
+        db.collection("users")
+                .whereEqualTo("email", user.getEmail())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                          @Override
+                                          public void onSuccess(QuerySnapshot maidSnapshots) {
+                                              if (!maidSnapshots.isEmpty()) {
+                                                  DocumentSnapshot userDocument = maidSnapshots.getDocuments().get(0);
+                                                  userType = userDocument.getString("userType");
+                                                  upcoming();
+                                              }
+                                          }
+                                          ;
+                                      });
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -84,6 +102,7 @@ public class BookRecordActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> record = document.getData();
+                                record.put("documentId", document.getId());
 
                                 String employeeEmail = (String) record.get("employeeEmail");
 
@@ -105,7 +124,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                     records.add(record);
 
                                                     if (records.size() == queryDocumentSnapshots.size()) {
-                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
+                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
                                                         recyclerView.setAdapter(bookRecordlAdapter);
                                                     }
                                                 }
@@ -155,6 +174,7 @@ public class BookRecordActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> record = document.getData();
+                                record.put("documentId", document.getId());
 
                                 String employeeEmail = (String) record.get("employeeEmail");
 
@@ -177,7 +197,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                     records.add(record);
 
                                                     if (records.size() == queryDocumentSnapshots.size()) {
-                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
+                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
                                                         recyclerView.setAdapter(bookRecordlAdapter);
                                                     }
                                                 }
@@ -227,6 +247,7 @@ public class BookRecordActivity extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> record = document.getData();
+                                record.put("documentId", document.getId());
 
                                 db.collection("MaidInfo")
                                         .whereEqualTo("email", "a")
@@ -246,7 +267,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                 records.add(record);
 
                                                 if (records.size() == queryDocumentSnapshots.size()) {
-                                                    BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records);
+                                                    BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
                                                     recyclerView.setAdapter(bookRecordlAdapter);
                                                 }
                                             }
