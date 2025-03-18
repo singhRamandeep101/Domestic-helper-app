@@ -12,6 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.activities.ResumeDetailActivity;
 import com.project.fypproject.models.HelperInfo;
 
@@ -44,6 +52,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
         holder.age.setText("("+ helperInfo.getAge()+"yr)");
         holder.nation.setText(helperInfo.getNationality());
         holder.zodiac.setText(helperInfo.getZodiac());
+        holder.religion.setText(helperInfo.getReligion());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,16 +71,17 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView name, age, nation, zodiac;
+        ImageView imgUserIcon;
+        TextView name, age, nation, zodiac, religion;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imageView = itemView.findViewById(R.id.imgUser);
+            imgUserIcon = itemView.findViewById(R.id.imgUser);
             name = itemView.findViewById(R.id.tvName);
             age = itemView.findViewById(R.id.tvAge);
             nation = itemView.findViewById(R.id.tvNationality);
             zodiac = itemView.findViewById(R.id.tvZodiac);
+            religion = itemView.findViewById(R.id.tvReligion);
         }
     }
 }

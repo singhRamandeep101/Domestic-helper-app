@@ -159,6 +159,7 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
 
         Toolbar toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
 
         drawerLayout = findViewById(R.id.drawableLayout);
         NavigationView navigationView = findViewById(R.id.nav_view);

@@ -87,32 +87,31 @@
                 android:id="@+id/btn_meeting"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
+                android:layout_margin="10dp"
                 android:background="@drawable/block"
                 android:gravity="center_horizontal"
-                android:layout_margin="10dp">
+                android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="75dp"
                     android:layout_height="75dp"
-                    android:background="@drawable/circle"
-                    android:orientation="vertical"
                     android:layout_margin="12dp"
-                    android:gravity="center">
+                    android:background="@drawable/circle"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/icon_date_surface_tint">
-                    </ImageView>
+                        android:src="@drawable/icon_date_surface_tint"></ImageView>
 
                 </RelativeLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:text="Meeting"
-                    android:gravity="center" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Meeting" />
 
             </LinearLayout>
 
@@ -142,8 +141,8 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Find Domestic Helper" />
 
@@ -175,7 +174,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:text="Post Job Offer"
                     android:gravity="center"/>
             </LinearLayout>
