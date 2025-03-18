@@ -81,7 +81,6 @@ public class BookRecordlAdapter extends RecyclerView.Adapter<BookRecordlAdapter.
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    // 提示删除失败并打印日志
                                                     Toast.makeText(context, "Failed to delete booking", Toast.LENGTH_SHORT).show();
                                                     Log.e("Firestore", "Error deleting record", e);
                                                 }
