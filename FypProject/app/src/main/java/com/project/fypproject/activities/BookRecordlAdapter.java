@@ -1,5 +1,6 @@
 package com.project.fypproject.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,11 +30,15 @@ public class BookRecordlAdapter extends RecyclerView.Adapter<BookRecordlAdapter.
     Context context;
     List<Map<String,Object>> recordsList;
     String userType;
+    RecyclerView recyclerView;
+    TextView tvNoData;
 
-    public BookRecordlAdapter(Context context, List<Map<String,Object>> recordsList,String userType) {
+    public BookRecordlAdapter(Context context, List<Map<String,Object>> recordsList,String userType,RecyclerView recyclerView, TextView tvNoData) {
         this.context = context;
         this.recordsList = recordsList;
         this.userType = userType;
+        this.recyclerView = recyclerView;
+        this.tvNoData = tvNoData;
     }
 
     @NonNull
@@ -43,7 +48,7 @@ public class BookRecordlAdapter extends RecyclerView.Adapter<BookRecordlAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         Map<String, Object> record = recordsList.get(position);
 
@@ -76,6 +81,10 @@ public class BookRecordlAdapter extends RecyclerView.Adapter<BookRecordlAdapter.
                                                     notifyItemRemoved(position);
                                                     notifyItemRangeChanged(position, recordsList.size());
                                                     Toast.makeText(context, "Booking deleted successfully", Toast.LENGTH_SHORT).show();
+                                                    if(recordsList.isEmpty()){
+                                                        tvNoData.setVisibility(View.VISIBLE);
+                                                        recyclerView.setVisibility(View.GONE);
+                                                    }
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {

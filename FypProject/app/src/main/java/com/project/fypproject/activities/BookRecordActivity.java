@@ -3,6 +3,7 @@ package com.project.fypproject.activities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -124,8 +125,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                     records.add(record);
 
                                                     if (records.size() == queryDocumentSnapshots.size()) {
-                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
-                                                        recyclerView.setAdapter(bookRecordlAdapter);
+                                                        updateUI();
                                                     }
                                                 }
                                             })
@@ -141,6 +141,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                 }
                             }
                         } else {
+                            updateUI();
                             Log.d("Firestore", "No booking found.");
                         }
                     }
@@ -197,8 +198,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                     records.add(record);
 
                                                     if (records.size() == queryDocumentSnapshots.size()) {
-                                                        BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
-                                                        recyclerView.setAdapter(bookRecordlAdapter);
+                                                        updateUI();
                                                     }
                                                 }
                                             })
@@ -214,6 +214,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                 }
                             }
                         } else {
+                            updateUI();
                             Log.d("Firestore", "No upcoming bookings found.");
                         }
                     }
@@ -267,8 +268,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                 records.add(record);
 
                                                 if (records.size() == queryDocumentSnapshots.size()) {
-                                                    BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records,userType);
-                                                    recyclerView.setAdapter(bookRecordlAdapter);
+                                                    updateUI();
                                                 }
                                             }
                                         })
@@ -280,6 +280,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                         });
                             }
                         } else {
+                            updateUI();
                             Log.d("Firestore", "No bookings found for the next month.");
                         }
                     }
@@ -290,5 +291,20 @@ public class BookRecordActivity extends AppCompatActivity {
                         Log.e("Firestore", "Error fetching bookings", e);
                     }
                 });
+    }
+    private void updateUI() {
+        TextView tvNoData = findViewById(R.id.tv_no_data);
+        recyclerView = findViewById(R.id.rv_bookRecord);
+
+        if (records.isEmpty()) {
+            tvNoData.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            tvNoData.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
+            BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records, userType,recyclerView,tvNoData);
+            recyclerView.setAdapter(bookRecordlAdapter);
+        }
     }
 }
