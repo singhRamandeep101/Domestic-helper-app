@@ -13,6 +13,8 @@ firebaseAuth = "23.1.0"
 roundedImageView = "2.3.0"
 glide = "4.16.0"
 pdfboxAndroid = "2.0.27.0"
+firebaseui = "8.0.2"
+
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -27,6 +29,8 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 rounded-image-view = { group = "com.makeramen", name = "roundedimageview", version.ref = "roundedImageView" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 pdfbox-android = { group = "com.tom-roush", name = "pdfbox-android", version.ref = "pdfboxAndroid" }
+
+firebaseui = { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseui" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

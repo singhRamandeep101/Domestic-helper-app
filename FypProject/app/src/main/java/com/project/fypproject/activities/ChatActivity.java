@@ -56,6 +56,7 @@ public class ChatActivity extends AppCompatActivity {
 
     String agentEmail;
     String senderEmail;
+    String employeeEmail;
 
     private Button btnBack;
     private FrameLayout layoutSend;
@@ -82,7 +83,13 @@ public class ChatActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        String employeeEmail = getIntent().getStringExtra("employeeEmail");
+        agentEmail = getIntent().getStringExtra("email");
+
+        if (agentEmail.equals("agentd@gmail.com")) {
+            employeeEmail= "youtube@gmail.com";
+        }else{
+            employeeEmail="agentd@gmail.com";
+        }
 
         senderEmail = user.getEmail();
 
@@ -94,20 +101,20 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(chatAdapter);
         listMessage();
 
-        db.collection("MaidInfo")
-                .whereEqualTo("email", "a")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-
-                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                            agentEmail = (String) doc.get("agentEmail");
-
-                            if (agentEmail != null) {
+//        db.collection("MaidInfo")
+//                .whereEqualTo("email", "a")
+//                .get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                        if (!queryDocumentSnapshots.isEmpty()) {
+//
+//                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+//                            agentEmail = (String) doc.get("agentEmail");
+//
+//                            if (agentEmail != null) {
                                 db.collection("users")
-                                        .whereEqualTo("email", "agentd@gmail.com")
+                                        .whereEqualTo("email", employeeEmail)
                                         .get()
                                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
@@ -128,12 +135,12 @@ public class ChatActivity extends AppCompatActivity {
                                                 Log.e("Firestore", "Error find Agent Data", e);
                                             }
                                         });
-                            } else {
-                                Log.e("Firestore", "no find agent Email");
-                            }
-                        }
-                    }
-                });
+//                            } else {
+//                                Log.e("Firestore", "no find agent Email");
+//                           }
+//                        }
+//                   }
+//                });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -145,7 +152,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(){
         HashMap<String,Object> message = new HashMap<>();
         message.put("senderEmail",senderEmail);
-        message.put("receiverEmail",agentEmail);
+        message.put("receiverEmail",employeeEmail);
         message.put("message",editMessage.getText().toString());
         message.put("timestamp",new Date());
         db.collection("chat").add(message);
@@ -155,10 +162,10 @@ public class ChatActivity extends AppCompatActivity {
     private void listMessage(){
         db.collection("chat")
                 .whereEqualTo("senderEmail",senderEmail)
-                .whereEqualTo("receiverEmail",agentEmail)
+                .whereEqualTo("receiverEmail",employeeEmail)
                 .addSnapshotListener(eventListener);
         db.collection("chat")
-                .whereEqualTo("senderEmail",agentEmail)
+                .whereEqualTo("senderEmail",employeeEmail)
                 .whereEqualTo("receiverEmail",senderEmail)
                 .addSnapshotListener(eventListener);
 

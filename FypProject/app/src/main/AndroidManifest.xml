@@ -19,9 +19,15 @@
         android:theme="@style/Base.Theme.FypProject.NoActionbar"
         tools:targetApi="31">
         <activity
-            android:name=".activities.ChatActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".activities.ChatSeachActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.ChatMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.BookRecordActivity"
             android:exported="false" />
