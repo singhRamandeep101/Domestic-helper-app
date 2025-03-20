@@ -1,22 +1,34 @@
 package com.project.fypproject.activities;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
@@ -28,9 +40,19 @@ import java.util.Map;
 
 public class ResumeDetailActivity extends AppCompatActivity {
 
+    ImageView imgBack, imgBookmark, imgShare;
     TextView tvName,tvAge,tvGender,tvMaritalStatus,tvNumOfKids,tvNationality,tvReligion,tvZodiac,tvRemark,tvNoExperience;
     Toolbar toolbar;
     LinearLayout layWorkExp,layWorkSkill;
+
+    Boolean isBookMarked = false;
+
+    Resources res = getResources();
+    Drawable icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_write, null);
+    Drawable icon_BookMarked_Filled = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_filled_write, null);;
+
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +73,14 @@ public class ResumeDetailActivity extends AppCompatActivity {
         layWorkExp = findViewById(R.id.layWorkExp);
         layWorkSkill = findViewById(R.id.layWorkSkill);
 
+        imgBack = findViewById(R.id.img_back);
+        imgBookmark = findViewById(R.id.img_book);
+        imgShare = findViewById(R.id.img_share);
+
 
         String email = getIntent().getStringExtra("email");
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("MaidInfo").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -60,13 +88,41 @@ public class ResumeDetailActivity extends AppCompatActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
 
+                //Book Marks Function
+                //To Check user's marked records
+                DocumentReference userRef = db.collection("users").document(user.getEmail());
+                userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot userDocument = task.getResult();
+                            if (userDocument.exists()) {
+                                //Get the string array from firebase as an object
+                                ArrayList<String> MarkedRef = (ArrayList<String>)userDocument.get("bookMarks");
+
+                                if(MarkedRef == null)
+                                    return;
+                                for (String MarkedId: MarkedRef) {
+                                    if(MarkedId == doc.getId()) {
+                                        imgBookmark.setImageDrawable(icon_BookMarked_Filled);
+                                        isBookMarked = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+
                 tvName.setText(doc.getString("name"));
 
                 Map<String, Object> oExperience = (Map<String, Object>) doc.get("overseas_experience");
                 if (oExperience == null || oExperience.isEmpty()) {
                     tvNoExperience.setVisibility(View.VISIBLE);
                     tvNoExperience.setText("No Experience");
-                } else {
+                }
+                else {
                     boolean hasExperience = false;
 
                     for (Map.Entry<String, Object> entry : oExperience.entrySet()) {
@@ -245,6 +301,33 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
                         return formattedName.toString().trim();
                     }
+        });
+
+        imgBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("MaidInfo").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+
+                        if(!isBookMarked){
+                            db.collection("users").document(user.getEmail()).update(
+                                    "bookMarks", FieldValue.arrayUnion(doc.getId())
+                            );
+                            imgBookmark.setImageDrawable(icon_BookMarked_Filled);
+                            isBookMarked = true;
+                        } else {
+                            db.collection("users").document(user.getEmail()).update(
+                                    "bookMarks", FieldValue.arrayRemove(doc.getId())
+                            );
+                            imgBookmark.setImageDrawable(icon_BookMarked_Outline);
+                            isBookMarked = false;
+                        }
+                    }
+                });
+            }
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
