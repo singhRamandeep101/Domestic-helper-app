@@ -1,6 +1,8 @@
 package com.project.fypproject.activities;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -14,36 +16,45 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<ChatMessage> chatMessages;
-    private final Bitmap reImage;
-    private final String senderId;
+    private final Drawable reImage;
+    private final String senderEmail;
     public static final int VIEW_TYPE_SEND = 1;
     public static final int VIEW_TYPE_REC = 2;
 
-    public ChatAdapter(List<ChatMessage> chatMessages, Bitmap reImage, String senderId) {
+    public ChatAdapter(List<ChatMessage> chatMessages, Drawable reImage, String senderEmail) {
         this.chatMessages = chatMessages;
         this.reImage = reImage;
-        this.senderId = senderId;
+        this.senderEmail = senderEmail;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        if(viewType == VIEW_TYPE_SEND){
+            return new SendMessageViewHolder(ItemSendMessageBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
+        }else{
+            return new ReceivedMessageViewHolder(ItemReceMessageBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(getItemViewType(position) == VIEW_TYPE_SEND){
+            ((SendMessageViewHolder) holder).setData(chatMessages.get(position));
+        }else{
+            ((ReceivedMessageViewHolder) holder).setData(chatMessages.get(position),reImage );
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return chatMessages.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(chatMessages.get(position).senderId.equals(senderId)){
+        if(chatMessages.get(position).senderEmail.equals(senderEmail)){
             return VIEW_TYPE_SEND;
         }else{
             return VIEW_TYPE_REC;
@@ -71,10 +82,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             binding = itemReceMessageBinding;
         }
 
-        void setData(ChatMessage chatMessage,Bitmap reImage){
+        void setData(ChatMessage chatMessage,Drawable reImage){
             binding.tvMessage.setText(chatMessage.message);
             binding.tvDateTime.setText(chatMessage.dataTime);
-            binding.imgProfile.setImageBitmap(reImage);
+            binding.imgProfile.setImageDrawable(reImage);
         }
     }
 }
