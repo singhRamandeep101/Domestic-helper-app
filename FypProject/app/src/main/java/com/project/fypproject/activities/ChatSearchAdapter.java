@@ -1,6 +1,7 @@
 package com.project.fypproject.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,21 @@ public class ChatSearchAdapter extends FirestoreRecyclerAdapter<ChatModel,ChatSe
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatModel model) {
-        holder.tvName.setText((model.getLastName() + model.getFirstName()));
+        holder.tvName.setText((model.getLastName() +" "+ model.getFirstName()));
         holder.tvEmail.setText(model.getEmail());
+        if(model.getEmail().equals(ChatUtil.currentUserEmail())){
+            holder.tvName.setText(model.getLastName() +" "+ model.getFirstName()+" (Me)");
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,ChatActivity.class);
+                ChatUtil.passUserIntent(intent,model);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
 
 
     }
@@ -43,8 +57,8 @@ public class ChatSearchAdapter extends FirestoreRecyclerAdapter<ChatModel,ChatSe
 
         public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvEmail = itemView.findViewById(R.id.Email);
+            tvName = itemView.findViewById(R.id.tvUName);
+            tvEmail = itemView.findViewById(R.id.tvUEmail);
             ImgIcon = itemView.findViewById(R.id.ImgIcon);
 
         }

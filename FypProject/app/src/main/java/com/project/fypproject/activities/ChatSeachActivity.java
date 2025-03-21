@@ -64,11 +64,13 @@ public class ChatSeachActivity extends AppCompatActivity {
     }
     void searchRV(String searchEmail){
         Query query = ChatUtil.allUserCollectionReference()
-                .whereGreaterThanOrEqualTo("email",searchEmail);
+                .whereGreaterThanOrEqualTo("email",searchEmail)
+                .whereLessThanOrEqualTo("email",searchEmail+'\uf8ff');
 
         FirestoreRecyclerOptions<ChatModel> options = new FirestoreRecyclerOptions.Builder<ChatModel>().setQuery(query,ChatModel.class).build();
         adapter = new ChatSearchAdapter(options,getApplicationContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
         adapter.startListening();
     }
 

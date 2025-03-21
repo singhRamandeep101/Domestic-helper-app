@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="4dp">
+    android:padding="8dp">
 
-    <TextView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvMessage"
+        android:background="@drawable/chat_re_message_bg"
+        android:padding="8dp"
+        android:layout_marginEnd="80dp"
+        android:id="@+id/left_chat">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:id="@+id/tvLeft"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/chat_send_message_bg"
-        android:paddingStart="12dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintWidth_max="wrap"
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.8"/>
+        android:padding="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="80dp"
+        android:id="@+id/right_chat">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:id="@+id/tvRight"/>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvDateTime"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/secondary_text"
-        android:textSize="8sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMessage"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
