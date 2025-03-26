@@ -22,16 +22,6 @@ public class AgentHomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
-        llAdd_dh = view.findViewById(R.id.btn_add_dh);
-
-        llAdd_dh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
-                startActivity(intent);
-            }
-        });
-
         return view;
     }
 }
