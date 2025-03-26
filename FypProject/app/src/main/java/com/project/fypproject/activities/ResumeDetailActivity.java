@@ -47,9 +47,8 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
     Boolean isBookMarked = false;
 
-    Resources res = getResources();
-    Drawable icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_write, null);
-    Drawable icon_BookMarked_Filled = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_filled_write, null);;
+    Resources res;
+    Drawable icon_BookMarked_Outline, icon_BookMarked_Filled;
 
     FirebaseAuth auth;
     FirebaseUser user;
@@ -77,6 +76,9 @@ public class ResumeDetailActivity extends AppCompatActivity {
         imgBookmark = findViewById(R.id.img_book);
         imgShare = findViewById(R.id.img_share);
 
+        res = getResources();
+        icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_write, null);
+        icon_BookMarked_Filled = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_filled_write, null);
 
         String email = getIntent().getStringExtra("email");
         auth = FirebaseAuth.getInstance();
@@ -88,7 +90,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
 
-                //Book Marks Function
+                //--Book Marks Function--
                 //To Check user's marked records
                 DocumentReference userRef = db.collection("users").document(user.getEmail());
                 userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -100,13 +102,16 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                 //Get the string array from firebase as an object
                                 ArrayList<String> MarkedRef = (ArrayList<String>)userDocument.get("bookMarks");
 
-                                if(MarkedRef == null)
+                                if(MarkedRef == null){
                                     return;
+                                }
+
                                 for (String MarkedId: MarkedRef) {
-                                    if(MarkedId == doc.getId()) {
+                                    if(MarkedId.equals(doc.getId())) {
                                         imgBookmark.setImageDrawable(icon_BookMarked_Filled);
                                         isBookMarked = true;
                                         return;
+                                    } else {
                                     }
                                 }
                             }
