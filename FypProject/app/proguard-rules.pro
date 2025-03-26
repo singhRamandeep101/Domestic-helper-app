@@ -2,6 +2,10 @@
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
 #
+-keep class org.jitsi.** { *; }
+-keep class com.facebook.react.** { *; }
+-dontwarn org.jitsi.**
+-dontwarn com.facebook.react.**
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
