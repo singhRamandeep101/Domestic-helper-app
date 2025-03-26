@@ -42,6 +42,7 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
 
     String userType = "";
 
+
     public void SelectUserTypeHomeFragment(String userType){
         switch (userType){
             case "Employer":
@@ -107,6 +108,7 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
             }
         });
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

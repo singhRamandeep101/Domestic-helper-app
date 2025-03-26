@@ -1,74 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.CreateReceiptActivity">
+    android:background="#E0F7FA">
 
-    <RelativeLayout
+    <EditText
+        android:id="@+id/inputBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="48dp"
+        android:hint="Enter meeting code"
+        android:inputType="text"
+        android:padding="16dp"
+        android:background="@android:drawable/edit_text"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#212121"
+        android:textColorHint="#90A4AE"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Join/Create button -->
+    <Button
+        android:id="@+id/joinCreateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inputBox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Join/Create"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:backgroundTint="#0288D1"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-bold"
+        android:textAllCaps="false"
+        android:stateListAnimator="@null" />
+
+    <!-- Share button -->
+    <Button
+        android:id="@+id/ShareCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/joinCreateButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Share Code"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:backgroundTint="#388E3C"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-bold"
+        android:textAllCaps="false"
+        android:stateListAnimator="@null" />
+
+    <!-- Container for Jitsi meeting view -->
+    <FrameLayout
+        android:id="@+id/meetingContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="200dp"
-        android:padding="16dp">
+        android:layout_below="@id/ShareCode"
+        android:layout_marginTop="32dp"
+        android:background="#263238" >
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/leaveButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="12dp">
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:contentDescription="Leave meeting"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:backgroundTint="#EF5350"
+            app:elevation="8dp"
+            app:fabSize="normal"
+            app:pressedTranslationZ="12dp"
+            app:rippleColor="#D81B60" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
+    </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MEETING CONFERENCE"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center_horizontal"
-                    android:paddingBottom="16dp"/>
+    <!-- Questions button (FAB, middle-right) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/questionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="32dp"
+        android:src="@android:drawable/ic_menu_help"
+        android:contentDescription="Show meeting questions"
+        app:backgroundTint="#FFCA28"
+        app:fabSize="normal"
+        app:rippleColor="#FFB300"
+        app:elevation="8dp"
+        app:pressedTranslationZ="12dp" />
 
-                <EditText
-                    android:id="@+id/inputBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter your meeting ID or link"
-                    android:padding="12dp"
-                    android:layout_marginBottom="16dp"
-                    android:paddingHorizontal="16dp"/>
+    <!-- Leave button (FAB, bottom-right) -->
 
-                <Button
-                    android:id="@+id/joinCreateButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="JOIN/CREATE"
-                    android:textColor="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="4dp"
-                    android:textSize="16sp"/>
-
-                <Button
-                    android:id="@+id/ShareCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="SHARE CODE"
-                    android:textColor="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="4dp"
-                    android:textSize="16sp"/>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-    </RelativeLayout>
-
-</ScrollView>
+</RelativeLayout>

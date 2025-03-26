@@ -14,6 +14,7 @@ roundedImageView = "2.3.0"
 glide = "4.16.0"
 pdfboxAndroid = "2.0.27.0"
 
+
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

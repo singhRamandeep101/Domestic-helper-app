@@ -19,17 +19,16 @@ public class AgentHomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view  = inflater.inflate(R.layout.fragment_agent_home, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
 
         llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HelperPDF_Upload_Activity.class);
+                Intent intent = new Intent(getActivity(), MeetingActivity.class);
                 startActivity(intent);
-                requireActivity().finish();
             }
         });
 

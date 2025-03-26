@@ -13,7 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -45,9 +43,13 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.rounded.image.view)
     implementation(libs.glide)
-    implementation (libs.pdfbox.android)
+    implementation(libs.pdfbox.android)
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("com.github.jiangdongguo.AndroidUSBCamera:libausbc:3.3.3")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.12.0")
 
-    // jitsi
+    // Jitsi Meet SDK 10.3.0
     implementation("org.jitsi.react:jitsi-meet-sdk:10.3.0") {
         isTransitive = true
     }
