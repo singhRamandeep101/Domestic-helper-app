@@ -20,7 +20,7 @@ dependencyResolutionManagement {
             setUrl("https://github.com/jitsi/jitsi-maven-repository/raw/master/releases")
         }
         maven {
-            setUrl("https://maven.google.com")
+            setUrl("https://jitpack.io")
         }
     }
 }

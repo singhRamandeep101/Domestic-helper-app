@@ -21,7 +21,7 @@ public class OldReceiptsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viewoldreceipts);
+        setContentView(R.layout.activity_old_receipts);
 
         monthSpinner = findViewById(R.id.monthSpinner);
         retrieveButton = findViewById(R.id.retrieveButton);
