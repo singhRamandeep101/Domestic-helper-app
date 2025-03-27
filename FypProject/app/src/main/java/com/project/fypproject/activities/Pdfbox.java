@@ -606,6 +606,7 @@ public class Pdfbox extends AppCompatActivity {
         Iterator<String> keys = jsonObject.keys();
 
         while (keys.hasNext()) {
+
             String key = keys.next();
             Object value = jsonObject.get(key);
 
