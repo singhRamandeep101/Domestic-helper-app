@@ -258,7 +258,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
                                     Log.e("Firestore", "Agent details are incomplete for email: " + employeeEmail);
                                 }
                             } else {
-                                Log.e("Firestore", "No document found for agentEmail: " + employeeEmail);
+                                Log.e("Firestore", "No document found for employeetEmail: " + employeeEmail);
                             }
                         } else {
                             Log.e("Firestore", "Failed to query users collection", task.getException());

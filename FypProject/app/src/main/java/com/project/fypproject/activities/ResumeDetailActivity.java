@@ -387,7 +387,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                                                                 boolean chatRoom = false;
                                                                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                                                                     List<String> userEmails = (List<String>) document.get("userEmails");
-                                                                                    if (userEmails != null && userEmails.contains(email) && userEmails.contains(agentEmail)) {
+                                                                                    if (userEmails != null && userEmails.contains(user.getEmail()) && userEmails.contains(agentEmail)) {
                                                                                         chatRoom = true;
                                                                                         break;
                                                                                     }
@@ -490,16 +490,16 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                     chatModel.setFirstName(firstName);
                                     chatModel.setLastName(lastName);
 
-                                    if(type.equals("yes")){
+//                                    if("yes".equals(type)){
                                         Intent intent = new Intent(ResumeDetailActivity.this, ChatActivity.class);
                                         ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
                                         startActivity(intent); // Start ChatActivity
-                                    } else {
-                                        Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
-                                        intent.putExtra("employeeEmail", email);
-                                        intent.putExtra("agentEmail", agentEmail);
-                                        startActivity(intent); // Start ChatActivity
-                                    }
+//                                    } else {
+//                                        Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
+//                                        intent.putExtra("employeeEmail", email);
+//                                        intent.putExtra("agentEmail", agentEmail);
+//                                        startActivity(intent); // Start ChatActivity
+//                                    }
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
