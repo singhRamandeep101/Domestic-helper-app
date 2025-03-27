@@ -1,6 +1,8 @@
 plugins {
-    alias(libs.plugins.android.application)
+
     alias(libs.plugins.google.gms.google.services)
+    id("com.android.application")
+    id("com.chaquo.python")
 }
 
 android {
@@ -13,8 +15,11 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -34,6 +39,27 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    flavorDimensions += "pyVersion"
+    productFlavors {
+        create("py310") { dimension = "pyVersion" }
+
+    }
+}
+
+chaquopy {
+    productFlavors {
+        getByName("py310") { version = "3.8" }
+
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        pip {
+            install("pdfplumber==0.5.28")
+        }
     }
 }
 

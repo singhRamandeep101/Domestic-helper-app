@@ -30,6 +30,9 @@
         android:theme="@style/Base.Theme.FypProject.NoActionbar"
         tools:targetApi="31">
         <activity
+            android:name=".activities.EmployerSelectTimeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.employer.OldReceiptsActivity"
             android:exported="false" />
 
@@ -62,7 +65,7 @@
             android:name=".activities.employer.JobListActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.Pdfbox"
+            android:name=".activities.Login"
             android:exported="false" />
         <activity
             android:name=".activities.Registry_usertype"
@@ -100,7 +103,7 @@
             android:name=".activities.employer.JobDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.Login"
+            android:name=".activities.Pdfbox"
             android:exported="true"
             android:theme="@style/Theme.Material3.Light.NoActionBar">
             <intent-filter>

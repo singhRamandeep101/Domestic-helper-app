@@ -147,6 +147,10 @@ public class ChatActivity extends AppCompatActivity {
                         chatRoom = new ChatRoom(chatroomId, Arrays.asList(ChatUtil.currentUserEmail(),otherUser.getEmail()), Timestamp.now(),"");
                         ChatUtil.getChatroomReference(chatroomId).set(chatRoom);
                     }
+                    String firstMessage = getIntent().getStringExtra("message");
+                    if (firstMessage!=null && !firstMessage.isEmpty()){
+                        sendMessage(firstMessage);
+                    }
                 }
             }
         });

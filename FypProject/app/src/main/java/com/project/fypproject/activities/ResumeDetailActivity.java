@@ -1,5 +1,6 @@
 package com.project.fypproject.activities;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -40,7 +41,7 @@ import java.util.Map;
 
 public class ResumeDetailActivity extends AppCompatActivity {
 
-    ImageView imgBack, imgBookmark, imgShare;
+    ImageView imgBack, imgBookmark, imgShare,imgBookInt;
     TextView tvName,tvAge,tvGender,tvMaritalStatus,tvNumOfKids,tvNationality,tvReligion,tvZodiac,tvRemark,tvNoExperience;
     Toolbar toolbar;
     LinearLayout layWorkExp,layWorkSkill;
@@ -52,6 +53,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +77,24 @@ public class ResumeDetailActivity extends AppCompatActivity {
         imgBack = findViewById(R.id.img_back);
         imgBookmark = findViewById(R.id.img_book);
         imgShare = findViewById(R.id.img_share);
+        imgBookInt = findViewById(R.id.btnBookInterview);
 
         res = getResources();
         icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_write, null);
         icon_BookMarked_Filled = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_filled_write, null);
 
-        String email = getIntent().getStringExtra("email");
+        email = getIntent().getStringExtra("email");
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        imgBookInt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
+                intent.putExtra("employeeEmail",email);
+                startActivity(intent);
+            }
+        });
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("MaidInfo").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

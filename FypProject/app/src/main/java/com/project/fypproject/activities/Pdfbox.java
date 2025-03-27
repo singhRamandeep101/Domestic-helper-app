@@ -2,654 +2,646 @@ package com.project.fypproject.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
 import com.project.fypproject.R;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class Pdfbox extends AppCompatActivity {
 
-    private static final String TAG = "Pdfbox";
+    private LinearLayout formContainer;
+    private Button buttonSave;
+    private JSONObject currentJsonData;
+    private ScrollView scrollView;
+    private TextView textViewName, textViewEmail;
+
+    private Uri currentFileUri;
+    private String currentFileName;
+    private FirebaseFirestore db;
+
+    private final ActivityResultLauncher<Intent> filePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    currentFileUri = result.getData().getData();
+                    currentFileName = getFileNameFromUri(currentFileUri);
+
+                    String filePath = copyFileToCache(currentFileUri);
+                    if (filePath != null) {
+                        updateNameAndEmailFields(currentFileName);
+                        processPdf(filePath);
+                    } else {
+                        Toast.makeText(this, "Failed to copy file to cache", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+    private void updateNameAndEmailFields(String name) {
+
+        String cleanedName = name.replaceAll("(?i)AM\\s*\\d*", "").trim();
 
 
-    private ImageView pdfPreview;
-    private Button btnUpload,btnSubmit,btnDelete;
-    private LinearLayout jsonFormContainer;
-    private EditText emailInput;
-    private TextView pdfFileName;
-    private String selectedPdfName;
-    EditText name_input;
-
-    String extractedName;
-
-    private byte[] selectedPdfData;
-    private String formattedJson;
+        for (int i = 0; i < formContainer.getChildCount(); i++) {
+            View child = formContainer.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                LinearLayout layout = (LinearLayout) child;
+                if (layout.getChildCount() > 1) {
+                    View field = layout.getChildAt(1);
+                    if (field.getTag() != null && field.getTag().equals("name") && field instanceof TextView) {
+                        ((TextView) field).setText(cleanedName);
+                    }
+                }
+            }
+        }
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdfbox);
 
-
-        pdfPreview = findViewById(R.id.pdf_preview);
-        btnUpload = findViewById(R.id.upload_button);
-        btnSubmit = findViewById(R.id.submit_button);
-        btnDelete = findViewById(R.id.delete_button);
-        jsonFormContainer = findViewById(R.id.json_form_container);
-        emailInput = findViewById(R.id.email_input);
-        pdfFileName = findViewById(R.id.pdf_file_name);
-        name_input = findViewById(R.id.name_input);
-
-        btnDelete.setVisibility(View.GONE);
+        db = FirebaseFirestore.getInstance();
 
 
-        btnUpload.setOnClickListener(view -> openFilePicker());
+        Button buttonSelectFile = findViewById(R.id.buttonSelectFile);
+        buttonSave = findViewById(R.id.buttonSave);
+        scrollView = findViewById(R.id.scrollView);
+        formContainer = findViewById(R.id.formContainer);
 
-
-        btnSubmit.setOnClickListener(view -> {
-            if (jsonFormContainer.getChildCount() > 0) {
-                Map<String, Object> updatedJsonMap = collectJsonData(jsonFormContainer);
-
-
-                String email = emailInput.getText().toString().trim();
-                if (!email.isEmpty()) {
-                    updatedJsonMap.put("email", email);
-                }
-
-                Map<String, Object> formattedData = formatDataForFirestore(updatedJsonMap);
-
-                uploadToFirestore(formattedData);
-            } else {
-                Toast.makeText(Pdfbox.this, "No data to submit!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        btnDelete.setOnClickListener(view -> deletePdf("Delete"));
+        buttonSelectFile.setOnClickListener(v -> openFilePicker());
+        buttonSave.setOnClickListener(v -> saveChanges());
     }
 
-    private Map<String, Object> collectJsonData(LinearLayout container) {
-        Map<String, Object> result = new HashMap<>();
+    private String getFileNameFromUri(Uri uri) {
+        String fileName = null;
+        String scheme = uri.getScheme();
 
-
-        for (int i = 0; i < container.getChildCount(); i++) {
-            View view = container.getChildAt(i);
-
-            if (view instanceof LinearLayout) {
-
-                String tag = (String) view.getTag();
-                if (tag != null && tag.equalsIgnoreCase("language_skills")) {
-                    HashMap<String, String> languageSkills = new HashMap<>();
-                    LinearLayout languageContainer = (LinearLayout) view;
-
-                    for (int j = 0; j < languageContainer.getChildCount(); j++) {
-                        View langRow = languageContainer.getChildAt(j);
-                        if (langRow instanceof LinearLayout) {
-                            LinearLayout langRowLayout = (LinearLayout) langRow;
-
-
-                            EditText langInput = (EditText) langRowLayout.getChildAt(0);
-                            String language = langInput.getText().toString().trim();
-
-
-                            Spinner proficiencySpinner = (Spinner) langRowLayout.getChildAt(1);
-                            String proficiency = proficiencySpinner.getSelectedItem().toString();
-
-
-                            if (!language.isEmpty() && !proficiency.isEmpty()) {
-                                languageSkills.put(language, proficiency);
-                            }
-                        }
-                    }
-
-                    result.put("language_skills", languageSkills);
-                } else {
-
-                    Map<String, Object> nestedData = collectJsonData((LinearLayout) view);
-                    result.putAll(nestedData);
-                }
-            } else if (view instanceof EditText) {
-
-                String key = (String) view.getTag();
-                if (key != null) {
-                    String value = ((EditText) view).getText().toString().trim();
-                    result.put(key, value.isEmpty() ? null : value);
-                }
-            } else if (view instanceof Spinner) {
-
-                String key = (String) view.getTag();
-                if (key != null) {
-                    String value = ((Spinner) view).getSelectedItem().toString();
-                    result.put(key, value.isEmpty() ? null : value);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private void displayJsonForm(Map<String, Object> jsonMap, LinearLayout container) {
-        emailInput.setVisibility(View.VISIBLE);
-        name_input.setText(extractedName);
-        name_input.setVisibility(View.VISIBLE);
-        container.removeAllViews();
-
-        for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-
-            if (value == null) {
-                value = "";
-            }
-
-
-            if (key.equalsIgnoreCase("language_skills") && value instanceof List) {
-                List<Map<String, Object>> languageSkillsList = (List<Map<String, Object>>) value;
-
-
-                TextView sectionHeader = new TextView(this);
-                sectionHeader.setText("Language Skills:");
-                sectionHeader.setTextSize(16);
-                sectionHeader.setPadding(0, 10, 0, 10);
-                container.addView(sectionHeader);
-
-
-                LinearLayout skillsContainer = new LinearLayout(this);
-                skillsContainer.setOrientation(LinearLayout.VERTICAL);
-                skillsContainer.setTag("language_skills");
-                container.addView(skillsContainer);
-
-
-                for (Map<String, Object> skillEntry : languageSkillsList) {
-                    for (Map.Entry<String, Object> entryd : skillEntry.entrySet()) {
-                        String proficiency = entryd.getKey();
-                        String language = entryd.getValue().toString();
-
-                        if (!language.isEmpty() && !proficiency.isEmpty()) {
-                            addLanguageSkillRow(skillsContainer, language, proficiency);
-                        }
+        if (scheme != null && scheme.equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        fileName = cursor.getString(nameIndex);
                     }
                 }
-                continue;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-
-            LinearLayout row = new LinearLayout(this);
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setPadding(0, 10, 0, 10);
-
-
-            TextView keyView = new TextView(this);
-            keyView.setText(key + ": ");
-            keyView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-            row.addView(keyView);
-
-
-            if (key.equalsIgnoreCase("Nationality")) {
-                createSpinner(row, key, new String[]{"", "FILIPINO", "THAILAND", "INDONESIA", "MYANMAR", "SRI LANKA"}, value);
-            } else if (key.equalsIgnoreCase("Gender")) {
-                createSpinner(row, key, new String[]{"", "M", "F"}, value);
-            } else if (key.equalsIgnoreCase("Education")) {
-                createSpinner(row, key, new String[]{"", "JUNIOR HIGH", "HIGH SCHOOL"}, value);
-            } else if (key.equalsIgnoreCase("Zodiac")) {
-                createSpinner(row, key, new String[]{"", "ARIES", "TAURUS", "GEMINI", "CANCER", "LEO", "VIRGO", "LIBRA",
-                        "SCORPIO", "SAGITTARIUS", "CAPRICORN", "AQUARIUS", "PISCES"}, value);
-            } else if (key.equalsIgnoreCase("care_of_babies") || key.equalsIgnoreCase("care_of_toddler") ||
-                    key.equalsIgnoreCase("care_of_children") || key.equalsIgnoreCase("care_of_elderly") ||
-                    key.equalsIgnoreCase("care_of_disabled") || key.equalsIgnoreCase("care_of_bedridden") ||
-                    key.equalsIgnoreCase("care_of_pet") || key.equalsIgnoreCase("household_works") ||
-                    key.equalsIgnoreCase("car_washing") || key.equalsIgnoreCase("gardening") ||
-                    key.equalsIgnoreCase("cooking") || key.equalsIgnoreCase("driving")) {
-                createSpinner(row, key, new String[]{"", "true", "false"}, value);
-            } else if (value instanceof String) {
-
-                EditText valueView = new EditText(this);
-                valueView.setText(value.toString());
-                valueView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2));
-                valueView.setTag(key);
-                row.addView(valueView);
-            } else if (value instanceof Map) {
-
-                TextView sectionHeader = new TextView(this);
-                sectionHeader.setText(key + ":");
-                sectionHeader.setTextSize(16);
-                sectionHeader.setPadding(0, 10, 0, 10);
-                container.addView(sectionHeader);
-
-                LinearLayout nestedContainer = new LinearLayout(this);
-                nestedContainer.setOrientation(LinearLayout.VERTICAL);
-                container.addView(nestedContainer);
-
-                displayJsonForm((Map<String, Object>) value, nestedContainer);
-            } else {
-
-                TextView valueView = new TextView(this);
-                valueView.setText(value != null ? value.toString() : "N/A");
-                valueView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2));
-                row.addView(valueView);
-            }
-
-            container.addView(row);
-        }
-    }
-
-    private void addLanguageSkillRow(LinearLayout container, String language, String proficiency) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 10, 0, 10);
-
-
-        EditText langInput = new EditText(this);
-        langInput.setHint("Language");
-        langInput.setText(language);
-        langInput.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        row.addView(langInput);
-
-
-        Spinner proficiencySpinner = new Spinner(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"poor", "fair", "good"});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        proficiencySpinner.setAdapter(adapter);
-
-
-        int position = adapter.getPosition(proficiency);
-        proficiencySpinner.setSelection(position >= 0 ? position : 0);
-
-        proficiencySpinner.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        row.addView(proficiencySpinner);
-
-
-
-        container.addView(row);
-    }
-
-    private void createSpinner(LinearLayout row, String key, String[] options, Object currentValue) {
-        Spinner spinner = new Spinner(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-
-        if (currentValue != null) {
-            int position = adapter.getPosition(currentValue.toString());
-            spinner.setSelection(position >= 0 ? position : 0);
         }
 
-        spinner.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2));
-        spinner.setTag(key);
-        row.addView(spinner);
-    }
+        if (fileName == null) {
+            fileName = uri.getPath();
+            int cut = fileName != null ? fileName.lastIndexOf('/') : -1;
+            if (cut != -1) {
+                fileName = fileName.substring(cut + 1);
+            }
+        }
 
+        if (fileName != null && fileName.toLowerCase().endsWith(".pdf")) {
+            fileName = fileName.substring(0, fileName.length() - 4);
+        }
+
+        return fileName;
+    }
 
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/pdf");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select PDF"), 1);
+        filePickerLauncher.launch(Intent.createChooser(intent, "Select PDF"));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-            Uri pdfUri = data.getData();
-            if (pdfUri != null) {
-                try {
-
-                    String fileName = getFileName(pdfUri);
-                    if (fileName != null) {
-
-                       extractedName = extractNameFromFile(fileName);
-//                        selectedPdfName = extractedName;
-//                        Log.d(TAG, "Extracted file name: " + extractedName);
-                       pdfFileName.setText(fileName);
-                    }
-
-                    selectedPdfData = loadPdfFile(pdfUri);
-                    displayPdf(pdfUri);
-                    sendPdfToFormXAI(selectedPdfData);
-
-                    btnUpload.setVisibility(View.GONE);
-                    btnDelete.setVisibility(View.VISIBLE);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error loading PDF file: " + e.getMessage());
-                    Toast.makeText(this, "Error loading PDF file", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    if (nameIndex >= 0) {
-                        result = cursor.getString(nameIndex);
-                    }
-                }
-            }
-        }
-        if (result == null) {
-
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-
-
-    private String extractNameFromFile(String fileName) {
-
-        if (fileName.toLowerCase().endsWith(".pdf")) {
-            fileName = fileName.substring(0, fileName.lastIndexOf(".pdf"));
-        }
-
-
-        String[] parts = fileName.trim().split(" ");
-        if (parts.length > 2) {
-
-            StringBuilder extractedName = new StringBuilder();
-            for (int i = 2; i < parts.length; i++) {
-                extractedName.append(parts[i]);
-                if (i < parts.length - 1) {
-                    extractedName.append(" ");
-                }
-            }
-            return extractedName.toString().trim();
-        }
-
-
-        return fileName;
-    }
-
-
-    private byte[] loadPdfFile(Uri pdfUri) throws IOException {
-        InputStream inputStream = getContentResolver().openInputStream(pdfUri);
-        byte[] buffer = new byte[inputStream.available()];
-        inputStream.read(buffer);
-        inputStream.close();
-        return buffer;
-    }
-
-
-    private void displayPdf(Uri pdfUri) {
+    private String copyFileToCache(Uri uri) {
         try {
-            ParcelFileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(pdfUri, "r");
-            if (fileDescriptor != null) {
-                PdfRenderer pdfRenderer = new PdfRenderer(fileDescriptor);
-                PdfRenderer.Page page = pdfRenderer.openPage(0);
-
-                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-
-                pdfPreview.setImageBitmap(bitmap);
-
-                page.close();
-                pdfRenderer.close();
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                return null;
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Error displaying PDF: " + e.getMessage());
-        }
-    }
 
-    private void deletePdf(String type) {
-        selectedPdfData = null;
-        formattedJson = null;
+            File tempFile = new File(getCacheDir(), "temp_pdf_" + System.currentTimeMillis() + ".pdf");
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
 
-        pdfPreview.setImageBitmap(null);
-        jsonFormContainer.removeAllViews();
-        pdfFileName.setText("");
-        emailInput.setText("");
-        name_input.setText("");
-        emailInput.setVisibility(View.GONE);
-        name_input.setVisibility(View.GONE);
-
-        btnUpload.setVisibility(View.VISIBLE);
-        btnDelete.setVisibility(View.GONE);
-        if(type.equals("Submit")){
-            Toast.makeText(Pdfbox.this, "Data saved successfully!", Toast.LENGTH_SHORT).show();
-        }else if(type.equals("Delete")) {
-            Toast.makeText(this, "PDF deleted successfully!", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(Pdfbox.this, "Please Upload Again!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void sendPdfToFormXAI(byte[] pdfData) {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-
-                RequestBody requestBody = RequestBody.create(pdfData, MediaType.parse("application/pdf"));
-
-
-                Request request = new Request.Builder()
-                        .url("https://worker.formextractorai.com/v2/extract")
-                        .post(requestBody)
-                        .addHeader("accept", "application/json")
-                        .addHeader("X-WORKER-EXTRACTOR-ID", "2380657e-49ed-4f20-8f5a-469a7efed154")
-                        .addHeader("X-WORKER-TOKEN", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV9vd25lcl9pZCI6IjUzODJhYjdkLWFmYzEtNDNmMS1iOThhLTc5MWVjMzE1YjQ4MyIsIndvcmtlcl90b2tlbl9pZCI6ImRjNGU3ZDExLTFmYzUtNDE3YS04NTM0LTAyZGZkZDY1OTVjZSIsInVzZXJfaWQiOiI1MzgyYWI3ZC1hZmMxLTQzZjEtYjk4YS03OTFlYzMxNWI0ODMifQ.t35NLKFnLV0T4FuJsmmmutS_3SjszuRv6126udSNn4A")
-                        .build();
-
-
-                Response response = client.newCall(request).execute();
-
-                if (response.isSuccessful() && response.body() != null) {
-
-                    String jsonResponse = response.body().string();
-                    formattedJson = formatJson(jsonResponse);
-
-
-                    runOnUiThread(() -> {
-                        if (formattedJson != null) {
-                            Map<String, Object> jsonMap = new Gson().fromJson(formattedJson, HashMap.class);
-                            displayJsonForm(jsonMap, jsonFormContainer);
-                        }
-                    });
-                } else {
-                    deletePdf("Again");
-                }
-            } catch (IOException e) {
-                deletePdf("Again");
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
             }
-        }).start();
-    }
 
-    private String formatJson(String json) {
-        Gson gson = new Gson();
-        try {
+            outputStream.close();
+            inputStream.close();
 
-            Map<?, ?> map = gson.fromJson(json, Map.class);
-
-
-            if (map.containsKey("documents")) {
-                List<?> documents = (List<?>) map.get("documents");
-                if (!documents.isEmpty()) {
-                    Map<?, ?> document = (Map<?, ?>) documents.get(0);
-                    if (document.containsKey("data")) {
-                        Map<?, ?> data = (Map<?, ?>) document.get("data");
-
-
-                        Map<String, Object> formattedData = new HashMap<>();
-                        formattedData.put("nationality", data.get("nationality"));
-                        formattedData.put("age", data.get("age"));
-                        formattedData.put("gender", data.get("gender"));
-                        formattedData.put("date_of_birth", data.get("date_of_birth"));
-                        formattedData.put("education", data.get("education"));
-                        formattedData.put("marital_status", data.get("marital_status"));
-                        formattedData.put("religion", data.get("religion"));
-                        formattedData.put("height", data.get("height"));
-                        formattedData.put("weight", data.get("weight"));
-                        formattedData.put("ranking_by_age", data.get("ranking_by_age"));
-                        formattedData.put("no_of_brother", data.get("no_of_brother"));
-                        formattedData.put("no_of_sister", data.get("no_of_sister"));
-                        formattedData.put("son_no_age", data.get("son_no_age"));
-                        formattedData.put("daughter_no_age", data.get("daughter_no_age"));
-                        formattedData.put("zodiac", data.get("zodiac"));
-
-
-                        Map<String, Object> workingExperience = new HashMap<>();
-                        workingExperience.put("care_of_babies", data.get("care_of_babies"));
-                        workingExperience.put("care_of_toddler", data.get("care_of_toddler"));
-                        workingExperience.put("care_of_children", data.get("care_of_children"));
-                        workingExperience.put("care_of_elderly", data.get("care_of_elderly"));
-                        workingExperience.put("care_of_disabled", data.get("care_of_disabled"));
-                        workingExperience.put("care_of_bedridden", data.get("care_of_bedridden"));
-                        workingExperience.put("care_of_pet", data.get("care_of_pet"));
-                        workingExperience.put("household_works", data.get("household_works"));
-                        workingExperience.put("car_washing", data.get("car_washing"));
-                        workingExperience.put("gardening", data.get("gardening"));
-                        workingExperience.put("cooking", data.get("cooking"));
-                        workingExperience.put("driving", data.get("driving"));
-
-
-                        formattedData.put("Working Experience", workingExperience);
-
-
-                        Map<String, Object> overseasExperience = new HashMap<>();
-                        overseasExperience.put("hong_kong", data.get("hong_kong"));
-                        overseasExperience.put("singapore", data.get("singapore"));
-                        overseasExperience.put("taiwan", data.get("taiwan"));
-                        overseasExperience.put("malaysia", data.get("malaysia"));
-                        overseasExperience.put("middle_east", data.get("middle_east"));
-                        overseasExperience.put("macau", data.get("macau"));
-                        overseasExperience.put("other", data.get("other"));
-                        overseasExperience.put("home_country", data.get("home_country"));
-
-
-                        formattedData.put("overseasExperience", overseasExperience);
-
-
-                        formattedData.put("language_skills", data.get("language_skills"));
-
-
-                        formattedData.put("remark", data.get("remark"));
-
-
-                        return gson.toJson(formattedData);
-                    }
-                }
-            }
+            return tempFile.getAbsolutePath();
         } catch (Exception e) {
-            Log.e(TAG, "Error formatting JSON: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-
-
-        return "Invalid JSON or 'data' key not found.";
     }
 
-
-    private Map<String, Object> formatDataForFirestore(Map<String, Object> data) {
-        Map<String, Object> formattedData = new HashMap<>();
-
-
-        formattedData.put("nationality", data.get("nationality"));
-        formattedData.put("age", data.get("age"));
-        formattedData.put("gender", data.get("gender"));
-        formattedData.put("date_of_birth", data.get("date_of_birth"));
-        formattedData.put("education", data.get("education"));
-        formattedData.put("marital_status", data.get("marital_status"));
-        formattedData.put("religion", data.get("religion"));
-        formattedData.put("height", data.get("height"));
-        formattedData.put("weight", data.get("weight"));
-        formattedData.put("ranking_by_age", data.get("ranking_by_age"));
-        formattedData.put("no_of_brother", data.get("no_of_brother"));
-        formattedData.put("no_of_sister", data.get("no_of_sister"));
-        formattedData.put("son_no_age", data.get("son_no_age"));
-        formattedData.put("daughter_no_age", data.get("daughter_no_age"));
-        formattedData.put("zodiac", data.get("zodiac"));
-
-
-        Map<String, Object> workingExperience = new HashMap<>();
-        workingExperience.put("care_of_babies", data.get("care_of_babies"));
-        workingExperience.put("care_of_toddler", data.get("care_of_toddler"));
-        workingExperience.put("care_of_children", data.get("care_of_children"));
-        workingExperience.put("care_of_elderly", data.get("care_of_elderly"));
-        workingExperience.put("care_of_disabled", data.get("care_of_disabled"));
-        workingExperience.put("care_of_bedridden", data.get("care_of_bedridden"));
-        workingExperience.put("care_of_pet", data.get("care_of_pet"));
-        workingExperience.put("household_works", data.get("household_works"));
-        workingExperience.put("car_washing", data.get("car_washing"));
-        workingExperience.put("gardening", data.get("gardening"));
-        workingExperience.put("cooking", data.get("cooking"));
-        workingExperience.put("driving", data.get("driving"));
-        formattedData.put("working_experience", workingExperience);
-
-
-        Map<String, Object> overseasExperience = new HashMap<>();
-        overseasExperience.put("hong_kong", data.get("hong_kong"));
-        overseasExperience.put("singapore", data.get("singapore"));
-        overseasExperience.put("taiwan", data.get("taiwan"));
-        overseasExperience.put("malaysia", data.get("malaysia"));
-        overseasExperience.put("middle_east", data.get("middle_east"));
-        overseasExperience.put("macau", data.get("macau"));
-        overseasExperience.put("other", data.get("other"));
-        overseasExperience.put("home_country", data.get("home_country"));
-        formattedData.put("overseas_experience", overseasExperience);
-
-
-        HashMap<String, String> languageSkills = (HashMap<String, String>) data.get("language_skills");
-        if (languageSkills != null) {
-            formattedData.put("language_skills", languageSkills);
+    private void processPdf(String filePath) {
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
         }
 
+        Python py = Python.getInstance();
+        PyObject pyObject = py.getModule("process_pdf");
 
-        formattedData.put("remark", data.get("remark"));
-        formattedData.put("email", data.get("email"));
-        formattedData.put("name", name_input.getText().toString());
-        formattedData.put("availability", "Available");
+        try {
+            PyObject result = pyObject.callAttr("extract_pdf_to_json_with_checkmarks", filePath);
+            String jsonResult = result.toString();
+            JSONObject originalJson = new JSONObject(jsonResult);
 
-        return formattedData;
+            Log.d("Original JSON", originalJson.toString(4));
+
+            if (currentFileUri != null) {
+                currentFileName = getFileNameFromUri(currentFileUri);
+            }
+
+            JSONObject formattedJson = processJsonData(originalJson);
+            currentJsonData = formattedJson;
+
+            displayEditableForm(formattedJson);
+
+            Toast.makeText(this, "PDF Processed Successfully!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to process PDF", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void uploadToFirestore(Map<String, Object> data) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("MaidInfo")
-                .add(data)
-                .addOnSuccessListener(documentReference -> {
-                    deletePdf("Submit");
-                    Toast.makeText(Pdfbox.this, "Data saved successfully!", Toast.LENGTH_SHORT).show();
-                })
+    private JSONObject processJsonData(JSONObject originalJson) throws JSONException {
+        JSONObject formattedJson = new JSONObject();
 
-                .addOnFailureListener(e -> Toast.makeText(Pdfbox.this, "Failed to save data!", Toast.LENGTH_SHORT).show());
+        JSONObject page = originalJson.getJSONArray("pages").getJSONObject(0);
+        JSONArray tables = page.getJSONArray("tables");
+
+        JSONArray basicInfoTable = tables.getJSONArray(0);
+        for (int i = 0; i < basicInfoTable.length(); i++) {
+            JSONArray row = basicInfoTable.getJSONArray(i);
+            if (row.length() >= 4) {
+                String key = row.getString(0).trim();
+                String value = row.getString(1).trim();
+                switch (key) {
+                    case "Nationality":
+                        formattedJson.put("nationality", value.replace(" ", "").trim());
+                        if (row.length() >= 4) {
+                            String ageAndZodiac = row.getString(3).trim();
+                            ageAndZodiac = ageAndZodiac.replaceAll("\\s+", "");
+                            String age = ageAndZodiac.replaceAll("[^0-9]", "");
+                            String zodiac = ageAndZodiac.replaceAll("^[A-Za-z]+\\d+", "");
+                            if (!age.isEmpty()) formattedJson.put("age", age);
+                            if (!zodiac.isEmpty()) formattedJson.put("zodiac", zodiac);
+                        }
+                        break;
+                    case "Gender":
+                        formattedJson.put("gender", value);
+                        formattedJson.put("date_of_birth", row.getString(3).trim());
+                        break;
+                    case "Education":
+                        formattedJson.put("education", value.replace(" ", ""));
+                        formattedJson.put("marital_status", row.getString(3).trim());
+                        break;
+                    case "Religion":
+                        formattedJson.put("religion", value.replace(" ", ""));
+                        formattedJson.put("height", row.getString(3).trim());
+                        break;
+                    case "Ranking by age":
+                        formattedJson.put("ranking_by_age", value);
+                        formattedJson.put("weight", row.getString(3).trim());
+                        break;
+                    case "No. of brother":
+                        formattedJson.put("no_of_brother", value);
+                        formattedJson.put("son_no_age", row.getString(3).trim());
+                        break;
+                    case "No. of sister":
+                        formattedJson.put("no_of_sister", value);
+                        formattedJson.put("daughter_no_age", row.getString(3).trim());
+                        break;
+                }
+            }
+        }
+
+        JSONObject workingExperience = new JSONObject();
+        JSONArray workExpTable = tables.getJSONArray(1);
+        for (int i = 1; i < workExpTable.length(); i++) {
+            JSONArray row = workExpTable.getJSONArray(i);
+            if (row.length() >= 2) {
+                String key = row.getString(0).trim();
+                boolean value = row.getString(1).trim().equalsIgnoreCase("true");
+                if (key.equalsIgnoreCase("Hong Kong")) break;
+                workingExperience.put(key, value);
+            }
+        }
+        formattedJson.put("working_experience", workingExperience);
+
+        JSONObject overseasExperience = new JSONObject();
+        JSONArray overseasExpTable = tables.getJSONArray(1);
+        for (int i = 14; i < overseasExpTable.length(); i++) {
+            JSONArray row = overseasExpTable.getJSONArray(i);
+            if (row.length() >= 3) {
+                String key = row.getString(0).trim();
+                String value = row.getString(2).trim();
+                overseasExperience.put(key, !value.isEmpty() ? value : JSONObject.NULL);
+            } else if (row.length() >= 1) {
+                String key = row.getString(0).trim();
+                overseasExperience.put(key, JSONObject.NULL);
+            }
+        }
+        formattedJson.put("overseas_experience", overseasExperience);
+
+        JSONObject languageSkills = page.getJSONObject("language_abilities");
+        formattedJson.put("language_skills", languageSkills);
+
+        JSONArray remarkTable = tables.getJSONArray(2);
+        if (remarkTable.length() > 1) {
+            String remark = remarkTable.getJSONArray(1).getString(0).trim().replace("\n", " ");
+            formattedJson.put("remark", remark);
+        } else {
+            formattedJson.put("remark", "No remark found");
+        }
+
+        return formattedJson;
+    }
+
+    private void displayEditableForm(JSONObject jsonData) throws JSONException {
+        formContainer.removeAllViews();
+
+        addNameAndEmailFields();
+        addEditableField("nationality", jsonData.optString("nationality"));
+        addEditableField("age", jsonData.optString("age"));
+        addEditableField("zodiac", jsonData.optString("zodiac"));
+        addEditableField("gender", jsonData.optString("gender"));
+        addEditableField("date_of_birth", jsonData.optString("date_of_birth"));
+        addEditableField("education", jsonData.optString("education"));
+        addEditableField("marital_status", jsonData.optString("marital_status"));
+        addEditableField("religion", jsonData.optString("religion"));
+        addEditableField("height", jsonData.optString("height"));
+        addEditableField("ranking_by_age", jsonData.optString("ranking_by_age"));
+        addEditableField("weight", jsonData.optString("weight"));
+        addEditableField("no_of_brother", jsonData.optString("no_of_brother"));
+        addEditableField("son_no_age", jsonData.optString("son_no_age"));
+        addEditableField("no_of_sister", jsonData.optString("no_of_sister"));
+        addEditableField("daughter_no_age", jsonData.optString("daughter_no_age"));
+
+
+        addSectionHeader("Working Experience");
+        JSONObject workExp = jsonData.getJSONObject("working_experience");
+        Iterator<String> workExpKeys = workExp.keys();
+        while (workExpKeys.hasNext()) {
+            String key = workExpKeys.next();
+            boolean value = workExp.getBoolean(key);
+            addCheckboxField("work_exp_" + key, key, value);
+        }
+
+        addSectionHeader("Overseas Experience");
+        JSONObject overseasExp = jsonData.getJSONObject("overseas_experience");
+        Iterator<String> overseasKeys = overseasExp.keys();
+        while (overseasKeys.hasNext()) {
+            String key = overseasKeys.next();
+            String value = overseasExp.isNull(key) ? "" : overseasExp.getString(key);
+            addEditableField("overseas_" + key, value);
+        }
+
+        addSectionHeader("Language Skills");
+        JSONObject langSkills = jsonData.getJSONObject("language_skills");
+        Iterator<String> langKeys = langSkills.keys();
+        while (langKeys.hasNext()) {
+            String key = langKeys.next();
+            String value = langSkills.getString(key);
+            addSpinnerField("lang_" + key, key, value);
+        }
+
+        addEditableField("remark", jsonData.optString("remark"));
+
+        scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_UP));
+    }
+
+    private void addNameAndEmailFields() {
+        LinearLayout nameLayout = new LinearLayout(this);
+        nameLayout.setOrientation(LinearLayout.VERTICAL);
+        nameLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        nameLayout.setPadding(0, 8, 0, 8);
+
+        TextView nameLabel = new TextView(this);
+        nameLabel.setText("Name");
+        nameLabel.setTextSize(16);
+        nameLabel.setTextColor(getResources().getColor(android.R.color.black));
+        nameLayout.addView(nameLabel);
+
+        TextView nameValue = new TextView(this);
+        nameValue.setTag("name");
+
+        if (currentFileName != null && !currentFileName.isEmpty()) {
+            String cleanedName = currentFileName.replaceAll("(?i)AM\\s*\\d*", "").trim();
+            nameValue.setText(cleanedName);
+        } else {
+            nameValue.setText("No file selected");
+        }
+
+        nameValue.setTextSize(14);
+        nameValue.setTextColor(getResources().getColor(android.R.color.black));
+        nameLayout.addView(nameValue);
+
+        formContainer.addView(nameLayout);
+
+        LinearLayout emailLayout = new LinearLayout(this);
+        emailLayout.setOrientation(LinearLayout.VERTICAL);
+        emailLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        emailLayout.setPadding(0, 8, 0, 16);
+
+        TextView emailLabel = new TextView(this);
+        emailLabel.setText("Email");
+        emailLabel.setTextSize(16);
+        emailLabel.setTextColor(getResources().getColor(android.R.color.black));
+        emailLayout.addView(emailLabel);
+
+        EditText emailEditText = new EditText(this);
+        emailEditText.setTag("email");
+        emailEditText.setText("");
+        emailEditText.setTextSize(14);
+        emailEditText.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        emailLayout.addView(emailEditText);
+
+        formContainer.addView(emailLayout);
+    }
+
+    private void addSectionHeader(String title) {
+        TextView header = new TextView(this);
+        header.setText(title);
+        header.setTextSize(18);
+        header.setPadding(0, 16, 0, 8);
+        formContainer.addView(header);
+    }
+
+    private void addEditableField(String fieldName, String value) {
+        LinearLayout fieldLayout = new LinearLayout(this);
+        fieldLayout.setOrientation(LinearLayout.VERTICAL);
+        fieldLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        fieldLayout.setPadding(0, 8, 0, 8);
+
+        TextView label = new TextView(this);
+        label.setText(fieldName.replace("_", " "));
+        label.setTextSize(16);
+        fieldLayout.addView(label);
+
+        EditText editText = new EditText(this);
+        editText.setTag(fieldName);
+        editText.setText(value);
+        editText.setTextSize(14);
+        fieldLayout.addView(editText);
+
+        formContainer.addView(fieldLayout);
+    }
+
+    private void addCheckboxField(String fieldName, String labelText, boolean isChecked) {
+        LinearLayout fieldLayout = new LinearLayout(this);
+        fieldLayout.setOrientation(LinearLayout.HORIZONTAL);
+        fieldLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        fieldLayout.setPadding(0, 8, 0, 8);
+
+        CheckBox checkBox = new CheckBox(this);
+        checkBox.setTag(fieldName);
+        checkBox.setChecked(isChecked);
+
+        TextView label = new TextView(this);
+        label.setText(labelText);
+        label.setTextSize(16);
+        label.setPadding(16, 0, 0, 0);
+
+        fieldLayout.addView(checkBox);
+        fieldLayout.addView(label);
+
+        formContainer.addView(fieldLayout);
+    }
+
+    private void addSpinnerField(String fieldName, String labelText, String currentValue) {
+        LinearLayout fieldLayout = new LinearLayout(this);
+        fieldLayout.setOrientation(LinearLayout.VERTICAL);
+        fieldLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        fieldLayout.setPadding(0, 8, 0, 8);
+
+        TextView label = new TextView(this);
+        label.setText(labelText);
+        label.setTextSize(16);
+        fieldLayout.addView(label);
+
+        Spinner spinner = new Spinner(this);
+        spinner.setTag(fieldName);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.language_skill_levels,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        int position = adapter.getPosition(currentValue);
+        if (position >= 0) {
+            spinner.setSelection(position);
+        }
+
+        fieldLayout.addView(spinner);
+        formContainer.addView(fieldLayout);
+    }
+
+    private void saveChanges() {
+        try {
+            JSONObject updatedJson = new JSONObject();
+
+            for (int i = 0; i < formContainer.getChildCount(); i++) {
+                View child = formContainer.getChildAt(i);
+
+                if (child instanceof LinearLayout) {
+                    LinearLayout fieldLayout = (LinearLayout) child;
+
+                    if (fieldLayout.getChildCount() > 1) {
+                        View field = fieldLayout.getChildAt(1);
+                        if (field.getTag() != null) {
+                            String tag = (String) field.getTag();
+
+                            if (tag.equals("name") && field instanceof TextView) {
+                                String value = ((TextView) field).getText().toString();
+                                updatedJson.put(tag, value);
+                            }
+                            else if (tag.equals("email") && field instanceof EditText) {
+                                String value = ((EditText) field).getText().toString();
+                                updatedJson.put(tag, value);
+                            }
+                        }
+                    }
+
+                    if (fieldLayout.getChildCount() > 1 && fieldLayout.getChildAt(1) instanceof EditText) {
+                        EditText editText = (EditText) fieldLayout.getChildAt(1);
+                        String key = (String) editText.getTag();
+                        if (key != null && !key.equals("email")) {
+                            String value = editText.getText().toString();
+                            updatedJson.put(key, value);
+                        }
+                    }
+                    else if (fieldLayout.getChildCount() > 0 && fieldLayout.getChildAt(0) instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) fieldLayout.getChildAt(0);
+                        String key = (String) checkBox.getTag();
+                        boolean value = checkBox.isChecked();
+                        updatedJson.put(key, value);
+                    }
+                    else if (fieldLayout.getChildCount() > 1 && fieldLayout.getChildAt(1) instanceof Spinner) {
+                        Spinner spinner = (Spinner) fieldLayout.getChildAt(1);
+                        String key = (String) spinner.getTag();
+                        String value = spinner.getSelectedItem().toString();
+                        updatedJson.put(key, value);
+                    }
+                }
+            }
+
+            JSONObject workingExperience = new JSONObject();
+            JSONObject overseasExperience = new JSONObject();
+            JSONObject languageSkills = new JSONObject();
+
+            Iterator<String> keys = updatedJson.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+
+                if (key.startsWith("work_exp_")) {
+                    String expKey = key.replace("work_exp_", "");
+                    workingExperience.put(expKey, updatedJson.getBoolean(key));
+                }
+                else if (key.startsWith("overseas_")) {
+                    String expKey = key.replace("overseas_", "");
+                    String value = updatedJson.getString(key);
+                    overseasExperience.put(expKey, value.isEmpty() ? JSONObject.NULL : value);
+                }
+                else if (key.startsWith("lang_")) {
+                    String langKey = key.replace("lang_", "");
+                    languageSkills.put(langKey, updatedJson.getString(key));
+                }
+            }
+
+            updatedJson.put("working_experience", workingExperience);
+            updatedJson.put("overseas_experience", overseasExperience);
+            updatedJson.put("language_skills", languageSkills);
+
+            currentJsonData = updatedJson;
+
+            saveToFirestore(updatedJson);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving changes", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveToFirestore(JSONObject jsonObject) {
+        try {
+            Map<String, Object> dataMap = jsonToMap(jsonObject);
+
+            if (currentFileName != null) {
+                dataMap.put("filename", currentFileName);
+            }
+
+            dataMap.put("availability", "Available");
+
+            Log.d("Firestore", "Data to save: " + dataMap.toString());
+
+            db.collection("MaidInfo")
+                    .add(dataMap)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d("Firestore", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        Toast.makeText(this, "Data saved to Firestore!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Error adding document", e);
+                        Toast.makeText(this, "Failed to save to Firestore", Toast.LENGTH_SHORT).show();
+                    });
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error converting data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Map<String, Object> jsonToMap(JSONObject jsonObject) throws JSONException {
+        Map<String, Object> map = new HashMap<>();
+        Iterator<String> keys = jsonObject.keys();
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Object value = jsonObject.get(key);
+
+            if (value instanceof JSONObject) {
+                value = jsonToMap((JSONObject) value);
+            }
+            else if (value instanceof JSONArray) {
+                value = jsonArrayToList((JSONArray) value);
+            }
+            else if (JSONObject.NULL.equals(value)) {
+                value = null;
+            }
+
+            map.put(key, value);
+        }
+
+        return map;
+    }
+
+    private List<Object> jsonArrayToList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+
+            if (value instanceof JSONObject) {
+                value = jsonToMap((JSONObject) value);
+            }
+            else if (value instanceof JSONArray) {
+                value = jsonArrayToList((JSONArray) value);
+            }
+            else if (JSONObject.NULL.equals(value)) {
+                value = null;
+            }
+
+            list.add(value);
+        }
+        return list;
     }
 }
