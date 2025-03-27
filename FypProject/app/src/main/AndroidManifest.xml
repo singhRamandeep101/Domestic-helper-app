@@ -30,6 +30,9 @@
         android:theme="@style/Base.Theme.FypProject.NoActionbar"
         tools:targetApi="31">
         <activity
+            android:name=".activities.EmployerSelectTimeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.employer.OldReceiptsActivity"
             android:exported="false" />
 
