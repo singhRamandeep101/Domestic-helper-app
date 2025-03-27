@@ -15,7 +15,7 @@ import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh,llJobList, llPublicholiday;
+    LinearLayout llAdd_dh, llJobList, llPublicholiday;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +38,7 @@ public class AgentHomeFragment extends Fragment {
         llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChatMainActivity.class);
+                Intent intent = new Intent(getActivity(), Pdfbox.class);
                 startActivity(intent);
             }
         });
