@@ -123,6 +123,7 @@ public class ChatActivity extends AppCompatActivity {
     void sendMessage(String message){
         chatRoom.setLastMessageTimestamp(Timestamp.now());
         chatRoom.setLastMessageSenderId(ChatUtil.currentUserEmail());
+        chatRoom.setLastMessage(message);
         ChatUtil.getChatroomReference(chatroomId).set(chatRoom);
 
         ChatMessageModel chatMessageModel = new ChatMessageModel(message,ChatUtil.currentUserEmail(),Timestamp.now());

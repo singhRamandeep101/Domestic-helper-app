@@ -22,7 +22,7 @@
             android:textStyle="bold"
             android:textColor="@color/white"
             android:layout_marginStart="10dp"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <ImageButton
             android:layout_width="32dp"
@@ -35,5 +35,12 @@
             android:layout_marginEnd="10dp"
             android:id="@+id/btnSearch"/>
     </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rv_chatList"
+        android:layout_below="@+id/main_toolbar"
+        android:layout_marginTop="10dp"/>
 
 </RelativeLayout>
