@@ -51,7 +51,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_agent_book_time);
+        setContentView(R.layout.activity_employer_select_time);
 
         db = FirebaseFirestore.getInstance();
         bookedTimes = new ArrayList<>();
@@ -105,7 +105,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
                     return;
                 }
 
-                openChatRoom();
+                openRoom();
             }
         });
 
@@ -216,7 +216,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
             }
         }
     }
-    private void openChatRoom() {
+    private void openRoom() {
         // Step 3: Query users collection for the agent's details using agentEmail
         String agentEmail = getIntent().getStringExtra("agentEmail");
         db.collection("users")

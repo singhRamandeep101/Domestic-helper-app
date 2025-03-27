@@ -490,6 +490,17 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                     chatModel.setFirstName(firstName);
                                     chatModel.setLastName(lastName);
 
+                                    if("yes".equals(type)){
+                                        Intent intent = new Intent(ResumeDetailActivity.this, ChatActivity.class);
+                                        ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
+                                        startActivity(intent); // Start ChatActivity
+                                    } else {
+                                        Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
+                                        intent.putExtra("employeeEmail", email);
+                                        intent.putExtra("agentEmail", agentEmail);
+                                        startActivity(intent); // Start ChatActivity
+                                    }
+
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
                                             "FirstName: " + firstName + ", LastName: " + lastName +
