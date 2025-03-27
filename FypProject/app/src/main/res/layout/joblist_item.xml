@@ -112,7 +112,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/icon_virgo"
+                    android:src="@drawable/icon_zodiac_virgo"
                     android:layout_toEndOf="@+id/imgUser"
                     android:layout_below="@+id/imgExperience" />
 
