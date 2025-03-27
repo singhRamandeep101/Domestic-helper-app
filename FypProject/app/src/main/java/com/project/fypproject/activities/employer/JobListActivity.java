@@ -179,39 +179,39 @@ public class JobListActivity extends AppCompatActivity {
         setupLabelClick(labelGenderMale, "gender", "M");
         setupLabelClick(labelGenderFemale, "gender", "F");
 
-        setupLabelClick(labelEducationJuniorHigh, "education", "JUNIOR HIGH");
-        setupLabelClick(labelEducationHighSchool, "education", "HIGH SCHOOL");
+        setupLabelClick(labelEducationJuniorHigh, "education", "JUNIORHIGH");
+        setupLabelClick(labelEducationHighSchool, "education", "HIGHSCHOOL");
 
         setupLabelClick(labelLanguageMandarin, "language_skills", "Mandarin");
         setupLabelClick(labelLanguageCantonese, "language_skills", "Cantonese");
         setupLabelClick(labelLanguageEnglish, "language_skills", "English");
 
-        setupLabelClick(labelWorkingExperienceCareOfBabies, "working_experience", "care_of_babies");
-        setupLabelClick(labelWorkingExperienceCareOfToddler, "working_experience", "care_of_toddler");
-        setupLabelClick(labelWorkingExperienceCareOfChildren, "working_experience", "care_of_children");
-        setupLabelClick(labelWorkingExperienceCareOfElderly, "working_experience", "care_of_elderly");
-        setupLabelClick(labelWorkingExperienceCareOfDisabled, "working_experience", "care_of_disabled");
-        setupLabelClick(labelWorkingExperienceCareOfBedridden, "working_experience", "care_of_bedridden");
-        setupLabelClick(labelWorkingExperienceCareOfPet, "working_experience", "care_of_pet");
-        setupLabelClick(labelWorkingExperienceHouseholdWorks, "working_experience", "household_works");
-        setupLabelClick(labelWorkingExperienceCarWashing, "working_experience", "car_washing");
-        setupLabelClick(labelWorkingExperienceGardening, "working_experience", "gardening");
-        setupLabelClick(labelWorkingExperienceCooking, "working_experience", "cooking");
-        setupLabelClick(labelWorkingExperienceDriving, "working_experience", "driving");
+        setupLabelClick(labelWorkingExperienceCareOfBabies, "working_experience", "Care of Babies");
+        setupLabelClick(labelWorkingExperienceCareOfToddler, "working_experience", "Care of Toddler");
+        setupLabelClick(labelWorkingExperienceCareOfChildren, "working_experience", "Care of Children");
+        setupLabelClick(labelWorkingExperienceCareOfElderly, "working_experience", "Care of Elderly");
+        setupLabelClick(labelWorkingExperienceCareOfDisabled, "working_experience", "Care of Disabled");
+        setupLabelClick(labelWorkingExperienceCareOfBedridden, "working_experience", "Care of Bedridden");
+        setupLabelClick(labelWorkingExperienceCareOfPet, "working_experience", "Care of Pet");
+        setupLabelClick(labelWorkingExperienceHouseholdWorks, "working_experience", "Household Works");
+        setupLabelClick(labelWorkingExperienceCarWashing, "working_experience", "Car Washing");
+        setupLabelClick(labelWorkingExperienceGardening, "working_experience", "Gardening");
+        setupLabelClick(labelWorkingExperienceCooking, "working_experience", "Cooking");
+        setupLabelClick(labelWorkingExperienceDriving, "working_experience", "Driving");
 
 
         setupLabelClick(labelAgeUnder30, "age", "Under 30");
         setupLabelClick(labelAge30to50, "age", "30 - 50");
         setupLabelClick(labelAgeOver50, "age", "Over 50");
 
-        setupLabelClick(labelOverseasHongKong, "overseas_experience", "hong_kong");
-        setupLabelClick(labelOverseasMalaysia, "overseas_experience", "malaysia");
-        setupLabelClick(labelOverseasMiddleEast, "overseas_experience", "middle_east");
-        setupLabelClick(labelOverseasSingapore, "overseas_experience", "singapore");
-        setupLabelClick(labelOverseasTaiwan, "overseas_experience", "taiwan");
-        setupLabelClick(labelOverseasMacau, "overseas_experience", "macau");
-        setupLabelClick(labelOverseasOther, "overseas_experience", "other");
-        setupLabelClick(labelOverseasHomeCountry, "overseas_experience", "home_country");
+        setupLabelClick(labelOverseasHongKong, "overseas_experience", "Hong Kong");
+        setupLabelClick(labelOverseasMalaysia, "overseas_experience", "Malaysia");
+        setupLabelClick(labelOverseasMiddleEast, "overseas_experience", "Middle East");
+        setupLabelClick(labelOverseasSingapore, "overseas_experience", "Singapore");
+        setupLabelClick(labelOverseasTaiwan, "overseas_experience", "Taiwan");
+        setupLabelClick(labelOverseasMacau, "overseas_experience", "Macau");
+        setupLabelClick(labelOverseasOther, "overseas_experience", "Other");
+        setupLabelClick(labelOverseasHomeCountry, "overseas_experience", "Home Country");
 
 
 
@@ -279,13 +279,13 @@ public class JobListActivity extends AppCompatActivity {
             switch (key) {
                 case "language_skills":
                     for (String value : values) {
-                        query = query.whereEqualTo("language_skills." + value, "good");
+                        query = query.whereEqualTo("language_skills." + value, "Good");
                     }
                     break;
 
                 case "working_experience":
                     for (String value : values) {
-                        query = query.whereEqualTo("working_experience." + value, "true");
+                        query = query.whereEqualTo("working_experience." + value, true);
                     }
                     break;
 
