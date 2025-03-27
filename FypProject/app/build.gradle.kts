@@ -26,6 +26,11 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -40,14 +45,16 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.firebaseui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.rounded.image.view)
     implementation(libs.glide)
     implementation (libs.pdfbox.android)
+    implementation(libs.libausbc)
+    implementation(libs.cardview)
 
-    // jitsi
     implementation("org.jitsi.react:jitsi-meet-sdk:10.3.0") {
         isTransitive = true
     }

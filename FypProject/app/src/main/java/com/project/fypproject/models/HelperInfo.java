@@ -1,18 +1,34 @@
 package com.project.fypproject.models;
 
 public class HelperInfo {
-    String name, nationality, zodiac, img_url, email, age;
+    String name;
+    String nationality;
+    String zodiac;
+    String img_url;
+    String email;
+    String age;
+
+    public String getReligion() {
+        return religion;
+    }
+
+    public void setReligion(String religion) {
+        this.religion = religion;
+    }
+
+    String religion;
 
     public HelperInfo() {
     }
 
-    public HelperInfo(String name, String nationality, String zodiac, String img_url, String email, String age) {
+    public HelperInfo(String name, String nationality, String zodiac, String img_url, String email, String age, String religion) {
         this.name = name;
         this.nationality = nationality;
         this.zodiac = zodiac;
         this.img_url = img_url;
         this.email = email;
         this.age = age;
+        this.religion = religion;
     }
 
     public String getName() {

@@ -13,10 +13,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="150px"
+            android:background="@color/surface_tint"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:elevation="5dp">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_arrow_back_24"/>
+
+            <ImageView
+                android:id="@+id/img_book"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icon_bookmarks_write"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="50dp"/>
+
+            <ImageView
+                android:id="@+id/img_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icon_share"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
-            android:layout_height="700px"
+            android:layout_height="550px"
             android:background="@drawable/header"
             android:gravity="center|bottom">
 
@@ -193,7 +225,7 @@
                     android:id="@+id/imgZodiac"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/icon_virgo"/>
+                    android:src="@drawable/icon_zodiac_virgo"/>
 
 
                 <TextView

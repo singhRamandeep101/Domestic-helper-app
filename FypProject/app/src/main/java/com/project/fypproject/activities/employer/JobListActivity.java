@@ -359,7 +359,8 @@ public class JobListActivity extends AppCompatActivity {
                             (String) data.get("zodiac"),
                             (String) data.get("img_url"),
                             (String) data.get("email"),
-                            (String) data.get("age")
+                            (String) data.get("age"),
+                            (String) data.get("religion")
                     );
 
                     helperInfoList.add(helperInfo);

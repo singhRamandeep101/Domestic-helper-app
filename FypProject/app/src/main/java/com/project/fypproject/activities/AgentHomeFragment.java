@@ -38,7 +38,7 @@ public class AgentHomeFragment extends Fragment {
         llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Pdfbox.class);
+                Intent intent = new Intent(getActivity(), ChatMainActivity.class);
                 startActivity(intent);
             }
         });

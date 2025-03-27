@@ -38,24 +38,24 @@
 
                 <ImageView
                     android:id="@+id/btnLastYear"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/left_arrow"/>
 
                 <TextView
                     android:id="@+id/year"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:text="2025"
-                    android:textSize="40dp"
+                    android:textSize="30dp"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:layout_marginHorizontal="20dp"/>
 
                 <ImageView
                     android:id="@+id/btnNextYear"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/right_arrow"/>
 
             </LinearLayout>
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="10dp">
+                android:padding="5dp">
 
 
 
@@ -77,8 +77,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -104,8 +104,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -131,8 +131,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <LinearLayout
                     android:id="@+id/month_4"
@@ -168,8 +168,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -195,8 +195,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -222,8 +222,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -249,7 +249,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <LinearLayout
                     android:id="@+id/month_7"
@@ -259,8 +259,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -286,8 +286,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -313,8 +313,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -340,7 +340,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:layout_marginBottom="80dp">
 
                 <LinearLayout
@@ -351,8 +351,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -378,8 +378,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView
@@ -405,8 +405,8 @@
                     android:background="@drawable/card"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="20dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp"
                     android:elevation="4dp">
 
                     <ImageView

@@ -41,7 +41,6 @@ public class EmployerHomeFragment extends Fragment {
     public void changeActivity(Class<?> cls){
         Intent intent = new Intent(getActivity(), cls);
         startActivity(intent);
-        requireActivity().finish();
     }
 
     // dp 轉換成 px

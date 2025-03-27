@@ -22,13 +22,13 @@
                     android:src="@drawable/icon_domestic_helper"
                     app:shapeAppearanceOverlay="@style/roundedImageView"/>
 
-                <ImageView
-                    android:id="@+id/imgBookmark"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="10dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/icon_bookmark_outline" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/imgBookmark"-->
+<!--                    android:layout_width="35dp"-->
+<!--                    android:layout_height="35dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:src="@drawable/icon_bookmark_outline" />-->
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -112,7 +112,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/icon_virgo"
+                    android:src="@drawable/icon_zodiac_virgo"
                     android:layout_toEndOf="@+id/imgUser"
                     android:layout_below="@+id/imgExperience" />
 
