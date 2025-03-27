@@ -23,6 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,13 +32,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobDetailActivity;
+import com.project.fypproject.models.ChatModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ResumeDetailActivity extends AppCompatActivity {
 
@@ -54,6 +58,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
     String email;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,17 +91,15 @@ public class ResumeDetailActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
         imgBookInt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
-                intent.putExtra("employeeEmail",email);
-                startActivity(intent);
+               checkAgent();
             }
         });
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("MaidInfo").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -352,5 +355,168 @@ public class ResumeDetailActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    private void checkAgent() {
+
+        // Step 1: Query MaidInfo to find the document with the given employeeEmail
+        db.collection("MaidInfo")
+                .whereEqualTo("email", email) // Search for the email in the collection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            QuerySnapshot maidInfoDocs = task.getResult();
+
+                            if (!maidInfoDocs.isEmpty()) {
+                                // If a document with the given employeeEmail exists
+                                DocumentSnapshot maidInfoDoc = maidInfoDocs.getDocuments().get(0);
+
+                                // Check if the document has an agentEmail field
+                                String agentEmail = maidInfoDoc.getString("agentEmail");
+
+                                if (agentEmail != null && !agentEmail.isEmpty()) {
+                                    // If agentEmail already exists, no further action needed
+                                    db.collection("chatrooms")
+                                                    .whereArrayContains("userEmails",agentEmail)
+                                                            .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if(task.isSuccessful() && task.getResult()!=null) {
+                                                                                boolean chatRoom = false;
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    List<String> userEmails = (List<String>) document.get("userEmails");
+                                                                                    if (userEmails != null && userEmails.contains(email) && userEmails.contains(agentEmail)) {
+                                                                                        chatRoom = true;
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                                                if (chatRoom) {
+                                                                                    openChatRoom(agentEmail, "yes");
+                                                                                } else {
+                                                                                    openChatRoom(agentEmail, "no");
+                                                                                }
+                                                                            }else{
+                                                                                Log.e("message","no found chatroom");
+                                                                            }
+                                                                        }
+                                                                    });
+                                } else {
+                                    assignAgent(db, maidInfoDoc.getId());
+                                }
+                            } else {
+                                // If no document contains the employeeEmail, log it
+                                Log.e("Firestore", "No document found for employeeEmail: " + email);
+                            }
+                        } else {
+                            Log.e("Firestore", "Failed to query MaidInfo collection", task.getException());
+                        }
+                    }
+                });
+    }
+
+    // Randomly selects a user with userType 'agent' and assigns their email to the specified MaidInfo document
+    private void assignAgent(FirebaseFirestore db, String maidInfoDocId) {
+        db.collection("users")
+                .whereEqualTo("userType", "Agent") // Query for users with userType = 'agent'
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            QuerySnapshot querySnapshot = task.getResult();
+
+                            if (!querySnapshot.isEmpty()) {
+                                // Randomly select one of the agents
+                                List<DocumentSnapshot> agents = querySnapshot.getDocuments();
+                                DocumentSnapshot randomAgent = agents.get(new Random().nextInt(agents.size()));
+
+                                // Get the agent's email
+                                String agentEmail = randomAgent.getString("email");
+
+                                if (agentEmail != null) {
+                                    // Step 2: Assign the agent's email to the specified MaidInfo document
+                                    db.collection("MaidInfo")
+                                            .document(maidInfoDocId)
+                                            .update("agentEmail", agentEmail)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    openChatRoom(agentEmail,"no");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("Firestore", "Failed to assign agentEmail", e);
+                                                }
+                                            });
+                                } else {
+                                    Log.e("Firestore", "Selected agent does not have an email field");
+                                }
+                            } else {
+                                Log.e("Firestore", "No users with userType = 'agent' found");
+                            }
+                        } else {
+                            Log.e("Firestore", "Failed to query users collection", task.getException());
+                        }
+                    }
+                });
+    }
+    private void openChatRoom(String agentEmail,String type) {
+        // Step 3: Query users collection for the agent's details using agentEmail
+        db.collection("users")
+                .whereEqualTo("email", email) // Search for the agent by email
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            QuerySnapshot Docs = task.getResult();
+
+                            if (!Docs.isEmpty()) {
+                                // Get the agent document
+                                DocumentSnapshot Doc = Docs.getDocuments().get(0);
+
+                                // Retrieve agent's details
+                                String firstName = Doc.getString("firstName");
+                                String lastName = Doc.getString("lastName");
+
+                                if (firstName != null && lastName != null) {
+                                    // Step 4: Create and set ChatModel
+                                    ChatModel chatModel = new ChatModel();
+                                    chatModel.setEmail(agentEmail);
+                                    chatModel.setFirstName(firstName);
+                                    chatModel.setLastName(lastName);
+
+                                    if(type.equals("yes")){
+                                        Intent intent = new Intent(ResumeDetailActivity.this, ChatActivity.class);
+                                        ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
+                                        startActivity(intent); // Start ChatActivity
+                                    } else {
+                                        Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
+                                        intent.putExtra("employeeEmail", email);
+                                        intent.putExtra("agentEmail", agentEmail);
+                                        startActivity(intent); // Start ChatActivity
+                                    }
+
+                                    // Log the information for verification
+                                    Log.d("Firestore", "ChatModel set with agent details: " +
+                                            "FirstName: " + firstName + ", LastName: " + lastName +
+                                            ", AgentEmail: " + agentEmail);
+
+                                    // Optionally, you can save ChatModel to Firestore or proceed to the next action
+                                } else {
+                                    Log.e("Firestore", "Agent details are incomplete for email: " + email);
+                                }
+                            } else {
+                                Log.e("Firestore", "No document found for agentEmail: " + email);
+                            }
+                        } else {
+                            Log.e("Firestore", "Failed to query users collection", task.getException());
+                        }
+                    }
+                });
     }
 }
