@@ -49,57 +49,57 @@ public class ApointmentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_emplyer_home, container, false);
-
-        recyclerView = view.findViewById(R.id.rv_bookRecord);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        TextView tvNoData = view.findViewById(R.id.tv_no_data);
-        recyclerView = view.findViewById(R.id.rv_bookRecord);
-
-        db = FirebaseFirestore.getInstance();
-        records = new ArrayList<>();
-
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-
-        db.collection("users")
-                .whereEqualTo("email", user.getEmail())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot maidSnapshots) {
-                        if (!maidSnapshots.isEmpty()) {
-                            DocumentSnapshot userDocument = maidSnapshots.getDocuments().get(0);
-                            userType = userDocument.getString("userType");
-                            upcoming();
-                        }
-                    }
-                    ;
-                });
-
-        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                String tabText = tab.getText().toString();
-
-                if (tabText.equalsIgnoreCase("UPCOMING")) {
-                    upcoming();
-                } else if (tabText.equalsIgnoreCase("NEXT MONTH")) {
-                    nextMonth();
-                } else{
-                    allData();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
-        });
+//        view = inflater.inflate(R.layout.fragment_emplyer_home, container, false);
+//
+//        recyclerView = view.findViewById(R.id.rv_bookRecord);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//
+//        TextView tvNoData = view.findViewById(R.id.tv_no_data);
+//        recyclerView = view.findViewById(R.id.rv_bookRecord);
+//
+//        db = FirebaseFirestore.getInstance();
+//        records = new ArrayList<>();
+//
+//        auth = FirebaseAuth.getInstance();
+//        user = auth.getCurrentUser();
+//
+//        db.collection("users")
+//                .whereEqualTo("email", user.getEmail())
+//                .get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot maidSnapshots) {
+//                        if (!maidSnapshots.isEmpty()) {
+//                            DocumentSnapshot userDocument = maidSnapshots.getDocuments().get(0);
+//                            userType = userDocument.getString("userType");
+//                            upcoming();
+//                        }
+//                    }
+//                    ;
+//                });
+//
+//        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
+//
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                String tabText = tab.getText().toString();
+//
+//                if (tabText.equalsIgnoreCase("UPCOMING")) {
+//                    upcoming();
+//                } else if (tabText.equalsIgnoreCase("NEXT MONTH")) {
+//                    nextMonth();
+//                } else{
+//                    allData();
+//                }
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {}
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {}
+//        });
 
         return inflater.inflate(R.layout.fragment_apointment, container, false);
     }

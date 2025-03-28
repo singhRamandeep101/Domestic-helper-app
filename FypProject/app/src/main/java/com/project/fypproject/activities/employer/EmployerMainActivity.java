@@ -111,9 +111,6 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-    public interface FirestoreCallback {
-        void onCallback(String result);
-    }
     String reselt = "";
     public String getUserInfo(String field){
 
