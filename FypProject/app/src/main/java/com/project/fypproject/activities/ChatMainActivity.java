@@ -72,7 +72,7 @@ public class ChatMainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         if(adapter!=null)
-            adapter.stopListening();
+            adapter.notifyDataSetChanged();
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 
@@ -94,8 +95,19 @@ public class BookRecordActivity extends AppCompatActivity {
 
     private void allData() {
         records.clear();
+        String emailField = "";
+
+        if ("Employer".equals(userType)) {
+            emailField = "employerEmail";
+        } else if ("Agent".equals(userType)) {
+            emailField = "agentEmail";
+        } else if ("Employee".equals(userType)){
+            emailField = "employeeEmail";
+        }
+
         db.collection("bookings")
-                .whereEqualTo("employeeEmail", "a")
+                .whereEqualTo(emailField, user.getEmail())
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -164,8 +176,18 @@ public class BookRecordActivity extends AppCompatActivity {
         calendar.add(Calendar.DAY_OF_YEAR, 7);
         String sevenDaysLater = dateFormat.format(calendar.getTime());
 
+        String emailField = "";
+
+        if ("Employer".equals(userType)) {
+            emailField = "employerEmail";
+        } else if ("Agent".equals(userType)) {
+            emailField = "agentEmail";
+        } else if ("Employee".equals(userType)){
+            emailField = "employeeEmail";
+        }
+
         db.collection("bookings")
-                .whereEqualTo("employeeEmail", "a")
+                .whereEqualTo(emailField, user.getEmail())
                 .whereGreaterThanOrEqualTo("date", today)
                 .whereLessThanOrEqualTo("date", sevenDaysLater)
                 .get()
@@ -181,7 +203,7 @@ public class BookRecordActivity extends AppCompatActivity {
 
                                 if (employeeEmail != null) {
                                     db.collection("MaidInfo")
-                                            .whereEqualTo("email", "a")
+                                            .whereEqualTo("email", employeeEmail)
                                             .get()
                                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                 @Override
@@ -237,8 +259,18 @@ public class BookRecordActivity extends AppCompatActivity {
         String oneMonthLater = dateFormat.format(calendar.getTime());
 
 
+        String emailField = "";
+
+        if ("Employer".equals(userType)) {
+            emailField = "employerEmail";
+        } else if ("Agent".equals(userType)) {
+            emailField = "agentEmail";
+        } else if ("Employee".equals(userType)){
+            emailField = "employeeEmail";
+        }
+
         db.collection("bookings")
-                .whereEqualTo("employeeEmail", "a")
+                .whereEqualTo(emailField, user.getEmail())
                 .whereGreaterThanOrEqualTo("date", today)
                 .whereLessThanOrEqualTo("date", oneMonthLater)
                 .get()
@@ -250,8 +282,9 @@ public class BookRecordActivity extends AppCompatActivity {
                                 Map<String, Object> record = document.getData();
                                 record.put("documentId", document.getId());
 
+                                String employeeEmail = (String) record.get("employeeEmail");
                                 db.collection("MaidInfo")
-                                        .whereEqualTo("email", "a")
+                                        .whereEqualTo("email", employeeEmail)
                                         .get()
                                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override

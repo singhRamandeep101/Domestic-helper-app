@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,6 +34,8 @@ public class AgentBookTimeActivity extends AppCompatActivity {
     private Button btnBack, btnContinue;
     private FirebaseFirestore db;
     private ArrayList<String> bookedTimes;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     private String selectedDate = "";
     private String startTime = "";
@@ -41,6 +45,8 @@ public class AgentBookTimeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agent_book_time);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         db = FirebaseFirestore.getInstance();
         bookedTimes = new ArrayList<>();
@@ -106,9 +112,11 @@ public class AgentBookTimeActivity extends AppCompatActivity {
     }
 
     private void updateAvailableTime() {
+        String employeeEmail = getIntent().getStringExtra("employeeEmail");
         bookedTimes.clear();
 
         db.collection("bookings")
+                .whereEqualTo("employeeEmail", employeeEmail)
                 .whereEqualTo("date", selectedDate)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -214,6 +222,7 @@ public class AgentBookTimeActivity extends AppCompatActivity {
         booking.put("endTime", endTime);
         booking.put("employeeEmail", employeeEmail);
         booking.put("employerEmail", employerEmail);
+        booking.put("agentEmail", user.getEmail());
         booking.put("state", "Waiting for interview");
 
         db.collection("bookings")
@@ -223,6 +232,12 @@ public class AgentBookTimeActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             Intent intent = new Intent(AgentBookTimeActivity.this, AgentBookSuccessActivity.class);
+                            intent.putExtra("employeeEmail", employeeEmail);
+                            intent.putExtra("employerEmail", employerEmail);
+                            intent.putExtra("agentEmail", user.getEmail());
+                            intent.putExtra("startTime", startTime);
+                            intent.putExtra("endTime", endTime);
+                            intent.putExtra("date", selectedDate);
                             startActivity(intent);
                             finish();
                         } else {
