@@ -45,7 +45,7 @@ public class EmployerHomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    // dp 轉換成 px
+    // dp convert to px
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
