@@ -47,11 +47,11 @@
 
     <FrameLayout
         app:layout_constraintTop_toBottomOf="@+id/btn_filter"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="100dp"
         android:id="@+id/filter_layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="#80000000">
 
         <ScrollView
@@ -77,6 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Close"
+                        android:textSize="16dp"
                         android:layout_marginBottom="16dp"
                         android:backgroundTint="#FF0000"
                         android:textColor="@android:color/white" />
@@ -92,8 +93,6 @@
                         android:textColor="@android:color/white" />
 
                 </RelativeLayout>
-
-
 
                 <!-- Nationality Section -->
                 <TextView
@@ -199,41 +198,44 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ARIES"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
                         android:layout_marginEnd="8dp"
-                        android:drawableLeft="@drawable/icon_zodiac_virgo"/>
+                        android:drawableLeft="@drawable/icon_zodiac_aries"/>
 
                     <TextView
                         android:id="@+id/labelZodiacTaurus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TAURUS"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_taurus" />
 
                     <TextView
                         android:id="@+id/labelZodiacGemini"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="GEMINI"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_gemini"/>
 
                     <TextView
                         android:id="@+id/labelZodiacCancer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CANCER"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_cancer" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -247,40 +249,44 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="LEO"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_leo" />
 
                     <TextView
                         android:id="@+id/labelZodiacVirgo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="VIRGO"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_virgo" />
 
                     <TextView
                         android:id="@+id/labelZodiacLibra"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="LIBRA"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_libra" />
 
                     <TextView
                         android:id="@+id/labelZodiacScorpio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="SCORPIO"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_scorpio" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -294,40 +300,52 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="SAGITTARIUS"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_sagittarius" />
 
                     <TextView
                         android:id="@+id/labelZodiacCapricorn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CAPRICORN"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_capricorn"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
                         android:id="@+id/labelZodiacAquarius"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="AQUARIUS"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_aquarius"/>
 
                     <TextView
                         android:id="@+id/labelZodiacPisces"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="PISCES"
-                        android:padding="8dp"
+                        android:padding="6dp"
                         android:background="@drawable/label_background"
                         android:textColor="@color/black"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="8dp"
+                        android:drawableLeft="@drawable/icon_zodiac_pisces" />
                 </LinearLayout>
 
                 <!-- Add other zodiac signs similarly -->
