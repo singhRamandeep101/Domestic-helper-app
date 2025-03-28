@@ -81,7 +81,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
         imgBack = findViewById(R.id.img_back);
         imgBookmark = findViewById(R.id.img_book);
-        imgShare = findViewById(R.id.img_share);
+        //imgShare = findViewById(R.id.img_share);
         imgBookInt = findViewById(R.id.btnBookInterview);
 
         res = getResources();
@@ -97,6 +97,13 @@ public class ResumeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                checkAgent();
+            }
+        });
+
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
