@@ -78,7 +78,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         otherUser = ChatUtil.getUserModelIntent(getIntent());
-        chatroomId = ChatUtil.getChatroomId(ChatUtil.currentUserEmail(), otherUser.getEmail());
+        String employeeEmail = getIntent().getStringExtra("employeeEmail");
+        chatroomId = ChatUtil.getChatroomId(ChatUtil.currentUserEmail(), otherUser.getEmail(),employeeEmail);
         tvName = findViewById(R.id.tvName);
         edMessage = findViewById(R.id.inputBox);
         btnSend = findViewById(R.id.layoutSend);

@@ -170,7 +170,7 @@ public class BookRecordActivity extends AppCompatActivity {
         records.clear();
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd", Locale.getDefault());
         String today = dateFormat.format(calendar.getTime());
 
         calendar.add(Calendar.DAY_OF_YEAR, 7);
@@ -252,7 +252,7 @@ public class BookRecordActivity extends AppCompatActivity {
         records.clear();
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd", Locale.getDefault());
         String today = dateFormat.format(calendar.getTime());
 
         calendar.add(Calendar.MONTH, 1);
