@@ -69,6 +69,7 @@ public class AgentBookSuccessActivity extends AppCompatActivity {
 
                                                 intent.putExtra("message", "Booking Success\n Booking Detail\nDate:" + selectedDate +"\nTime:" + startTime + " to " + endTime);
                                                 startActivity(intent); // Start ChatActivity
+                                                finish();
 
                                                 // Log the information for verification
                                                 Log.d("Firestore", "ChatModel set with agent details: " +

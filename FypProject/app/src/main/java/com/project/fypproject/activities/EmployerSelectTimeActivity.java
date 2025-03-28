@@ -252,6 +252,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
                                     intent.putExtra("employerEmail", employerEmail);
                                     intent.putExtra("message", "Ideal Booking Detail\nDate:" + selectedDate +"\nTime:" + startTime + " to " + endTime);
                                     startActivity(intent); // Start ChatActivity
+                                    finish();
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
