@@ -190,22 +190,32 @@ public class ResumeDetailActivity extends AppCompatActivity {
                 int sonNo = 0;
                 int daughterNo = 0;
 
-                if (sonNoAge != null && sonNoAge.contains("/")) {
-                    String sonNoStr = sonNoAge.split("/")[0];
-                    try {
-                        sonNo = Integer.parseInt(sonNoStr);
-                    } catch (NumberFormatException e) {
-                        sonNo = 0;
+                if (sonNoAge != null && !sonNoAge.isEmpty()) {
+                    String[] sonParts = sonNoAge.split("/");
+                    if (sonParts.length > 0) {
+                        try {
+                            sonNo = Integer.parseInt(sonParts[0].trim());
+                        } catch (NumberFormatException e) {
+                            Log.e("Error", "Invalid son number format: " + sonNoAge, e);
+                            sonNo = 0;
+                        }
                     }
+                } else {
+                    Log.e("Error", "son_no_age is null or empty");
                 }
 
-                if (daughterNoAge != null && daughterNoAge.contains("/")) {
-                    String daughterNoStr = daughterNoAge.split("/")[0];
-                    try {
-                        daughterNo = Integer.parseInt(daughterNoStr);
-                    } catch (NumberFormatException e) {
-                        daughterNo = 0;
+                if (daughterNoAge != null && !daughterNoAge.isEmpty()) {
+                    String[] daughterParts = daughterNoAge.split("/");
+                    if (daughterParts.length > 0) {
+                        try {
+                            daughterNo = Integer.parseInt(daughterParts[0].trim());
+                        } catch (NumberFormatException e) {
+                            Log.e("Error", "Invalid daughter number format: " + daughterNoAge, e);
+                            daughterNo = 0;
+                        }
                     }
+                } else {
+                    Log.e("Error", "daughter_no_age is null or empty");
                 }
 
                 Map<String, Object> workingExperience = (Map<String, Object>) doc.get("working_experience");
@@ -217,7 +227,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                         String skill = entry.getKey();
                         Object value = entry.getValue();
 
-                        if (value != null) {
+                        if (!value.equals(false)) {
                             String formattedSkill = formatSkillName(skill);
                             experienceList.add(formattedSkill);
                         }
@@ -493,11 +503,15 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                     if("yes".equals(type)){
                                         Intent intent = new Intent(ResumeDetailActivity.this, ChatActivity.class);
                                         ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
+                                        intent.putExtra("employeeEmail", email);
+                                        intent.putExtra("agentEmail", agentEmail);
+                                        intent.putExtra("employerEmail", user.getEmail());
                                         startActivity(intent); // Start ChatActivity
                                     } else {
                                         Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
                                         intent.putExtra("employeeEmail", email);
                                         intent.putExtra("agentEmail", agentEmail);
+                                        intent.putExtra("employerEmail", user.getEmail());
                                         startActivity(intent); // Start ChatActivity
                                     }
 

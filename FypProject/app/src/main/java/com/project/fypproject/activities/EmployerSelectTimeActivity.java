@@ -47,6 +47,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
     private String startTime = "";
     private String endTime = "";
     String employeeEmail;
+    String employerEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         bookedTimes = new ArrayList<>();
         employeeEmail = getIntent().getStringExtra("employeeEmail");
+        employerEmail = getIntent().getStringExtra("employerEmail");
 
         calendarView = findViewById(R.id.calendar_view);
         spinnerStartTime = findViewById(R.id.spinner_start_time);
@@ -245,6 +247,9 @@ public class EmployerSelectTimeActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent(EmployerSelectTimeActivity.this, ChatActivity.class);
                                     ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
+                                    intent.putExtra("employeeEmail", employeeEmail);
+                                    intent.putExtra("agentEmail", agentEmail);
+                                    intent.putExtra("employerEmail", employerEmail);
                                     intent.putExtra("message", "Ideal Booking Detail\nDate:" + selectedDate +"\nTime:" + startTime + " to " + endTime);
                                     startActivity(intent); // Start ChatActivity
 
