@@ -566,11 +566,23 @@ public class Pdfbox extends AppCompatActivity {
             currentJsonData = updatedJson;
 
             saveToFirestore(updatedJson);
+            clearFormData();
 
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error saving changes", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void clearFormData() {
+        // Remove all child views from the form container
+        formContainer.removeAllViews();
+
+        // Optionally, reset other related variables or UI elements
+        currentFileUri = null;
+        currentFileName = null;
+
+        Toast.makeText(this, "Form data cleared successfully!", Toast.LENGTH_SHORT).show();
     }
 
     private void saveToFirestore(JSONObject jsonObject) {
