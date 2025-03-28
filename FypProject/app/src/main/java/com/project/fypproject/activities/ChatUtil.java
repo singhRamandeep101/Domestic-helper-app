@@ -47,12 +47,14 @@ public class ChatUtil {
     public static CollectionReference getChatroomMessageReference(String chatroomId){
         return getChatroomReference(chatroomId).collection("chats");
     }
-    public static String getChatroomId(String userEmail1,String userEmail2){
-        if(userEmail1.hashCode()<userEmail2.hashCode()){
-            return userEmail1+"_"+userEmail2;
-        }else{
-            return userEmail2+"_"+userEmail1;
+    public static String getChatroomId(String userEmail1, String userEmail2, String employeeEmail) {
+        String baseId;
+        if (userEmail1.hashCode() < userEmail2.hashCode()) {
+            baseId = userEmail1 + "_" + userEmail2;
+        } else {
+            baseId = userEmail2 + "_" + userEmail1;
         }
+        return baseId + "_" + employeeEmail;
     }
 
     public static CollectionReference allChatroomCollectionReference(){

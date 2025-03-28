@@ -1,5 +1,7 @@
 package com.project.fypproject.activities.employer;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,6 +26,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -40,8 +47,8 @@ public class JobListActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     JobListAdapter jobListAdapter;
     List<HelperInfo> helperInfoList;
-    Toolbar toolbar;
-    EditText search_bar;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     private TextView labelNationalityFilipino, labelNationalityThailand, labelNationalityIndonesia, labelNationalityMyanmar, labelNationalitySriLanka;
     private TextView labelZodiacAries, labelZodiacTaurus, labelZodiacGemini, labelZodiacCancer, labelZodiacLeo, labelZodiacVirgo, labelZodiacLibra, labelZodiacScorpio, labelZodiacSagittarius, labelZodiacCapricorn, labelZodiacAquarius, labelZodiacPisces;
@@ -52,12 +59,17 @@ public class JobListActivity extends AppCompatActivity {
     private TextView labelAgeUnder30, labelAge30to50, labelAgeOver50;
     private TextView labelOverseasMacau,labelOverseasOther,labelOverseasHomeCountry,labelOverseasHongKong, labelOverseasMalaysia, labelOverseasMiddleEast, labelOverseasSingapore, labelOverseasTaiwan,noResultText;
 
+    private ImageView imgBookmarkFilter;
     private FrameLayout filterLayout;
 
 
     private Map<String, List<String>> selectedFilters = new HashMap<>();
 
     private Button btnApplyFilter,btnFilter,btnClose;
+    private boolean isApplyBookmark;
+
+    Resources res;
+    Drawable icon_BookMarked_Outline, icon_BookMarked_Filled;
 
 
     @Override
@@ -65,6 +77,8 @@ public class JobListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_job_list);
+
+        imgBookmarkFilter = findViewById(R.id.btn_bookmark_filter);
 
         labelNationalityFilipino = findViewById(R.id.label_nationality_filipino);
         labelNationalityThailand = findViewById(R.id.label_nationality_thailand);
@@ -114,6 +128,8 @@ public class JobListActivity extends AppCompatActivity {
         labelOverseasOther = findViewById(R.id.labelOverseasOther);
         labelOverseasHomeCountry = findViewById(R.id.labelOverseasHomeCountry);
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         noResultText = findViewById(R.id.no_result_text);
 
@@ -130,6 +146,13 @@ public class JobListActivity extends AppCompatActivity {
         filterLayout = findViewById(R.id.filter_layout_container);
         btnClose = findViewById(R.id.btn_close_filter);
 
+        isApplyBookmark = false;
+
+        res = getResources();
+        icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmark_outline, null);
+        icon_BookMarked_Filled = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmark_filled, null);
+
+
         btnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,7 +167,18 @@ public class JobListActivity extends AppCompatActivity {
             }
         });
 
-
+        imgBookmarkFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isApplyBookmark){
+                    isApplyBookmark = false;
+                    imgBookmarkFilter.setImageDrawable(icon_BookMarked_Outline);
+                } else{
+                    isApplyBookmark = true;
+                    imgBookmarkFilter.setImageDrawable(icon_BookMarked_Filled);
+                }
+            }
+        });
 
         btnApplyFilter = findViewById(R.id.btn_apply_filter);
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +188,6 @@ public class JobListActivity extends AppCompatActivity {
                 filterLayout.setVisibility(View.GONE);
             }
         });
-
 
 
         setupLabelClick(labelNationalityFilipino, "nationality", "FILIPINO");
@@ -270,6 +303,65 @@ public class JobListActivity extends AppCompatActivity {
     }
 
     private void applyFilters() {
+        if(isApplyBookmark){
+            Log.d("Dennis", "Book mark filter applied");
+            DocumentReference userRef = firestore.collection("users").document(user.getEmail());
+            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot userDocument = task.getResult();
+                        if (userDocument.exists()) {
+                            //Get the string array from firebase as an object
+                            ArrayList<String> MarkedRef = (ArrayList<String>)userDocument.get("bookMarks");
+
+                            if(MarkedRef == null){
+                                noResultText.setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.GONE);
+                                return;
+                            } else {
+                                noResultText.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+
+                                helperInfoList.clear();
+                                for (String MarkedId: MarkedRef) {
+                                    DocumentReference docRef = firestore.collection("MaidInfo").document(MarkedId);
+                                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot document = task.getResult();
+                                                if (document.exists()) {
+                                                    Map<String, Object> data = document.getData();
+
+                                                    HelperInfo helperInfo = new HelperInfo(
+                                                            (String) data.get("name"),
+                                                            (String) data.get("nationality"),
+                                                            (String) data.get("zodiac"),
+                                                            (String) data.get("img_url"),
+                                                            (String) data.get("email"),
+                                                            (String) data.get("age"),
+                                                            (String) data.get("religion")
+                                                    );
+
+                                                    helperInfoList.add(helperInfo);
+                                                    Log.d("Dennis", helperInfoList.toString());
+                                                    jobListAdapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
+                            }
+                        }
+                    }
+                }
+            });
+            return;
+        }
+        Log.d("Dennis", "No apply book mark");
+
         Query query = firestore.collection("MaidInfo");
 
         for (Map.Entry<String, List<String>> filter : selectedFilters.entrySet()) {

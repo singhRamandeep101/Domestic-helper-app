@@ -48,6 +48,7 @@ public class ChatMainAdapter extends FirestoreRecyclerAdapter<ChatRoom,ChatMainA
                         public void onClick(View view) {
                             Intent intent = new Intent(context, ChatActivity.class);
                             ChatUtil.passUserIntent(intent,otherUserModel);
+                            intent.putExtra("employeeEmail",model.getEmployeeEmail());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
