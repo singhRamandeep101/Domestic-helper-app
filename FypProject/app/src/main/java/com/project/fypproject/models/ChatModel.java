@@ -1,15 +1,16 @@
 package com.project.fypproject.models;
 
 public class ChatModel {
-    private String lastName,firstName,email;
+    private String lastName,firstName,email,userType;
 
     public ChatModel() {
     }
 
-    public ChatModel(String lastName, String firstName, String email) {
+    public ChatModel(String lastName, String firstName, String email,String userType) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+        this.userType = userType;
     }
 
     public String getLastName() {
@@ -34,5 +35,13 @@ public class ChatModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

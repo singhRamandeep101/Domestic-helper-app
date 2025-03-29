@@ -484,7 +484,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
     private void openChatRoom(String agentEmail,String type) {
         // Step 3: Query users collection for the agent's details using agentEmail
         db.collection("users")
-                .whereEqualTo("email", email) // Search for the agent by email
+                .whereEqualTo("email", agentEmail) // Search for the agent by email
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -499,6 +499,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                 // Retrieve agent's details
                                 String firstName = Doc.getString("firstName");
                                 String lastName = Doc.getString("lastName");
+                                String userType = Doc.getString("userType");
 
                                 if (firstName != null && lastName != null) {
                                     // Step 4: Create and set ChatModel
@@ -506,21 +507,11 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                     chatModel.setEmail(agentEmail);
                                     chatModel.setFirstName(firstName);
                                     chatModel.setLastName(lastName);
+                                    chatModel.setUserType(userType);
 
-                                    if("yes".equals(type)){
                                         Intent intent = new Intent(ResumeDetailActivity.this, ChatActivity.class);
                                         ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
-                                        intent.putExtra("employeeEmail", email);
-                                        intent.putExtra("agentEmail", agentEmail);
-                                        intent.putExtra("employerEmail", user.getEmail());
                                         startActivity(intent); // Start ChatActivity
-                                    } else {
-                                        Intent intent = new Intent(ResumeDetailActivity.this, EmployerSelectTimeActivity.class);
-                                        intent.putExtra("employeeEmail", email);
-                                        intent.putExtra("agentEmail", agentEmail);
-                                        intent.putExtra("employerEmail", user.getEmail());
-                                        startActivity(intent); // Start ChatActivity
-                                    }
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +

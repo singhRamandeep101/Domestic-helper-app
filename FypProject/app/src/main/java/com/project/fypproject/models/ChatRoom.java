@@ -11,21 +11,15 @@ public class ChatRoom {
     Timestamp lastMessageTimestamp;
     String lastMessageSenderId;
     String lastMessage;
-    String employeeEmail;
-    String employerEmail;
-    String agentEmail;
 
     public ChatRoom() {
     }
 
-    public ChatRoom(String chatroomId, List<String> userEmails, Timestamp lastMessageTimestamp, String lastMessageSenderId,String employeeEmail,String agentEmail,String employerEmail) {
+    public ChatRoom(String chatroomId, List<String> userEmails, Timestamp lastMessageTimestamp, String lastMessageSenderId) {
         this.chatroomId = chatroomId;
         this.userEmails = userEmails;
         this.lastMessageTimestamp = lastMessageTimestamp;
         this.lastMessageSenderId = lastMessageSenderId;
-        this.employeeEmail = employeeEmail;
-        this.agentEmail = agentEmail;
-        this.employerEmail = employerEmail;
     }
 
     public String getChatroomId() {
@@ -66,29 +60,5 @@ public class ChatRoom {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
-    }
-
-    public String getEmployeeEmail() {
-        return employeeEmail;
-    }
-
-    public void setEmployeeEmail(String employeeEmail) {
-        this.employeeEmail = employeeEmail;
-    }
-
-    public String getEmployerEmail() {
-        return employerEmail;
-    }
-
-    public void setEmployerEmail(String employerEmail) {
-        this.employerEmail = employerEmail;
-    }
-
-    public String getAgentEmail() {
-        return agentEmail;
-    }
-
-    public void setAgentEmail(String agentEmail) {
-        this.agentEmail = agentEmail;
     }
 }

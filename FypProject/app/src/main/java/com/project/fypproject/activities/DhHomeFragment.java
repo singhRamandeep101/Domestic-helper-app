@@ -28,7 +28,7 @@ public class DhHomeFragment extends Fragment {
         llPublicHoliday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
+                Intent intent = new Intent(getActivity(), ChatMainActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
             }
