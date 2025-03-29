@@ -45,10 +45,11 @@ public class ChatMainAdapter extends FirestoreRecyclerAdapter<ChatRoom,ChatMainA
                     }else{
                         holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName()+"(Translator)");
                     }
-                    if (lastMessageSendByMe)
+                    if (lastMessageSendByMe) {
                         holder.tvLastMessage.setText("You : " + model.getLastMessage());
-                    else
+                    }else {
                         holder.tvLastMessage.setText(model.getLastMessage());
+                    }
                     holder.tvLastMessageTime.setText(ChatUtil.timestampToString(model.getLastMessageTimestamp()));
 
                     holder.itemView.setOnClickListener(new View.OnClickListener() {

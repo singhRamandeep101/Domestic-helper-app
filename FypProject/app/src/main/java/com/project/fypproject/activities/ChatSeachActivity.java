@@ -14,7 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.models.ChatModel;
 
@@ -63,15 +68,48 @@ public class ChatSeachActivity extends AppCompatActivity {
         });
     }
     void searchRV(String searchEmail){
-        Query query = ChatUtil.allUserCollectionReference()
-                .whereGreaterThanOrEqualTo("email",searchEmail)
-                .whereLessThanOrEqualTo("email",searchEmail+'\uf8ff');
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        Query currentUserQuery = ChatUtil.allUserCollectionReference().whereEqualTo("email",currentUserEmail);
+        currentUserQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(!queryDocumentSnapshots.isEmpty()){
+                    DocumentSnapshot currentUserDoc = queryDocumentSnapshots.getDocuments().get(0);
+                    String userType = currentUserDoc.getString("userType");
 
-        FirestoreRecyclerOptions<ChatModel> options = new FirestoreRecyclerOptions.Builder<ChatModel>().setQuery(query,ChatModel.class).build();
-        adapter = new ChatSearchAdapter(options,getApplicationContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        adapter.startListening();
+                    final Query[] query = new Query[1];
+
+                    if(userType.equals("Agent")){
+                        query[0] = ChatUtil.allUserCollectionReference()
+                                .whereGreaterThanOrEqualTo("email",searchEmail)
+                                .whereLessThanOrEqualTo("email",searchEmail+'\uf8ff');
+                    }else{
+                            query[0] = ChatUtil.allUserCollectionReference()
+                                    .whereEqualTo("userType","Agent")
+                                    .whereGreaterThanOrEqualTo("email",searchEmail)
+                                    .whereLessThanOrEqualTo("email",searchEmail+'\uf8ff');
+                    }
+                    query[0].get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if (queryDocumentSnapshots.isEmpty()){
+                                findViewById(R.id.tvNoResults).setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.GONE);
+                            }else{
+                                findViewById(R.id.tvNoResults).setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+
+                                FirestoreRecyclerOptions<ChatModel> options = new FirestoreRecyclerOptions.Builder<ChatModel>().setQuery(query[0],ChatModel.class).build();
+                                adapter = new ChatSearchAdapter(options,getApplicationContext());
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ChatSeachActivity.this));
+                                recyclerView.setAdapter(adapter);
+                                adapter.startListening();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override

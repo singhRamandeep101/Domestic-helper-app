@@ -53,7 +53,6 @@ public class ChatMainActivity extends AppCompatActivity {
         Query query = ChatUtil.allChatroomCollectionReference()
                 .whereArrayContains("userEmails",ChatUtil.currentUserEmail())
                 .whereNotEqualTo("lastMessageSenderId","")
-                .orderBy("lastMessageSenderId")
                 .orderBy("lastMessageTimestamp",Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<ChatRoom> options = new FirestoreRecyclerOptions.Builder<ChatRoom>().setQuery(query,ChatRoom.class).build();
