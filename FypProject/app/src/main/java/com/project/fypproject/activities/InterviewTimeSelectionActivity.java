@@ -142,7 +142,7 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
     }
 
     private void checkBooked() {
-        db.collection("bookings")
+        db.collection("booking")
                 .whereEqualTo("employeeEmail", employeeEmail)
                 .get()
                 .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<com.google.firebase.firestore.QuerySnapshot>() {
@@ -299,6 +299,8 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
         data.put("employerEmail", user.getEmail());
         data.put("employeeEmail", employeeEmail);
         data.put("employerSelectedTime", selectedTime);
+        data.put("employerState", "Pending Confirmation");
+        data.put("internalState", "Awaiting Action");
         data.put("postTime", dateTimeFormat.format(Calendar.getInstance().getTime()));
 
         db.collection("users").whereEqualTo("userType", "Agent").get()
