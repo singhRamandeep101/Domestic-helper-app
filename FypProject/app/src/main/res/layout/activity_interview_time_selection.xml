@@ -51,6 +51,7 @@
             android:text="Today" />
 
         <TextView
+            android:id="@+id/selectDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
@@ -68,11 +69,13 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="20dp">
         <Button
+            android:id="@+id/btnSelectAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:text="Select all"/>
         <Button
+            android:id="@+id/btnCancelAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -91,86 +94,43 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/btn1000"
+                android:id="@+id/btn1000TO1100"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="10:00" />
+                android:text="10:00 - 11:00" />
 
             <Button
-                android:id="@+id/btn1030"
+                android:id="@+id/btn1100TO1200"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1000TO1100"
                 android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1000"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="10:30" />
+                android:text="11:00 - 12:00" />
 
             <Button
-                android:id="@+id/btn1100"
+                android:id="@+id/btn1200TO1300"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1000"
+                android:layout_below="@+id/btn1100TO1200"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="11:00" />
+                android:text="12:00 - 13:00" />
 
             <Button
-                android:id="@+id/btn1130"
+                android:id="@+id/btn1300TO1400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1000"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1000"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="10:30" />
-
-            <Button
-                android:id="@+id/btn1200"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1100"
+                android:layout_below="@+id/btn1200TO1300"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="12:00" />
-
-            <Button
-                android:id="@+id/btn1230"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1100"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1000"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="12:30" />
-
-            <Button
-                android:id="@+id/btn1300"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1200"
-                android:layout_margin="5dp"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="13:00" />
-
-            <Button
-                android:id="@+id/btn1330"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1200"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1000"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="13:30" />
+                android:text="13:00 - 14:00" />
 
         </RelativeLayout>
 
@@ -185,107 +145,43 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/btn1400"
+                android:id="@+id/btn1400TO1500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="14:00" />
+                android:text="14:00 - 15:00" />
 
             <Button
-                android:id="@+id/btn1430"
+                android:id="@+id/btn1500TO1600"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1400TO1500"
                 android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1400"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="14:30" />
+                android:text="15:00 - 16:00" />
 
             <Button
-                android:id="@+id/btn1500"
+                android:id="@+id/btn1600TO1700"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1400"
+                android:layout_below="@+id/btn1500TO1600"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="15:00" />
+                android:text="16:00 - 17:00" />
 
             <Button
-                android:id="@+id/btn1530"
+                android:id="@+id/btn1700TO1800"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1400"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1400"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="15:30" />
-
-            <Button
-                android:id="@+id/btn1600"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1500"
+                android:layout_below="@+id/btn1600TO1700"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_outlined"
                 android:textColor="@color/surface_tint"
-                android:text="16:00" />
-
-            <Button
-                android:id="@+id/btn1630"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1500"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1600"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="16:30" />
-
-            <Button
-                android:id="@+id/btn1700"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1600"
-                android:layout_margin="5dp"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="17:00" />
-
-            <Button
-                android:id="@+id/btn1730"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1600"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1700"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="17:30" />
-
-            <Button
-                android:id="@+id/btn1800"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1700"
-                android:layout_margin="5dp"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="18:00" />
-
-            <Button
-                android:id="@+id/btn1830"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn1700"
-                android:layout_margin="5dp"
-                android:layout_toEndOf="@+id/btn1800"
-                android:background="@drawable/button_outlined"
-                android:textColor="@color/surface_tint"
-                android:text="18:30" />
+                android:text="17:00 - 18:00" />
 
         </RelativeLayout>
     </LinearLayout>
