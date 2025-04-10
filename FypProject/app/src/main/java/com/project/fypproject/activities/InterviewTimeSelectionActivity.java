@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -324,9 +325,20 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
                                                     public void onSuccess(DocumentReference documentReference) {
-                                                        Intent intent = new Intent(InterviewTimeSelectionActivity.this, InterviewTimeInvitedActivity.class);
-                                                        startActivity(intent);
-                                                        finish();
+                                                        documentReference.update("docId",documentReference.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                Intent intent = new Intent(InterviewTimeSelectionActivity.this, InterviewTimeInvitedActivity.class);
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                        })
+                                                                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(InterviewTimeSelectionActivity.this, "Failed to save!", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
                                                     }
                                                 })
                                                 .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
