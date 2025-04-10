@@ -102,6 +102,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                             bookingRequests.clear();
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                final String docId = document.getId();
                                 final String employeeEmail = document.getString("employeeEmail");
                                 final String employerEmail = document.getString("employerEmail");
                                 final String userStatus;
@@ -116,7 +117,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                                     userStatus= document.getString("employerState");
                                 }
 
-                                getName(employeeEmail, employerEmail, userStatus);
+                                getName(docId,employeeEmail, employerEmail, userStatus);
                             }
                         } else {
                             bookingRequests.clear();
@@ -128,7 +129,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                 });
     }
 
-    private void getName(final String employeeEmail, final String employerEmail, final String userStatus) {
+    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userStatus) {
         final HashMap<String, String> requestData = new HashMap<>();
 
         db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
@@ -150,7 +151,8 @@ public class BookingRequestActivity extends AppCompatActivity {
                                         } else {
                                             requestData.put("userName", "Unknown");
                                         }
-
+                                        
+                                        requestData.put("docId", docId);
                                         requestData.put("userStatus", userStatus);
                                         bookingRequests.add(requestData);
                                         adapter.notifyDataSetChanged();

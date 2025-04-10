@@ -52,10 +52,12 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
                 holder.stateIcon.setImageResource(R.drawable.ic_rej);
                 break;
             default:
-                holder.userStatus.setTextColor(Color.parseColor("#9E9E9E"));
+                holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
                 holder.stateIcon.setImageResource(R.drawable.ic_pending);
                 break;
         }
+
+        holder.docId.setText("Request ID: "+ request.get("docId"));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvHelperName, tvUserName, userStatus;
+        TextView tvHelperName, tvUserName, userStatus,docId;
         ImageView stateIcon;
 
         public ViewHolder(@NonNull View itemView) {
@@ -73,6 +75,7 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             tvUserName = itemView.findViewById(R.id.tvUserName);
             userStatus = itemView.findViewById(R.id.userStatus);
             stateIcon = itemView.findViewById(R.id.stateIcon);
+            docId = itemView.findViewById(R.id.bookRequestID);
         }
     }
 }
