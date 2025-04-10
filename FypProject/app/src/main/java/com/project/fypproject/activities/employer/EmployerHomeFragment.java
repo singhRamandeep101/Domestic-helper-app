@@ -26,7 +26,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.BookRecordActivity;
+import com.project.fypproject.activities.BookingRequestActivity;
 import com.project.fypproject.activities.ChatMainActivity;
+import com.project.fypproject.activities.InterviewTimeSelectionActivity;
 import com.project.fypproject.activities.Login;
 import com.project.fypproject.activities.MeetingActivity;
 import com.project.fypproject.activities.SalaryRecordSelectorActivity;
@@ -92,7 +94,7 @@ public class EmployerHomeFragment extends Fragment {
         llJobPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeActivity(ChatMainActivity.class);
+                changeActivity(InterviewTimeSelectionActivity.class);
             }
         });
 
