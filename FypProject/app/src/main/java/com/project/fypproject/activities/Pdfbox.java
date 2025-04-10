@@ -2,13 +2,8 @@ package com.project.fypproject.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -33,16 +27,12 @@ import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.project.fypproject.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -63,79 +53,6 @@ public class Pdfbox extends AppCompatActivity {
     private Uri currentFileUri;
     private String currentFileName;
     private FirebaseFirestore db;
-
-    private Bitmap extractedImageBitmap;
-
-    private void extractImageFromPdf(String pdfPath, int pageNumber, Rect cropRect) {
-        try {
-            File pdfFile = new File(pdfPath);
-            ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY);
-
-            PdfRenderer pdfRenderer = new PdfRenderer(fileDescriptor);
-            PdfRenderer.Page page = pdfRenderer.openPage(pageNumber - 1); // Page numbers are 0-based
-
-            Bitmap pageBitmap = Bitmap.createBitmap(
-                    page.getWidth(), page.getHeight(),
-                    Bitmap.Config.ARGB_8888
-            );
-
-            page.render(pageBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-
-            Bitmap croppedBitmap = Bitmap.createBitmap(
-                    cropRect.width(),
-                    cropRect.height(),
-                    Bitmap.Config.ARGB_8888
-            );
-
-            Canvas canvas = new Canvas(croppedBitmap);
-            canvas.drawBitmap(
-                    pageBitmap,
-                    new Rect(cropRect.left, cropRect.top, cropRect.right, cropRect.bottom),
-                    new Rect(0, 0, cropRect.width(), cropRect.height()),
-                    null
-            );
-
-            extractedImageBitmap = croppedBitmap;
-            showExtractedImage();
-
-            page.close();
-            pdfRenderer.close();
-            fileDescriptor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to extract image", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showExtractedImage() {
-        if (extractedImageBitmap != null) {
-            ImageView imageView = new ImageView(this);
-            imageView.setImageBitmap(extractedImageBitmap);
-            imageView.setPadding(0, 16, 0, 16);
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    500
-            );
-            imageView.setLayoutParams(layoutParams);
-
-            for (int i = 0; i < formContainer.getChildCount(); i++) {
-                View child = formContainer.getChildAt(i);
-                if (child instanceof LinearLayout) {
-                    LinearLayout layout = (LinearLayout) child;
-
-                    if (layout.getChildCount() > 1) {
-                        View field = layout.getChildAt(1);
-                        if (field.getTag() != null && field.getTag().equals("name")) {
-                            int insertPosition = formContainer.indexOfChild(layout) + 1;
-                            formContainer.addView(imageView, insertPosition);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private final ActivityResultLauncher<Intent> filePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -277,10 +194,6 @@ public class Pdfbox extends AppCompatActivity {
             currentJsonData = formattedJson;
 
             displayEditableForm(formattedJson);
-
-            // Extract the image from Page 1, specific coordinates
-            Rect cropRect = new Rect(296, 300, 553, 643); // Adjust to match your coordinates
-            extractImageFromPdf(filePath, 1, cropRect);
 
             Toast.makeText(this, "PDF Processed Successfully!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -592,7 +505,8 @@ public class Pdfbox extends AppCompatActivity {
                             if (tag.equals("name") && field instanceof TextView) {
                                 String value = ((TextView) field).getText().toString();
                                 updatedJson.put(tag, value);
-                            } else if (tag.equals("email") && field instanceof EditText) {
+                            }
+                            else if (tag.equals("email") && field instanceof EditText) {
                                 String value = ((EditText) field).getText().toString();
                                 updatedJson.put(tag, value);
                             }
@@ -606,12 +520,14 @@ public class Pdfbox extends AppCompatActivity {
                             String value = editText.getText().toString();
                             updatedJson.put(key, value);
                         }
-                    } else if (fieldLayout.getChildCount() > 0 && fieldLayout.getChildAt(0) instanceof CheckBox) {
+                    }
+                    else if (fieldLayout.getChildCount() > 0 && fieldLayout.getChildAt(0) instanceof CheckBox) {
                         CheckBox checkBox = (CheckBox) fieldLayout.getChildAt(0);
                         String key = (String) checkBox.getTag();
                         boolean value = checkBox.isChecked();
                         updatedJson.put(key, value);
-                    } else if (fieldLayout.getChildCount() > 1 && fieldLayout.getChildAt(1) instanceof Spinner) {
+                    }
+                    else if (fieldLayout.getChildCount() > 1 && fieldLayout.getChildAt(1) instanceof Spinner) {
                         Spinner spinner = (Spinner) fieldLayout.getChildAt(1);
                         String key = (String) spinner.getTag();
                         String value = spinner.getSelectedItem().toString();
@@ -631,11 +547,13 @@ public class Pdfbox extends AppCompatActivity {
                 if (key.startsWith("work_exp_")) {
                     String expKey = key.replace("work_exp_", "");
                     workingExperience.put(expKey, updatedJson.getBoolean(key));
-                } else if (key.startsWith("overseas_")) {
+                }
+                else if (key.startsWith("overseas_")) {
                     String expKey = key.replace("overseas_", "");
                     String value = updatedJson.getString(key);
                     overseasExperience.put(expKey, value.isEmpty() ? JSONObject.NULL : value);
-                } else if (key.startsWith("lang_")) {
+                }
+                else if (key.startsWith("lang_")) {
                     String langKey = key.replace("lang_", "");
                     languageSkills.put(langKey, updatedJson.getString(key));
                 }
@@ -647,43 +565,13 @@ public class Pdfbox extends AppCompatActivity {
 
             currentJsonData = updatedJson;
 
-            // Upload image to Firestore
-            if (extractedImageBitmap != null) {
-                uploadImageToFirestore(updatedJson);
-            } else {
-                saveToFirestore(updatedJson);
-            }
+            saveToFirestore(updatedJson);
             clearFormData();
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error saving changes", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void uploadImageToFirestore(JSONObject jsonObject) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        extractedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] imageData = baos.toByteArray();
-
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        String imageFileName = "images/" + System.currentTimeMillis() + ".png";
-        StorageReference imageRef = storageRef.child(imageFileName);
-
-        UploadTask uploadTask = imageRef.putBytes(imageData);
-        uploadTask.addOnSuccessListener(taskSnapshot -> {
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                try {
-                    jsonObject.put("image_url", uri.toString());
-                    saveToFirestore(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, "Error saving image URL", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }).addOnFailureListener(e -> {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void clearFormData() {
@@ -730,6 +618,7 @@ public class Pdfbox extends AppCompatActivity {
         Iterator<String> keys = jsonObject.keys();
 
         while (keys.hasNext()) {
+
             String key = keys.next();
             Object value = jsonObject.get(key);
 
