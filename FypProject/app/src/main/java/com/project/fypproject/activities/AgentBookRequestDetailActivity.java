@@ -89,7 +89,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
 //        requestID = intent.getStringExtra("requestID");
         requestID = "DWOEUbcanW7HFwSO5zL4";
 //        requestState = intent.getStringExtra("requestState");
-        requestState = "Final Time Confirmed";
+        requestState = "Action Required";
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 

@@ -96,7 +96,7 @@ public class EmployerHomeFragment extends Fragment {
         llJobPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeActivity(EmployerBookRequestDetailActivity.class);
+                changeActivity(AgentBookRequestDetailActivity.class);
             }
         });
 
