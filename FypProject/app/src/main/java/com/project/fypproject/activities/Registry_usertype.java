@@ -37,7 +37,7 @@ public class Registry_usertype extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), Register.class);
 
                 Bundle b = new Bundle();
-                b.putString("userType", "DomesticHelper"); //userType 1 = looking For an Emp
+                b.putString("userType", "DomesticHelper");
                 intent.putExtras(b);
 
                 startActivity(intent);

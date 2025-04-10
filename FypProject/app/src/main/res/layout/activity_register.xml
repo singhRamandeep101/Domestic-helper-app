@@ -101,6 +101,30 @@
             android:textColor="@color/primary_text"
             android:textSize="16sp"/>
 
+        <LinearLayout
+            android:id="@+id/llAgentOperator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16sp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <Switch
+                android:id="@+id/switchDH"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Right to Create Domectic Helper Account"
+                android:textSize="16sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+            <Switch
+                android:id="@+id/switchAgent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Right to Create New Agent Account"
+                android:textSize="16sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </LinearLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

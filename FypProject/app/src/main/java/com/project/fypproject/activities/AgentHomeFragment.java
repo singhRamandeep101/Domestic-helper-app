@@ -3,19 +3,31 @@ package com.project.fypproject.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
     LinearLayout llAdd_dh, llJobList, llPublicholiday,llChatRoom,llAddAgent;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,11 +35,15 @@ public class AgentHomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
         llJobList = view.findViewById(R.id.btn_Find);
         llPublicholiday = view.findViewById(R.id.btn_meeting);
         llChatRoom = view.findViewById(R.id.btn_JobPost);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
+
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,11 +57,6 @@ public class AgentHomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChatMainActivity.class);
-
-                Bundle b = new Bundle();
-                b.putString("userType", "Agent"); //userType 1 = looking For an Emp
-                intent.putExtras(b);
-
                 startActivity(intent);
             }
         });
@@ -53,17 +64,59 @@ public class AgentHomeFragment extends Fragment {
         llAddAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(getActivity(), Register.class);
-                startActivity(intent);
+                DocumentReference docRef = db.collection("users").document(user.getEmail());
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Boolean isAllowCreateAgent = document.getBoolean("allowCreateAgent");
+                                if(isAllowCreateAgent){
+                                    Intent intent = new Intent(getActivity(), Register.class);
+                                    Bundle b = new Bundle();
+                                    b.putString("userType", "Agent");
+                                    intent.putExtras(b);
+                                    startActivity(intent);
+                                }else{
+                                    Toast.makeText(getContext(), "You have no right to create a new Agent account", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Log.d("Dennis", "No such document");
+                            }
+                        } else {
+                            Log.d("Dennis", "get failed with ", task.getException());
+                        }
+                    }
+                });
             }
         });
 
         llAdd_dh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Pdfbox.class);
-                startActivity(intent);
+                DocumentReference docRef = db.collection("users").document(user.getEmail());
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Boolean isAllowCreateDH = document.getBoolean("allowCreateDH");
+                                if(isAllowCreateDH){
+                                    Intent intent = new Intent(getActivity(), Pdfbox.class);
+                                    startActivity(intent);
+                                }else{
+                                    Toast.makeText(getContext(), "You have no right to create a new Domestic Helper resume", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Log.d("Dennis", "No such document");
+                            }
+                        } else {
+                            Log.d("Dennis", "get failed with ", task.getException());
+                        }
+                    }
+                });
             }
         });
 
