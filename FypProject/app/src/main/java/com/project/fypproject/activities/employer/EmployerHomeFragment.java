@@ -127,7 +127,7 @@ public class EmployerHomeFragment extends Fragment {
                             newLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(getActivity(), SalaryRecordSelectorActivity.class);
+                                    Intent intent = new Intent(getActivity(), HiringStatusActivity.class);
                                     Bundle b = new Bundle();
                                     b.putString("employeeEmail", MyDomesticHelper);
                                     b.putString("employerEmail", user.getEmail());

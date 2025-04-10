@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.AgentHomeFragment;
+import com.project.fypproject.activities.ChatMainActivity;
 import com.project.fypproject.activities.DhHomeFragment;
 import com.project.fypproject.activities.Login;
 
@@ -40,18 +42,23 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
     private DrawerLayout drawerLayout;
     FirebaseAuth auth;
     FirebaseUser user;
+
+    Toolbar toolbar;
     String userType = "";
 
     public void SelectUserTypeHomeFragment(String userType){
         switch (userType){
             case "Employer":
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
+                toolbar.setBackgroundColor(getResources().getColor(R.color.surface_tint));
                 break;
             case "Agent":
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new AgentHomeFragment()).commit();
+                toolbar.setBackgroundColor(getResources().getColor(R.color.agent));
                 break;
             case "DomesticHelper":
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new DhHomeFragment()).commit();
+                toolbar.setBackgroundColor(getResources().getColor(R.color.teal_700));
                 break;
             default:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new EmployerHomeFragment()).commit();
@@ -111,52 +118,17 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-    String reselt = "";
-    public String getUserInfo(String field){
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("users").document(user.getEmail());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        reselt = document.getString("domesticHelper");
-                    }
-                }
-            }
-        });
-        Log.d("Dennis", "The reselt is " + reselt);
-        return reselt;
-    }
-
-    public String getOtherUserInfo(String userGmail, String field){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("users").document(userGmail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        reselt = document.getString(field);
-                    }
-                }
-            }
-        });
-        return reselt;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_employer_main);
 
-        Toolbar toolbar = findViewById(R.id.toolBar);
+        toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(null);
+        }
 
         drawerLayout = findViewById(R.id.drawableLayout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -210,7 +182,23 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_chat) {
+            Intent intent = new Intent(this, ChatMainActivity.class);
+            startActivity(intent);
+            //Changing animation
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onBackPressed(){

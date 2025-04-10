@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class Register extends AppCompatActivity {
 
@@ -199,10 +200,17 @@ public class Register extends AppCompatActivity {
 
                                     db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(data);
 
-                                    //Go Back to the login page.
-                                    Intent intent = new Intent(getApplicationContext(), Login.class);
-                                    startActivity(intent);
-                                    finish();
+                                    if(!Objects.equals(Type, "Agent")){
+                                        //Go Back to the login page.
+                                        Intent intent = new Intent(getApplicationContext(), Login.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                                        finish();
+                                    }else {
+                                        Toast.makeText(Register.this, "A new agent account created successfully", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+
 
                                 } else {
                                     // If sign in fails, display a message to the user.

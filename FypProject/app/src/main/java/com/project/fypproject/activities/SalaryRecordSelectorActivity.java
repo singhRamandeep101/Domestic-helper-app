@@ -203,7 +203,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
                     imageView.setImageResource(R.drawable.baseline_done_24);
                     break;
                 default:
-                        imageView.setImageResource(R.drawable.icon_add_circle); // 默認圖標
+                        imageView.setImageResource(R.drawable.icon_add_circle); // 默認icon
                     break;
             }
         }

@@ -12,6 +12,7 @@
     <color name="icon_background">#20FFFFFF</color>
     <color name="green">#00DE43</color>
     <color name="error">#B00020</color>
+    <color name="agent">#909000</color>
     <color name="received_message_background">#090D16</color>
 
 

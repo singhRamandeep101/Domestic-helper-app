@@ -15,7 +15,7 @@ import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh, llJobList, llPublicholiday,llChatRoom,llBooking;
+    LinearLayout llAdd_dh, llJobList, llPublicholiday,llChatRoom,llAddAgent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,7 +27,7 @@ public class AgentHomeFragment extends Fragment {
         llJobList = view.findViewById(R.id.btn_Find);
         llPublicholiday = view.findViewById(R.id.btn_meeting);
         llChatRoom = view.findViewById(R.id.btn_JobPost);
-        llBooking = view.findViewById(R.id.btn_add_agent);
+        llAddAgent = view.findViewById(R.id.btn_add_agent);
 
         llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,14 +41,20 @@ public class AgentHomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChatMainActivity.class);
+
+                Bundle b = new Bundle();
+                b.putString("userType", "Agent"); //userType 1 = looking For an Emp
+                intent.putExtras(b);
+
                 startActivity(intent);
             }
         });
 
-        llBooking.setOnClickListener(new View.OnClickListener() {
+        llAddAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), BookRecordActivity.class);
+
+                Intent intent = new Intent(getActivity(), Register.class);
                 startActivity(intent);
             }
         });
