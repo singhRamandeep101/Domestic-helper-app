@@ -33,7 +33,7 @@
             android:name=".activities.TranslatorBookRequestDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.EmployeeRequestDetailActivity"
+            android:name=".activities.EmployeeBookRequestDetailActivity"
             android:exported="false" />
         <activity
             android:name=".activities.EmployerBookRequestDetailActivity"
