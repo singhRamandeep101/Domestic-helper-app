@@ -113,7 +113,7 @@
             android:id="@+id/ConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:layout_marginTop="16sp"
+            android:layout_marginVertical="16sp"
             android:hint="@string/confirm_password"
             android:background="@drawable/background_input"
             android:imeOptions="actionNext"
@@ -128,7 +128,6 @@
             android:id="@+id/llAgentOperator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16sp"
             android:orientation="vertical"
             android:visibility="gone">
 

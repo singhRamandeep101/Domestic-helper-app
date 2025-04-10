@@ -1,5 +1,9 @@
 package com.project.fypproject.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,128 +37,97 @@ import java.util.Objects;
 
 public class Register extends AppCompatActivity {
 
-    public static class newUser{
 
-        public newUser(String userType, String firstName, String lastName, String email, String availability, String telephone) {
+    // <editor-fold desc="Declare The Classes of User Type">
+    public static class User {
+        private String userType;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String telephone;
+
+        // Constructor
+        public User(String userType, String firstName, String lastName, String email, String telephone) {
             this.userType = userType;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
-            this.availability = availability;
             this.telephone = telephone;
         }
 
+        // Getters and Setters
         public String getUserType() {
             return userType;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public String getAvailability() {
-            return availability;
-        }
-        public String getTelephone() {
-            return telephone;
         }
 
         public void setUserType(String userType) {
             this.userType = userType;
         }
 
+        public String getFirstName() {
+            return firstName;
+        }
+
         public void setFirstName(String firstName) {
             this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
         }
 
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
 
+        public String getEmail() {
+            return email;
+        }
+
         public void setEmail(String email) {
             this.email = email;
+        }
+
+        public String getTelephone() {
+            return telephone;
+        }
+
+        public void setTelephone(String telephone) {
+            this.telephone = telephone;
+        }
+    }
+
+    public static class newUser extends User {
+        private String availability;
+
+        // Constructor
+        public newUser(String userType, String firstName, String lastName, String email, String availability, String telephone) {
+            super(userType, firstName, lastName, email, telephone);
+            this.availability = availability;
+        }
+
+        // Getter and Setter for availability
+        public String getAvailability() {
+            return availability;
         }
 
         public void setAvailability(String availability) {
             this.availability = availability;
         }
-        public void setTelephone(String telephone) {
-            this.telephone = telephone;
-        }
-        private String userType;
-
-        private String firstName;
-
-        private String lastName;
-        private String email;
-        private String availability;
-        private String telephone;
     }
-    public static class newAgent{
 
-        public newAgent(String firstName, String lastName, String email, String telephone, boolean isAllowCreateDH, boolean isAllowCreateAgent) {
-            this.userType = userType;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.telephone = telephone;
+    public static class newAgent extends User {
+        private Boolean isAllowCreateDH;
+        private Boolean isAllowCreateAgent;
+
+        // Constructor
+        public newAgent(String firstName, String lastName, String email, String telephone, Boolean isAllowCreateDH, Boolean isAllowCreateAgent) {
+            super("Agent", firstName, lastName, email, telephone);
             this.isAllowCreateDH = isAllowCreateDH;
             this.isAllowCreateAgent = isAllowCreateAgent;
         }
 
-        public String getUserType() {
-            return userType;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-        public String getTelephone() {
-            return telephone;
-        }
-
-        public void setUserType(String userType) {
-            this.userType = userType;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-        public void setTelephone(String telephone) {
-            this.telephone = telephone;
-        }
-        private String userType = "Agent";
-
-        private String firstName;
-
-        private String lastName;
-        private String email;
-        private String telephone;
-
+        // Getters and Setters for Agent-specific properties
         public Boolean getAllowCreateDH() {
             return isAllowCreateDH;
         }
@@ -170,10 +143,15 @@ public class Register extends AppCompatActivity {
         public void setAllowCreateAgent(Boolean allowCreateAgent) {
             isAllowCreateAgent = allowCreateAgent;
         }
-
-        private Boolean isAllowCreateDH;
-        private Boolean isAllowCreateAgent;
     }
+
+    public static class Translator extends User {
+        // Constructor
+        public Translator(String firstName, String lastName, String email, String telephone) {
+            super("Translator", firstName, lastName, email, telephone);
+        }
+    }
+    // </editor-fold>
 
     EditText editTextEmail, editTextPassword,editTextConfirmPassword ,editTextFirstName, editTextLastName;
     Button buttonReg;
@@ -199,7 +177,7 @@ public class Register extends AppCompatActivity {
         }
 
         RadioGroup radioGroup = findViewById(R.id.rgUserType);
-        LinearLayout llAgentOperator = findViewById(R.id.llAgentOperator);
+        llAgentOperator = findViewById(R.id.llAgentOperator);
 
         // 顯示 RadioGroup，LinearLayout 預設隱藏
         radioGroup.setVisibility(View.VISIBLE);
@@ -210,9 +188,53 @@ public class Register extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rbtnAgent) {
+                    // 設定動畫顯示 LinearLayout，改變透明度同高度
+                    ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(llAgentOperator, "alpha", 0f, 1f);
+                    alphaAnimator.setDuration(300);
+
+                    ValueAnimator heightAnimator = ValueAnimator.ofInt(0, (int) getResources().getDimension(R.dimen.agent_operator_height)); // 自定義高度
+                    heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int value = (int) animation.getAnimatedValue();
+                            llAgentOperator.getLayoutParams().height = value;
+                            llAgentOperator.requestLayout();
+                        }
+                    });
+                    heightAnimator.setDuration(300);
+
+                    // 啟動動畫
+                    alphaAnimator.start();
+                    heightAnimator.start();
+
                     llAgentOperator.setVisibility(View.VISIBLE);
                 } else {
-                    llAgentOperator.setVisibility(View.GONE);
+                    // 設定動畫隱藏 LinearLayout，改變透明度同高度
+                    ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(llAgentOperator, "alpha", 1f, 0f);
+                    alphaAnimator.setDuration(300);
+
+                    ValueAnimator heightAnimator = ValueAnimator.ofInt((int) getResources().getDimension(R.dimen.agent_operator_height), 0);
+                    heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int value = (int) animation.getAnimatedValue();
+                            llAgentOperator.getLayoutParams().height = value;
+                            llAgentOperator.requestLayout();
+                        }
+                    });
+                    heightAnimator.setDuration(300);
+
+                    // 當動畫完成後隱藏 LinearLayout
+                    heightAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            llAgentOperator.setVisibility(View.GONE);
+                        }
+                    });
+
+                    alphaAnimator.start();
+                    heightAnimator.start();
                 }
             }
         });
@@ -317,7 +339,7 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
-                if(Objects.equals(Type, "Agent")) {
+                if (((RadioGroup) findViewById(R.id.rgUserType)).getCheckedRadioButtonId() == R.id.rbtnAgent) {
                     isAllowCreateDH = switchDH.isChecked();
                     isAllowCreateAgent = switchAgent.isChecked();
                 }
