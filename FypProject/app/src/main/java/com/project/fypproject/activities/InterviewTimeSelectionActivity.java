@@ -300,7 +300,10 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
         data.put("employeeEmail", employeeEmail);
         data.put("employerSelectedTime", selectedTime);
         data.put("employerState", "Pending Confirmation");
-        data.put("internalState", "Awaiting Action");
+        data.put("agentState", "Awaiting Helper and Translator Confirmation");
+        data.put("employeeState", "Action Required");
+        data.put("translatorState", "Action Required");
+
         data.put("postTime", dateTimeFormat.format(Calendar.getInstance().getTime()));
 
         db.collection("users").whereEqualTo("userType", "Agent").get()

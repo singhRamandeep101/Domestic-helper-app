@@ -1,5 +1,6 @@
 package com.project.fypproject.activities;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,27 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
         holder.tvHelperName.setText(request.get("helperName"));
         holder.tvUserName.setText(request.get("userName"));
         holder.userStatus.setText(request.get("userStatus"));
+
+        switch (request.get("userStatus")) {
+            case "Action Required":
+                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+                break;
+            case "Confirmed":
+                holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+                break;
+            case "Rejected":
+                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+                break;
+            case "Awaiting Action":
+                holder.userStatus.setTextColor(Color.parseColor("#FF9800"));
+                break;
+            case "Completed":
+                holder.userStatus.setTextColor(Color.parseColor("#2196F3"));
+                break;
+            default:
+                holder.userStatus.setTextColor(Color.parseColor("#9E9E9E"));
+                break;
+        }
     }
 
     @Override

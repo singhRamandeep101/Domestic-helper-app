@@ -106,10 +106,14 @@ public class BookingRequestActivity extends AppCompatActivity {
                                 final String employerEmail = document.getString("employerEmail");
                                 final String userStatus;
 
-                                if("Employer".equals(userType)){
-                                    userStatus = document.getString("employerState");
+                                if("Agent".equals(userType)){
+                                    userStatus = document.getString("agentState");
+                                }else if("Translator".equals(userType)){
+                                    userStatus= document.getString("translatorState");
+                                }else if("DomesticHelper".equals(userType)){
+                                    userStatus= document.getString("employeeState");
                                 }else{
-                                    userStatus= document.getString("internalState");
+                                    userStatus= document.getString("employerState");
                                 }
 
                                 getName(employeeEmail, employerEmail, userStatus);
