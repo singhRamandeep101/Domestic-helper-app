@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,7 +98,6 @@ public class Register extends AppCompatActivity {
         private String availability;
         private String telephone;
     }
-
     public static class newAgent{
 
         public newAgent(String firstName, String lastName, String email, String telephone, boolean isAllowCreateDH, boolean isAllowCreateAgent) {
@@ -173,13 +174,13 @@ public class Register extends AppCompatActivity {
         private Boolean isAllowCreateDH;
         private Boolean isAllowCreateAgent;
     }
+
     EditText editTextEmail, editTextPassword,editTextConfirmPassword ,editTextFirstName, editTextLastName;
     Button buttonReg;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textView;
     LinearLayout llAgentOperator;
-
     Boolean isAllowCreateDH, isAllowCreateAgent;
     Switch switchDH, switchAgent;
     String Type = "hello";
@@ -189,6 +190,32 @@ public class Register extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
+    }
+
+    private void setupAgentUI(String userType) {
+        if (!"Agent".equals(userType)) {
+            // 唔係 Agent 就唔做野，UI 隱藏
+            return;
+        }
+
+        RadioGroup radioGroup = findViewById(R.id.rgUserType);
+        LinearLayout llAgentOperator = findViewById(R.id.llAgentOperator);
+
+        // 顯示 RadioGroup，LinearLayout 預設隱藏
+        radioGroup.setVisibility(View.VISIBLE);
+        llAgentOperator.setVisibility(View.GONE);
+
+        // 加入監聽器
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rbtnAgent) {
+                    llAgentOperator.setVisibility(View.VISIBLE);
+                } else {
+                    llAgentOperator.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -207,6 +234,18 @@ public class Register extends AppCompatActivity {
             return insets;
         });
 
+        editTextFirstName = findViewById(R.id.FirstName);
+        editTextLastName = findViewById(R.id.LastName);
+        editTextEmail = findViewById(R.id.email);
+        editTextPassword = findViewById(R.id.password);
+        editTextConfirmPassword = findViewById(R.id.ConfirmPassword);
+
+        buttonReg = findViewById(R.id.btn_register);
+        mAuth = FirebaseAuth.getInstance();
+        textView = findViewById(R.id.loginNow);
+
+        //喺上一個Advice撈返個User take返嚟
+        // <editor-fold desc="Get User Type">
         Bundle b = getIntent().getExtras();
 
         if(b != null){
@@ -220,16 +259,9 @@ public class Register extends AppCompatActivity {
             switchDH = findViewById(R.id.switchDH);
             switchAgent = findViewById(R.id.switchAgent);
         }
+        // </editor-fold>
 
-        editTextFirstName = findViewById(R.id.FirstName);
-        editTextLastName = findViewById(R.id.LastName);
-        editTextEmail = findViewById(R.id.email);
-        editTextPassword = findViewById(R.id.password);
-        editTextConfirmPassword = findViewById(R.id.ConfirmPassword);
-
-        buttonReg = findViewById(R.id.btn_register);
-        mAuth = FirebaseAuth.getInstance();
-        textView = findViewById(R.id.loginNow);
+        setupAgentUI(Type);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 

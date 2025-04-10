@@ -33,6 +33,7 @@ import com.project.fypproject.activities.AgentHomeFragment;
 import com.project.fypproject.activities.ChatMainActivity;
 import com.project.fypproject.activities.DhHomeFragment;
 import com.project.fypproject.activities.Login;
+import com.project.fypproject.activities.TranslatorHomeFragment;
 
 public class EmployerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -58,6 +59,10 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case "DomesticHelper":
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new DhHomeFragment()).commit();
+                toolbar.setBackgroundColor(getResources().getColor(R.color.teal_700));
+                break;
+            case "Translator":
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new TranslatorHomeFragment()).commit();
                 toolbar.setBackgroundColor(getResources().getColor(R.color.teal_700));
                 break;
             default:

@@ -26,16 +26,39 @@
             android:textSize="30sp"
             android:textStyle="bold"/>
 
+        <RadioGroup
+            android:id="@+id/rgUserType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <RadioButton
+                android:id="@+id/rbtnAgent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Agent" />
+
+            <RadioButton
+                android:id="@+id/rbtnTranslator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Translator" />
+        </RadioGroup>
+
         <EditText
             android:id="@+id/FirstName"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:layout_marginTop="40sp"
             android:hint="@string/first_name"
             android:background="@drawable/background_input"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
             android:inputType="text"
+            android:layout_marginTop="10sp"
             android:paddingStart="16sp"
             android:paddingEnd="16sp"
             android:textColor="@color/primary_text"
