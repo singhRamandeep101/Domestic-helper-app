@@ -13,19 +13,18 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/userIcon"
+        <ImageView
+            android:id="@+id/stateIcon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/icon_domestic_helper"
-            app:shapeAppearanceOverlay="@style/roundedImageView"/>
+            android:src="@drawable/ic_pending"/>
 
         <!-- User Name -->
         <TextView
             android:id="@+id/tvHelperName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/userIcon"
+            android:layout_toEndOf="@id/stateIcon"
             android:layout_marginStart="16dp"
             android:text="Booking Request"
             android:textSize="16sp"
@@ -37,7 +36,7 @@
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/userIcon"
+            android:layout_toEndOf="@id/stateIcon"
             android:layout_below="@id/tvHelperName"
             android:layout_marginStart="16dp"
             android:text="PName"
@@ -50,11 +49,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_marginTop="40dp"
             android:text="Pending Confirmation"
             android:textSize="14sp"
             android:textColor="#6B7280"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnGo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="Pending Confirmation"
+            android:src="@drawable/ic_arrow_circle_right" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
