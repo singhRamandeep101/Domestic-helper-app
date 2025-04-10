@@ -301,7 +301,7 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
         data.put("employeeEmail", employeeEmail);
         data.put("employerSelectedTime", selectedTime);
         data.put("employerState", "Pending Confirmation");
-        data.put("agentState", "Awaiting Helper and Translator Confirmation");
+        data.put("agentState", "Awaiting Both");
         data.put("employeeState", "Action Required");
         data.put("translatorState", "Action Required");
 
