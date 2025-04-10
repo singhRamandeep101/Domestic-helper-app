@@ -92,6 +92,23 @@
                 android:padding="8dp">
 
                 <TextView
+                    android:id="@+id/tvAgentName"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Agent Name: abc@gmail.com"
+                    android:textSize="16sp"
+                    android:textColor="#555555" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp">
+
+                <TextView
                     android:id="@+id/tvEmployerName"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -184,6 +201,30 @@
 
         </LinearLayout>
 
+        <!-- Employer Selected Time -->
+        <LinearLayout
+            android:id="@+id/layoutConfirmedTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Confirmed Schedule"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="#333333"
+                android:paddingBottom="12dp" />
+
+        </LinearLayout>
+
         <!-- Helper Selected Time -->
         <LinearLayout
             android:id="@+id/layoutHelperSelectedTime"
@@ -260,13 +301,11 @@
                 android:gravity="center"
                 android:textColor="#333333"
                 android:paddingBottom="12dp" />
-
-
         </LinearLayout>
 
         <!-- Confirmed Times -->
         <LinearLayout
-            android:id="@+id/layoutConfirmedTime"
+            android:id="@+id/layoutConfirmTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -275,54 +314,12 @@
             android:elevation="4dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Confirmed Times"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:textColor="#333333"
-                android:paddingBottom="12dp" />
-
-            <!-- Date 1 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="15 Apr, 2025 (Tue)"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:paddingBottom="8dp" />
-
-            <!-- Time Slot 1 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="09:00 - 10:00"
-                    android:textSize="16sp"
-                    android:textColor="#555555" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/btn_minus"
-                    android:contentDescription="No" />
-            </LinearLayout>
-
         </LinearLayout>
         <Button
-            android:id="@+id/btnSendReject"
+            android:id="@+id/btnSendDecline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reject"
+            android:text="Send Declined"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_500"
             android:textStyle="bold"
@@ -331,10 +328,22 @@
             android:visibility="gone"/>
 
         <Button
-            android:id="@+id/btnSendConfirm"
+            android:id="@+id/btnBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send Final"
+            android:text="Book Time"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_500"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btnCheckBook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Check Book"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_500"
             android:textStyle="bold"

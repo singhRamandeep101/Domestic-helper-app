@@ -20,6 +20,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,18 +37,21 @@ import java.util.Map;
 
 public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
-    private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName, tvNoMatchTime;
+    private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName, tvNoMatchTime,tvAgentName;
     private ImageButton chatEmployer, chatHelper, chatTranslator;
 
     private String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
     private String currentUserEmail;
-    private LinearLayout layoutEmployerSelectedTime, layoutHelperSelectedTime, layoutTranslatorSelectedTime, layoutMatchingTime, layoutConfirmedTime;
+    LinearLayout layoutEmployerSelectedTime, layoutHelperSelectedTime, layoutTranslatorSelectedTime, layoutMatchingTime, layoutConfirmedTime,layoutConfirmTime;
 
     private FirebaseFirestore db;
     private Map<String, List<String>> matchingTimes = new HashMap<>();
     private Map<String, List<String>> confirmedTimes = new HashMap<>();
 
-    Button btnSendReject;
+    Button btnSendDecline,btnBook,btnCheckBook;
+
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,8 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
         // 初始化 Firestore
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
         // 綁定視圖
         tvRequestID = findViewById(R.id.tvRequestID);
@@ -68,16 +76,20 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         layoutHelperSelectedTime = findViewById(R.id.layoutHelperSelectedTime);
         layoutTranslatorSelectedTime = findViewById(R.id.layoutTranslatorSelectedTime);
         layoutMatchingTime = findViewById(R.id.layoutMatchingTime);
+        layoutConfirmTime = findViewById(R.id.layoutConfirmTime);
         layoutConfirmedTime = findViewById(R.id.layoutConfirmedTime);
         tvNoMatchTime = findViewById(R.id.tvNoMatchTime);
-        btnSendReject = findViewById(R.id.btnSendReject);
+        btnSendDecline = findViewById(R.id.btnSendDecline);
+        btnBook = findViewById(R.id.btnBook);
+        btnCheckBook = findViewById(R.id.btnCheckBook);
+        tvAgentName = findViewById(R.id.tvAgentName);
 
         // 從上一個 Activity 獲取數據
         Intent intent = getIntent();
 //        requestID = intent.getStringExtra("requestID");
         requestID = "DWOEUbcanW7HFwSO5zL4";
 //        requestState = intent.getStringExtra("requestState");
-        requestState = "Action Required";
+        requestState = "Final Time Confirmed";
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 
@@ -112,30 +124,149 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             }
         });
 
+        btnCheckBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AgentBookRequestDetailActivity.this, BookRecordActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        btnSendDecline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 更新 Firestore 中的状态
+                db.collection("interview_request")
+                        .document(requestID) // 使用当前的 requestID 定位文档
+                        .update(
+                                "agentState", "Declined",
+                                "employerState", "Declined",
+                                "translatorState", "Declined",
+                                "employeeState", "Declined"
+                        )
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(AgentBookRequestDetailActivity.this, "The Decline Request Has Been Sent Successfully.", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(AgentBookRequestDetailActivity.this, BookingRequestActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(AgentBookRequestDetailActivity.this, "Failed to Declined request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e("Firestore", "Error updating states", e);
+                            }
+                        });
+            }
+        });
+
+        btnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 确保 confirmedTimes 只有一个日期
+                if (confirmedTimes.size() == 1) {
+                    // 获取唯一的日期和时间段
+                    String confirmedDate = confirmedTimes.keySet().iterator().next(); // 获取日期
+                    List<String> timeSlots = confirmedTimes.get(confirmedDate); // 获取时间段列表
+
+                    if (timeSlots != null && timeSlots.size() == 1) {
+                        String confirmedTimeSlot = timeSlots.get(0); // 获取唯一的时间段
+
+                        // 构造 Firestore 的 confirmedTime 数据
+                        Map<String, Object> confirmedTimeMap = new HashMap<>();
+                        Map<String, Boolean> timeSlotMap = new HashMap<>();
+                        timeSlotMap.put(confirmedTimeSlot, true);
+                        confirmedTimeMap.put(confirmedDate, timeSlotMap);
+
+                        // 更新 interview_request 集合中的状态和 confirmedTime
+                        db.collection("interview_request")
+                                .document(requestID) // 使用当前的 requestID 定位文档
+                                .update(
+                                        "agentState", "Final Time Confirmed",
+                                        "employerState", "Final Time Confirmed",
+                                        "translatorState", "Final Time Confirmed",
+                                        "employeeState", "Final Time Confirmed",
+                                        "confirmedTime", confirmedTimeMap // 添加 confirmedTime 数据
+                                )
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        // 构造 booking 集合的数据
+                                        Map<String, Object> bookingData = new HashMap<>();
+                                        bookingData.put("timeSlot", confirmedTimeSlot);
+                                        bookingData.put("agentEmail", user.getEmail()); // 当前用户的 email
+                                        bookingData.put("employeeEmail", employeeEmail);
+                                        bookingData.put("employerEmail", employerEmail);
+                                        bookingData.put("translatorEmail", translatorEmail);
+                                        bookingData.put("date", confirmedDate);
+                                        bookingData.put("state", "Waiting for interview");
+
+                                        // 添加到 booking 集合
+                                        db.collection("booking")
+                                                .add(bookingData)
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentReference documentReference) {
+                                                        Log.d("Firestore", "Booking added with ID: " + documentReference.getId());
+                                                        // 提示成功并跳转到 BookingRequestActivity
+                                                        Toast.makeText(AgentBookRequestDetailActivity.this, "The Confirmation Request Has Been Sent Successfully.", Toast.LENGTH_SHORT).show();
+                                                        Intent intent = new Intent(AgentBookRequestDetailActivity.this, BookingRequestActivity.class);
+                                                        startActivity(intent); // Start BookingRequestActivity
+                                                        finish();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.e("Firestore", "Error adding booking: ", e);
+                                                    }
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(AgentBookRequestDetailActivity.this, "Failed to confirm request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e("Firestore", "Error updating states", e);
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(AgentBookRequestDetailActivity.this, "Error: Confirmed time is invalid or missing.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AgentBookRequestDetailActivity.this, "Error: ConfirmedTimes must contain exactly one entry.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         if ("Awaiting Both".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.VISIBLE);
             layoutHelperSelectedTime.setVisibility(View.GONE);
             layoutTranslatorSelectedTime.setVisibility(View.GONE);
             layoutMatchingTime.setVisibility(View.GONE);
-            layoutConfirmedTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
 
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
 
-        } else if ("Awaiting Translator Confirmation".equals(requestState)) {
+        } else if ("Awaiting Translator".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.VISIBLE);
             layoutHelperSelectedTime.setVisibility(View.VISIBLE);
             layoutTranslatorSelectedTime.setVisibility(View.GONE);
             layoutMatchingTime.setVisibility(View.GONE);
-            layoutConfirmedTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
             getSelectedTime(requestID, "helperSelectedTime", layoutHelperSelectedTime);
 
-        } else if ("Awaiting DomesticHelper Confirmation".equals(requestState)) {
+        } else if ("Awaiting DomesticHelper".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.VISIBLE);
             layoutTranslatorSelectedTime.setVisibility(View.VISIBLE);
             layoutHelperSelectedTime.setVisibility(View.GONE);
             layoutMatchingTime.setVisibility(View.GONE);
-            layoutConfirmedTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
             getSelectedTime(requestID, "translatorSelectedTime", layoutTranslatorSelectedTime);
 
@@ -144,17 +275,32 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             layoutHelperSelectedTime.setVisibility(View.VISIBLE);
             layoutTranslatorSelectedTime.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
-            layoutConfirmedTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
             getSelectedTime(requestID, "helperSelectedTime", layoutHelperSelectedTime);
             getSelectedTime(requestID, "translatorSelectedTime", layoutTranslatorSelectedTime);
 
             fetchAndMatchTimes();
+        }else if ("Declined".equals(requestState)) {
+            layoutEmployerSelectedTime.setVisibility(View.GONE);
+            layoutTranslatorSelectedTime.setVisibility(View.GONE);
+            layoutHelperSelectedTime.setVisibility(View.GONE);
+            layoutMatchingTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
+        }else{
+            layoutEmployerSelectedTime.setVisibility(View.GONE);
+            layoutTranslatorSelectedTime.setVisibility(View.GONE);
+            layoutHelperSelectedTime.setVisibility(View.GONE);
+            layoutMatchingTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
+            layoutConfirmedTime.setVisibility(View.VISIBLE);
+            btnCheckBook.setVisibility(View.VISIBLE);
+            getSelectedTime(requestID, "confirmedTime", layoutConfirmedTime);
         }
     }
 
     private void getInfo() {
-        // 使用 requestID 從 interview_request 集合中獲取 translatorEmail
+        // 使用 requestID 從 interview_request 集合中獲取相關信息
         db.collection("interview_request")
                 .whereEqualTo("docId", requestID)
                 .get()
@@ -166,9 +312,10 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                             translatorEmail = querySnapshot.getDocuments().get(0).getString("translatorEmail");
                             employerEmail = querySnapshot.getDocuments().get(0).getString("employerEmail");
                             employeeEmail = querySnapshot.getDocuments().get(0).getString("employeeEmail");
+                            currentUserEmail = querySnapshot.getDocuments().get(0).getString("agentEmail"); // 获取 agentEmail
 
+                            // 获取翻译员的名字
                             if (translatorEmail != null && !translatorEmail.isEmpty()) {
-                                // 使用 translatorEmail 從 users 集合中獲取翻譯員的名字
                                 db.collection("users")
                                         .whereEqualTo("email", translatorEmail)
                                         .get()
@@ -187,15 +334,38 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                             } else {
                                 Log.e("Translator", "Translator Email empty");
                             }
+
+                            // 获取代理人的名字
+                            if (currentUserEmail != null && !currentUserEmail.isEmpty()) {
+                                db.collection("users")
+                                        .whereEqualTo("email", currentUserEmail)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> agentTask) {
+                                                if (agentTask.isSuccessful() && !agentTask.getResult().isEmpty()) {
+                                                    String firstName = agentTask.getResult().getDocuments().get(0).getString("firstName");
+                                                    String lastName = agentTask.getResult().getDocuments().get(0).getString("lastName");
+                                                    // 在 UI 中显示代理人的名字
+                                                    TextView tvAgentName = findViewById(R.id.tvAgentName);
+                                                    tvAgentName.setText("Agent Name: " + lastName + " " + firstName);
+                                                } else {
+                                                    Log.e("Agent", "Agent Not Found");
+                                                }
+                                            }
+                                        });
+                            } else {
+                                Log.e("Agent", "Agent Email empty");
+                            }
                         } else {
-                            Log.e("Translator", "Translator Not Found2");
+                            Log.e("Firestore", "Request Document Not Found");
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Translator", "Error fetching translator info");
+                        Log.e("Firestore", "Error fetching request info", e);
                     }
                 });
     }
@@ -231,6 +401,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                     Intent intent = new Intent(AgentBookRequestDetailActivity.this, ChatActivity.class);
                                     ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
                                     startActivity(intent); // Start ChatActivity
+                                    finish();
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
@@ -313,24 +484,11 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                         Map<String, Object> translatorTimes = (Map<String, Object>) task.getResult().getDocuments().get(0).get("translatorSelectedTime");
 
                         matchingTimes = findMatchingTimes(employerTimes, helperTimes, translatorTimes);
-
-                        if (matchingTimes.isEmpty()) {
-                            tvNoMatchTime.setVisibility(View.VISIBLE);
-                            btnSendReject.setVisibility(View.VISIBLE);
-                            layoutMatchingTime.setVisibility(View.GONE);
-                            Log.d("NoMatchTime", "No matching times found");
-                        } else {
-                            tvNoMatchTime.setVisibility(View.GONE);
-                            btnSendReject.setVisibility(View.GONE);
-                            layoutMatchingTime.setVisibility(View.VISIBLE);
-                            Log.d("MatchTime", "Matching times found: " + matchingTimes);
-                        }
-
                         updateMatchingTimeUI();
                     } else {
                         Log.e("Firestore", "Failed to fetch selected times");
                         tvNoMatchTime.setVisibility(View.VISIBLE);
-                        btnSendReject.setVisibility(View.VISIBLE);
+                        btnSendDecline.setVisibility(View.VISIBLE);
                         layoutMatchingTime.setVisibility(View.GONE);
                     }
                 });
@@ -377,14 +535,15 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         titleTextView.setGravity(Gravity.CENTER);
         titleTextView.setPadding(0, 16, 0, 8);
         layoutMatchingTime.addView(titleTextView);
+        layoutMatchingTime.addView(tvNoMatchTime);
 
         if (matchingTimes.isEmpty()) {
             tvNoMatchTime.setVisibility(View.VISIBLE);
-            btnSendReject.setVisibility(View.VISIBLE);
+            btnSendDecline.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
         } else {
             tvNoMatchTime.setVisibility(View.GONE);
-            btnSendReject.setVisibility(View.GONE);
+            btnSendDecline.setVisibility(View.GONE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
 
             for (String date : matchingTimes.keySet()) {
@@ -455,7 +614,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
     private void updateConfirmedTimeUI() {
         // 清空布局，但保留标题
-        layoutConfirmedTime.removeAllViews();
+        layoutConfirmTime.removeAllViews();
 
         // 添加标题
         TextView titleTextView = new TextView(this);
@@ -464,12 +623,14 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         titleTextView.setTextColor(getResources().getColor(R.color.black));
         titleTextView.setTypeface(null, Typeface.BOLD);
         titleTextView.setPadding(0, 16, 0, 8);
-        layoutConfirmedTime.addView(titleTextView);
+        layoutConfirmTime.addView(titleTextView);
 
         if (confirmedTimes.isEmpty()) {
-            layoutConfirmedTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
+            btnBook.setVisibility(View.GONE);
         } else {
-            layoutConfirmedTime.setVisibility(View.VISIBLE);
+            layoutConfirmTime.setVisibility(View.VISIBLE);
+            btnBook.setVisibility(View.VISIBLE);
 
             for (String date : confirmedTimes.keySet()) {
                 // 添加日期 TextView
@@ -480,7 +641,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                 dateTextView.setPadding(0, 16, 0, 8);
                 titleTextView.setGravity(Gravity.CENTER);
                 dateTextView.setTypeface(null, Typeface.BOLD);
-                layoutConfirmedTime.addView(dateTextView);
+                layoutConfirmTime.addView(dateTextView);
                 List<String> sortedTimes = new ArrayList<>(confirmedTimes.get(date));
                 Collections.sort(sortedTimes);
 
@@ -506,7 +667,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
                     timeLayout.addView(timeTextView);
                     timeLayout.addView(noIcon);
-                    layoutConfirmedTime.addView(timeLayout);
+                    layoutConfirmTime.addView(timeLayout);
                 }
             }
         }
