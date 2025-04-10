@@ -1,8 +1,10 @@
 package com.project.fypproject.activities;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,25 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
         holder.tvHelperName.setText(request.get("helperName"));
         holder.tvUserName.setText(request.get("userName"));
         holder.userStatus.setText(request.get("userStatus"));
+
+        switch (request.get("userStatus")) {
+            case "Action Required":
+                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+                holder.stateIcon.setImageResource(R.drawable.ic_action);
+                break;
+            case "Confirmed":
+                holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+                holder.stateIcon.setImageResource(R.drawable.icon_confirm);
+                break;
+            case "Rejected":
+                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+                holder.stateIcon.setImageResource(R.drawable.ic_rej);
+                break;
+            default:
+                holder.userStatus.setTextColor(Color.parseColor("#9E9E9E"));
+                holder.stateIcon.setImageResource(R.drawable.ic_pending);
+                break;
+        }
     }
 
     @Override
@@ -44,12 +65,14 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvHelperName, tvUserName, userStatus;
+        ImageView stateIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvHelperName = itemView.findViewById(R.id.tvHelperName);
             tvUserName = itemView.findViewById(R.id.tvUserName);
             userStatus = itemView.findViewById(R.id.userStatus);
+            stateIcon = itemView.findViewById(R.id.stateIcon);
         }
     }
 }
