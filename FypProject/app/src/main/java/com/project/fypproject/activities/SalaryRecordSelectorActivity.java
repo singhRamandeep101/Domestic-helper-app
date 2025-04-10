@@ -31,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
-import com.project.fypproject.activities.employer.JobDetailActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
 import java.util.HashMap;
