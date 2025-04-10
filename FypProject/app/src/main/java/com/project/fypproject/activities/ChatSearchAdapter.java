@@ -25,7 +25,15 @@ public class ChatSearchAdapter extends FirestoreRecyclerAdapter<ChatModel,ChatSe
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatModel model) {
-        holder.tvName.setText((model.getLastName() +" "+ model.getFirstName()));
+        if(model.getUserType().equals("Agent")){
+            holder.tvName.setText(model.getLastName() + " " + model.getFirstName()+"(Agent)");
+        } else if(model.getUserType().equals("Employer")) {
+            holder.tvName.setText(model.getLastName() + " " + model.getFirstName()+"(Employer)");
+        } else if (model.getUserType().equals("DomesticHelper")) {
+            holder.tvName.setText(model.getLastName() + " " + model.getFirstName()+"(DomesticHelper)");
+        }else{
+            holder.tvName.setText(model.getLastName() + " " + model.getFirstName()+"(Translator)");
+        }
         holder.tvEmail.setText(model.getEmail());
         if(model.getEmail().equals(ChatUtil.currentUserEmail())){
             holder.tvName.setText(model.getLastName() +" "+ model.getFirstName()+" (Me)");

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.InterviewTimeSelectionActivity">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:background="@color/surface_tint"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:elevation="5dp">
+
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/baseline_arrow_back_24"/>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="Selection the time for the interview"
+        android:textColor="@color/surface_tint"
+        android:textSize="35dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/button_outlined"
+            android:textColor="@color/black"
+            android:text="Today" />
+
+        <TextView
+            android:id="@+id/selectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_toEndOf="@+id/btnToday"
+            android:gravity="center"
+            android:text="30 Mar, 2025 (Mon)"
+            android:textColor="@color/black"
+            android:textSize="25dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+        <Button
+            android:id="@+id/btnSelectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Select all"/>
+        <Button
+            android:id="@+id/btnCancelAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:text="Cancel all"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn1000TO1100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="10:00 - 11:00" />
+
+            <Button
+                android:id="@+id/btn1100TO1200"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1000TO1100"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="11:00 - 12:00" />
+
+            <Button
+                android:id="@+id/btn1200TO1300"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1100TO1200"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="12:00 - 13:00" />
+
+            <Button
+                android:id="@+id/btn1300TO1400"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1200TO1300"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="13:00 - 14:00" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/divider6"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn1400TO1500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="14:00 - 15:00" />
+
+            <Button
+                android:id="@+id/btn1500TO1600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1400TO1500"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="15:00 - 16:00" />
+
+            <Button
+                android:id="@+id/btn1600TO1700"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1500TO1600"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="16:00 - 17:00" />
+
+            <Button
+                android:id="@+id/btn1700TO1800"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn1600TO1700"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_outlined"
+                android:textColor="@color/surface_tint"
+                android:text="17:00 - 18:00" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/Confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button"
+        android:drawableLeft="@drawable/icon_date_write"
+        android:text="Invite Now!"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

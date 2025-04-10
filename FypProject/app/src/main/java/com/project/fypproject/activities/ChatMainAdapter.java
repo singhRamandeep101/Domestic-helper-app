@@ -36,11 +36,20 @@ public class ChatMainAdapter extends FirestoreRecyclerAdapter<ChatRoom,ChatMainA
                     boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(ChatUtil.currentUserEmail());
 
                     ChatModel otherUserModel = task.getResult().toObject(ChatModel.class);
-                    holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName());
-                    if (lastMessageSendByMe)
+                    if(otherUserModel.getUserType().equals("Agent")){
+                        holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName()+"(Agent)");
+                    } else if(otherUserModel.getUserType().equals("Employer")) {
+                        holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName()+"(Employer)");
+                    } else if (otherUserModel.getUserType().equals("DomesticHelper")) {
+                        holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName()+"(DomesticHelper)");
+                    }else{
+                        holder.tvName.setText(otherUserModel.getLastName() + " " + otherUserModel.getFirstName()+"(Translator)");
+                    }
+                    if (lastMessageSendByMe) {
                         holder.tvLastMessage.setText("You : " + model.getLastMessage());
-                    else
+                    }else {
                         holder.tvLastMessage.setText(model.getLastMessage());
+                    }
                     holder.tvLastMessageTime.setText(ChatUtil.timestampToString(model.getLastMessageTimestamp()));
 
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +57,6 @@ public class ChatMainAdapter extends FirestoreRecyclerAdapter<ChatRoom,ChatMainA
                         public void onClick(View view) {
                             Intent intent = new Intent(context, ChatActivity.class);
                             ChatUtil.passUserIntent(intent,otherUserModel);
-                            intent.putExtra("employeeEmail",model.getEmployeeEmail());
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }

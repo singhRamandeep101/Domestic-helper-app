@@ -78,12 +78,11 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         otherUser = ChatUtil.getUserModelIntent(getIntent());
-        String employeeEmail = getIntent().getStringExtra("employeeEmail");
-        chatroomId = ChatUtil.getChatroomId(ChatUtil.currentUserEmail(), otherUser.getEmail(),employeeEmail);
+        chatroomId = ChatUtil.getChatroomId(ChatUtil.currentUserEmail(), otherUser.getEmail());
         tvName = findViewById(R.id.tvName);
         edMessage = findViewById(R.id.inputBox);
         btnSend = findViewById(R.id.layoutSend);
-        btnBook = findViewById(R.id.layoutBook);
+//        btnBook = findViewById(R.id.layoutBook);
         btnBack = findViewById(R.id.imgBack);
         recyclerView = findViewById(R.id.rv_chat);
 
@@ -91,7 +90,7 @@ public class ChatActivity extends AppCompatActivity {
         user = auth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        changeIcon();
+//        changeIcon();
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +99,15 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        tvName.setText(otherUser.getLastName() + " " + otherUser.getFirstName());
+        if(otherUser.getUserType().equals("Agent")){
+            tvName.setText(otherUser.getLastName() + " " + otherUser.getFirstName()+"(Agent)");
+        } else if(otherUser.getUserType().equals("Employer")) {
+            tvName.setText(otherUser.getLastName() + " " + otherUser.getFirstName()+"(Employer)");
+        } else if (otherUser.getUserType().equals("DomesticHelper")) {
+            tvName.setText(otherUser.getLastName() + " " + otherUser.getFirstName()+"(DomesticHelper)");
+        }else{
+            tvName.setText(otherUser.getLastName() + " " + otherUser.getFirstName()+"(Translator)");
+        }
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,12 +119,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        btnBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkUser();
-            }
-        });
 
         getChatroom();
         setChat();
@@ -162,27 +163,14 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     void getChatroom() {
-        String employerEmail = getIntent().getStringExtra("employerEmail");
         ChatUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     chatRoom = task.getResult().toObject(ChatRoom.class);
                     if (chatRoom == null) {
-                        String employeeEmail = getIntent().getStringExtra("employeeEmail");
-                        String agentEmail = getIntent().getStringExtra("agentEmail");
-
-                        if (employeeEmail != null && !employeeEmail.isEmpty() && agentEmail != null && !agentEmail.isEmpty() && employerEmail != null && !employerEmail.isEmpty()) {
-                            chatRoom = new ChatRoom(chatroomId, Arrays.asList(ChatUtil.currentUserEmail(), otherUser.getEmail()), Timestamp.now(), "", employeeEmail, agentEmail,employerEmail);
+                            chatRoom = new ChatRoom(chatroomId, Arrays.asList(ChatUtil.currentUserEmail(), otherUser.getEmail()), Timestamp.now(), "");
                             ChatUtil.getChatroomReference(chatroomId).set(chatRoom);
-                        } else {
-                            chatRoom = new ChatRoom(chatroomId, Arrays.asList(ChatUtil.currentUserEmail(), otherUser.getEmail()), Timestamp.now(), "", null, null,null);
-                            ChatUtil.getChatroomReference(chatroomId).set(chatRoom);
-                        }
-                    }
-                    String firstMessage = getIntent().getStringExtra("message");
-                    if (firstMessage != null && !firstMessage.isEmpty()) {
-                        sendMessage(firstMessage);
                     }
                 }
             }
@@ -194,106 +182,106 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    void changeIcon() {
-        db.collection("users")
-                .whereEqualTo("email", user.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // 获取 userType
-                                String userType = document.getString("userType");
-
-                                FrameLayout layoutBook = findViewById(R.id.layoutBook);
-                                AppCompatImageView imageView = (AppCompatImageView) layoutBook.getChildAt(0);
-
-                                if ("Employer".equals(userType)) {
-                                    imageView.setImageResource(R.drawable.ic_select_date);
-                                    layoutBook.setVisibility(View.VISIBLE);
-                                } else if ("Agent".equals(userType)) {
-                                    imageView.setImageResource(R.drawable.ic_book_date);
-                                    layoutBook.setVisibility(View.VISIBLE);
-                                } else {
-                                    layoutBook.setVisibility(View.GONE);
-                                }
-
-                            }
-                        }
-                    }
-                });
-    }
-
-    void checkUser() {
-        db.collection("users")
-                .whereEqualTo("email", user.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // 获取 userType
-                                String userType = document.getString("userType");
-
-                                if ("Employer".equals(userType)) {
-                                    db.collection("chatrooms")
-                                            .document(chatroomId)
-                                            .get()
-                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful() && task.getResult().exists()) {
-                                                        String employeeEmail = task.getResult().getString("employeeEmail");
-                                                        String agentEmail = task.getResult().getString("agentEmail");
-
-                                                        if (employeeEmail != null && !employeeEmail.isEmpty() && agentEmail != null && !agentEmail.isEmpty()) {
-                                                            Intent intent = new Intent(ChatActivity.this, EmployerSelectTimeActivity.class);
-                                                            intent.putExtra("agentEmail", agentEmail);
-                                                            intent.putExtra("employeeEmail", employeeEmail);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            Log.e("checkUser", "employeeEmail is null or empty");
-                                                        }
-                                                    } else {
-                                                        Log.e("checkUser", "Chatroom not found or error occurred");
-                                                    }
-                                                }
-                                            });
-
-                                } else {
-                                    db.collection("chatrooms")
-                                            .document(chatroomId)
-                                            .get()
-                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful() && task.getResult().exists()) {
-                                                        String employeeEmail = task.getResult().getString("employeeEmail");
-                                                        String agentEmail = task.getResult().getString("agentEmail");
-                                                        String employerEmail = task.getResult().getString("employerEmail");
-
-                                                        if (employeeEmail != null && !employeeEmail.isEmpty() && agentEmail != null && !agentEmail.isEmpty() && employerEmail != null && !employerEmail.isEmpty()) {
-                                                            Intent intent = new Intent(ChatActivity.this, AgentBookTimeActivity.class);
-                                                            intent.putExtra("agentEmail", agentEmail);
-                                                            intent.putExtra("employeeEmail", employeeEmail);
-                                                            intent.putExtra("employerEmail", employerEmail);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            Log.e("checkUser", "employeeEmail is null or empty");
-                                                        }
-                                                    } else {
-                                                        Log.e("checkUser", "Chatroom not found or error occurred");
-                                                    }
-                                                }
-                                            });
-                                }
-                            }
-                        } else {
-                            Log.e("checkUser", "Error fetching user data or no user found");
-                        }
-                    }
-                });
-    }
+//    void changeIcon() {
+//        db.collection("users")
+//                .whereEqualTo("email", user.getEmail())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                // 获取 userType
+//                                String userType = document.getString("userType");
+//
+//                                FrameLayout layoutBook = findViewById(R.id.layoutBook);
+//                                AppCompatImageView imageView = (AppCompatImageView) layoutBook.getChildAt(0);
+//
+//                                if ("Employer".equals(userType)) {
+//                                    imageView.setImageResource(R.drawable.ic_select_date);
+//                                    layoutBook.setVisibility(View.VISIBLE);
+//                                } else if ("Agent".equals(userType)) {
+//                                    imageView.setImageResource(R.drawable.ic_book_date);
+//                                    layoutBook.setVisibility(View.VISIBLE);
+//                                } else {
+//                                    layoutBook.setVisibility(View.GONE);
+//                                }
+//
+//                            }
+//                        }
+//                    }
+//                });
+//    }
+//
+//    void checkUser() {
+//        db.collection("users")
+//                .whereEqualTo("email", user.getEmail())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                // 获取 userType
+//                                String userType = document.getString("userType");
+//
+//                                if ("Employer".equals(userType)) {
+//                                    db.collection("chatrooms")
+//                                            .document(chatroomId)
+//                                            .get()
+//                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                                    if (task.isSuccessful() && task.getResult().exists()) {
+//                                                        String employeeEmail = task.getResult().getString("employeeEmail");
+//                                                        String agentEmail = task.getResult().getString("agentEmail");
+//
+//                                                        if (employeeEmail != null && !employeeEmail.isEmpty() && agentEmail != null && !agentEmail.isEmpty()) {
+//                                                            Intent intent = new Intent(ChatActivity.this, EmployerSelectTimeActivity.class);
+//                                                            intent.putExtra("agentEmail", agentEmail);
+//                                                            intent.putExtra("employeeEmail", employeeEmail);
+//                                                            startActivity(intent);
+//                                                        } else {
+//                                                            Log.e("checkUser", "employeeEmail is null or empty");
+//                                                        }
+//                                                    } else {
+//                                                        Log.e("checkUser", "Chatroom not found or error occurred");
+//                                                    }
+//                                                }
+//                                            });
+//
+//                                } else {
+//                                    db.collection("chatrooms")
+//                                            .document(chatroomId)
+//                                            .get()
+//                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                                    if (task.isSuccessful() && task.getResult().exists()) {
+//                                                        String employeeEmail = task.getResult().getString("employeeEmail");
+//                                                        String agentEmail = task.getResult().getString("agentEmail");
+//                                                        String employerEmail = task.getResult().getString("employerEmail");
+//
+//                                                        if (employeeEmail != null && !employeeEmail.isEmpty() && agentEmail != null && !agentEmail.isEmpty() && employerEmail != null && !employerEmail.isEmpty()) {
+//                                                            Intent intent = new Intent(ChatActivity.this, AgentBookTimeActivity.class);
+//                                                            intent.putExtra("agentEmail", agentEmail);
+//                                                            intent.putExtra("employeeEmail", employeeEmail);
+//                                                            intent.putExtra("employerEmail", employerEmail);
+//                                                            startActivity(intent);
+//                                                        } else {
+//                                                            Log.e("checkUser", "employeeEmail is null or empty");
+//                                                        }
+//                                                    } else {
+//                                                        Log.e("checkUser", "Chatroom not found or error occurred");
+//                                                    }
+//                                                }
+//                                            });
+//                                }
+//                            }
+//                        } else {
+//                            Log.e("checkUser", "Error fetching user data or no user found");
+//                        }
+//                    }
+//                });
+//    }
 }

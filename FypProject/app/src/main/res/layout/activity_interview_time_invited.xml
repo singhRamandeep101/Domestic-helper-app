@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context=".activities.InterviewTimeInvitedActivity">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:background="@color/surface_tint"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:elevation="5dp">
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Interview invite successful."
+        android:textColor="@color/green"
+        android:textSize="40dp"
+        android:gravity="center"
+        android:layout_marginTop="150dp"
+        android:layout_marginHorizontal="20dp"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/baseline_check_24"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your online interview invatation has sent successfully. Pleace chack the appointment status of the interview."
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"/>
+
+    <Button
+        android:id="@+id/btnGoToAppointment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button"
+        android:drawableLeft="@drawable/icon_date_write"
+        android:text="Check appointment"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btnGoToJobList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button"
+        android:drawableLeft="@drawable/search_icon_white"
+        android:text="Find other helpers"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

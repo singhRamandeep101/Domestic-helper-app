@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.SalaryRecordSelectorActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:elevation="4dp"
+            android:gravity="bottom"
+            android:paddingTop="50dp"
+            android:background="@color/surface_tint">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_arrow_back_24"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hiring Status"
+                android:textColor="@color/WHITE"
+                android:textSize="30dp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="20dp"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:id="@+id/LightBodyCheck"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/status_pending"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Body Check"
+                    android:textSize="25dp"
+                    android:textColor="@color/BLACK"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="20dp"/>
+
+                <ImageView
+                    android:id="@+id/LightInsurance"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/status_pending"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Insurance"
+                    android:textSize="25dp"
+                    android:textColor="@color/BLACK"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                >
+
+                <View
+                    android:id="@+id/divider7"
+                    android:layout_width="6dp"
+                    android:layout_height="500dp"
+                    android:layout_marginLeft="80dp"
+                    android:layout_marginTop="13dp"
+                    android:background="@color/BLACK_A020" />
+
+                <ImageView
+                    android:id="@+id/status1"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="71dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/status_done"/>
+                <ImageView
+                    android:id="@+id/status2"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="71dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/status1"
+                    android:src="@drawable/current_status"/>
+                <ImageView
+                    android:id="@+id/status3"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="71dp"
+                    android:layout_marginTop="100dp"
+                    android:layout_below="@+id/status2"
+                    android:src="@drawable/status_pending"/>
+                <ImageView
+                    android:id="@+id/status4"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="71dp"
+                    android:layout_marginTop="120dp"
+                    android:layout_below="@+id/status3"
+                    android:src="@drawable/status_pending"/>
+                <ImageView
+                    android:id="@+id/status5"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="71dp"
+                    android:layout_marginTop="155dp"
+                    android:layout_below="@+id/status4"
+                    android:src="@drawable/status_pending"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit application"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/BLACK"
+                    android:layout_toEndOf="@+id/status1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Application in progress"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status1"
+                    android:layout_marginTop="30dp"
+                    android:layout_toEndOf="@+id/status2"/>
+                <TextView
+                    android:id="@+id/txtStatus2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="It usually takes 4 to 6 weeks for the Immigration Department to process your application."
+                    android:textSize="16dp"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_toEndOf="@+id/status2"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Waiting to go to destination"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status2"
+                    android:layout_marginTop="100dp"
+                    android:layout_toEndOf="@+id/status3"/>
+
+                <TextView
+                    android:id="@+id/txtStatus3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="She will go to destination once the domestic helper’s visa is approved. The employer needs to arrange airport pick-up and settlement for her."
+                    android:textSize="16dp"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status3"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_toEndOf="@+id/status3"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arrival at destination"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status3"
+                    android:layout_marginTop="120dp"
+                    android:layout_toEndOf="@+id/status4"/>
+
+                <TextView
+                    android:id="@+id/txtStatus4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Describe the daily operations of the family and the requirements of work. Maintain communication with the domestic worker to ensure she adapts to the new environment."
+                    android:textSize="16dp"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status4"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_toEndOf="@+id/status4"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start working"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/BLACK"
+                    android:layout_below="@+id/status4"
+                    android:layout_marginTop="150dp"
+                    android:layout_toEndOf="@+id/status5"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

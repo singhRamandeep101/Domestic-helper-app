@@ -18,6 +18,7 @@ public class ChatUtil {
         intent.putExtra("lastName",model.getLastName());
         intent.putExtra("firstName",model.getFirstName());
         intent.putExtra("email",model.getEmail());
+        intent.putExtra("userType",model.getUserType());
     }
 
     public static ChatModel getUserModelIntent(Intent intent){
@@ -25,6 +26,7 @@ public class ChatUtil {
         chatModel.setLastName(intent.getStringExtra("lastName"));
         chatModel.setFirstName(intent.getStringExtra("firstName"));
         chatModel.setEmail(intent.getStringExtra("email"));
+        chatModel.setUserType(intent.getStringExtra("userType"));
         return chatModel;
     }
 
@@ -47,14 +49,13 @@ public class ChatUtil {
     public static CollectionReference getChatroomMessageReference(String chatroomId){
         return getChatroomReference(chatroomId).collection("chats");
     }
-    public static String getChatroomId(String userEmail1, String userEmail2, String employeeEmail) {
+    public static String getChatroomId(String userEmail1, String userEmail2) {
         String baseId;
         if (userEmail1.hashCode() < userEmail2.hashCode()) {
-            baseId = userEmail1 + "_" + userEmail2;
+            return userEmail1 + "_" + userEmail2;
         } else {
-            baseId = userEmail2 + "_" + userEmail1;
+            return userEmail2 + "_" + userEmail1;
         }
-        return baseId + "_" + employeeEmail;
     }
 
     public static CollectionReference allChatroomCollectionReference(){
@@ -70,7 +71,7 @@ public class ChatUtil {
     }
 
     public static String timestampToString(Timestamp timestamp){
-        return new SimpleDateFormat("HH:MM").format(timestamp.toDate());
+        return new SimpleDateFormat("HH:mm").format(timestamp.toDate());
     }
 
 }

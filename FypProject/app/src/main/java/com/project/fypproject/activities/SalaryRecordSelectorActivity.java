@@ -31,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
-import com.project.fypproject.activities.employer.JobDetailActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
 import java.util.HashMap;
@@ -203,7 +202,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
                     imageView.setImageResource(R.drawable.baseline_done_24);
                     break;
                 default:
-                        imageView.setImageResource(R.drawable.icon_add_circle); // 默認圖標
+                        imageView.setImageResource(R.drawable.icon_add_circle); // 默認icon
                     break;
             }
         }

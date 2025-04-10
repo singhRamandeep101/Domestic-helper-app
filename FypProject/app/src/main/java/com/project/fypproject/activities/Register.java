@@ -6,7 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +27,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class Register extends AppCompatActivity {
 
     public static class newUser{
-
 
         public newUser(String userType, String firstName, String lastName, String email, String availability, String telephone) {
             this.userType = userType;
@@ -95,12 +97,99 @@ public class Register extends AppCompatActivity {
         private String telephone;
     }
 
+    public static class newAgent{
+
+        public newAgent(String firstName, String lastName, String email, String telephone, boolean isAllowCreateDH, boolean isAllowCreateAgent) {
+            this.userType = userType;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+            this.telephone = telephone;
+            this.isAllowCreateDH = isAllowCreateDH;
+            this.isAllowCreateAgent = isAllowCreateAgent;
+        }
+
+        public String getUserType() {
+            return userType;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+        public String getTelephone() {
+            return telephone;
+        }
+
+        public void setUserType(String userType) {
+            this.userType = userType;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+        public void setTelephone(String telephone) {
+            this.telephone = telephone;
+        }
+        private String userType = "Agent";
+
+        private String firstName;
+
+        private String lastName;
+        private String email;
+        private String telephone;
+
+        public Boolean getAllowCreateDH() {
+            return isAllowCreateDH;
+        }
+
+        public void setAllowCreateDH(Boolean allowCreateDH) {
+            isAllowCreateDH = allowCreateDH;
+        }
+
+        public Boolean getAllowCreateAgent() {
+            return isAllowCreateAgent;
+        }
+
+        public void setAllowCreateAgent(Boolean allowCreateAgent) {
+            isAllowCreateAgent = allowCreateAgent;
+        }
+
+        private Boolean isAllowCreateDH;
+        private Boolean isAllowCreateAgent;
+    }
     EditText editTextEmail, editTextPassword,editTextConfirmPassword ,editTextFirstName, editTextLastName;
     Button buttonReg;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textView;
+    LinearLayout llAgentOperator;
+
+    Boolean isAllowCreateDH, isAllowCreateAgent;
+    Switch switchDH, switchAgent;
     String Type = "hello";
+
+    private void navigateToLoginPage() {
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +211,14 @@ public class Register extends AppCompatActivity {
 
         if(b != null){
             Type = b.getString("userType"); //Get the user type from last activity
+        }
+
+        if (Objects.equals(Type, "Agent")){
+            llAgentOperator = findViewById(R.id.llAgentOperator);
+            llAgentOperator.setVisibility(View.VISIBLE);
+
+            switchDH = findViewById(R.id.switchDH);
+            switchAgent = findViewById(R.id.switchAgent);
         }
 
         editTextFirstName = findViewById(R.id.FirstName);
@@ -155,6 +252,8 @@ public class Register extends AppCompatActivity {
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
                 confirmPassword = String.valueOf(editTextConfirmPassword.getText());
+                isAllowCreateDH = false;
+                isAllowCreateAgent = false;
 
                 if(TextUtils.isEmpty(firstName)){
                     Toast.makeText(Register.this, "Enter your first name", Toast.LENGTH_SHORT).show();
@@ -186,6 +285,11 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
+                if(Objects.equals(Type, "Agent")) {
+                    isAllowCreateDH = switchDH.isChecked();
+                    isAllowCreateAgent = switchAgent.isChecked();
+                }
+
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -195,15 +299,31 @@ public class Register extends AppCompatActivity {
                                     Toast.makeText(Register.this, "Account Created.",
                                             Toast.LENGTH_SHORT).show();
 
-                                    newUser data = new newUser(Type, firstName, lastName, email, "available", "'");
+                                    if (!Objects.equals(Type, "Agent")) {
+                                        newUser newUserData = new newUser(Type, firstName, lastName, email, "available", "'");
 
-                                    db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(data);
+                                        // 將普通用戶資料存入 Firestore
+                                        db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(newUserData)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    navigateToLoginPage();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(Register.this, "Error creating user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        newAgent newAgentData = new newAgent(firstName, lastName, email, "", isAllowCreateDH, isAllowCreateAgent);
 
-                                    //Go Back to the login page.
-                                    Intent intent = new Intent(getApplicationContext(), Login.class);
-                                    startActivity(intent);
-                                    finish();
-
+                                        // 將Agent用戶資料存入 Firestore
+                                        db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(newAgentData)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    mAuth.signOut(); // 登出
+                                                    Toast.makeText(Register.this, "A new agent account created successfully", Toast.LENGTH_SHORT).show();
+                                                    navigateToLoginPage();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(Register.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    }
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(Register.this, "Authentication failed.",

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/stateIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_pending"/>
+
+        <ImageView
+            android:id="@+id/maidIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_toEndOf="@id/stateIcon"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_maid"
+            android:layout_marginTop="5dp"/>
+
+        <!-- User Name -->
+        <TextView
+            android:id="@+id/tvHelperName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/maidIcon"
+            android:text="Booking Request"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:layout_marginStart="3dp"
+            android:textStyle="bold"
+            android:textColor="#000" />
+
+        <ImageView
+            android:id="@+id/userIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_toEndOf="@id/stateIcon"
+            android:layout_below="@id/maidIcon"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_reuser"/>
+
+        <!-- User Location -->
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/userIcon"
+            android:layout_below="@id/tvHelperName"
+            android:layout_marginStart="3dp"
+            android:text="PName"
+            android:layout_marginTop="6dp"
+            android:textSize="14sp"
+            android:textColor="#888" />
+
+        <!-- Book Request ID -->
+        <TextView
+            android:id="@+id/bookRequestID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvUserName"
+            android:layout_marginTop="8dp"
+            android:text="Request ID: 12345"
+            android:textSize="14sp"
+            android:textColor="#6B7280"
+            android:textStyle="bold" />
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/userStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/bookRequestID"
+            android:layout_marginTop="8dp"
+            android:text="Pending Confirmation"
+            android:textSize="14sp"
+            android:textColor="#6B7280"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnGo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/userStatus"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_arrow_circle_right" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
