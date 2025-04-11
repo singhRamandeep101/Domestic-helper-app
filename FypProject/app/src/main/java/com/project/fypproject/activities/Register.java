@@ -145,9 +145,9 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    public static class Translator extends User {
+    public static class newTranslator extends User {
         // Constructor
-        public Translator(String firstName, String lastName, String email, String telephone) {
+        public newTranslator(String firstName, String lastName, String email, String telephone) {
             super("Translator", firstName, lastName, email, telephone);
         }
     }
@@ -179,16 +179,16 @@ public class Register extends AppCompatActivity {
         RadioGroup radioGroup = findViewById(R.id.rgUserType);
         llAgentOperator = findViewById(R.id.llAgentOperator);
 
-        // 顯示 RadioGroup，LinearLayout 預設隱藏
+        // Show RadioGroup，LinearLayout is hide by default
         radioGroup.setVisibility(View.VISIBLE);
         llAgentOperator.setVisibility(View.GONE);
 
-        // 加入監聽器
+        // 整個監聽器 - 視乎個用家係唔係揀咗agent 而去決定show唔show下面嗰啲agent operator
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rbtnAgent) {
-                    // 設定動畫顯示 LinearLayout，改變透明度同高度
+                    // Set show animation LinearLayout
                     ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(llAgentOperator, "alpha", 0f, 1f);
                     alphaAnimator.setDuration(300);
 
@@ -203,13 +203,13 @@ public class Register extends AppCompatActivity {
                     });
                     heightAnimator.setDuration(300);
 
-                    // 啟動動畫
+                    //Animation to show LinearLayout
                     alphaAnimator.start();
                     heightAnimator.start();
 
                     llAgentOperator.setVisibility(View.VISIBLE);
                 } else {
-                    // 設定動畫隱藏 LinearLayout，改變透明度同高度
+                    // Set hide animation LinearLayout
                     ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(llAgentOperator, "alpha", 1f, 0f);
                     alphaAnimator.setDuration(300);
 
@@ -224,7 +224,7 @@ public class Register extends AppCompatActivity {
                     });
                     heightAnimator.setDuration(300);
 
-                    // 當動畫完成後隱藏 LinearLayout
+                    // Hide LinearLayout
                     heightAnimator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -256,6 +256,7 @@ public class Register extends AppCompatActivity {
             return insets;
         });
 
+        // initialising the UI element
         editTextFirstName = findViewById(R.id.FirstName);
         editTextLastName = findViewById(R.id.LastName);
         editTextEmail = findViewById(R.id.email);
@@ -266,7 +267,7 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         textView = findViewById(R.id.loginNow);
 
-        //喺上一個Advice撈返個User take返嚟
+        //喺上一個 Activity 撈返個 User Type 返嚟
         // <editor-fold desc="Get User Type">
         Bundle b = getIntent().getExtras();
 
@@ -340,8 +341,13 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (((RadioGroup) findViewById(R.id.rgUserType)).getCheckedRadioButtonId() == R.id.rbtnAgent) {
+                    Type = "Agent";
                     isAllowCreateDH = switchDH.isChecked();
                     isAllowCreateAgent = switchAgent.isChecked();
+                }
+
+                if (((RadioGroup) findViewById(R.id.rgUserType)).getCheckedRadioButtonId() == R.id.rbtnTranslator) {
+                    Type = "Translator";
                 }
 
                 mAuth.createUserWithEmailAndPassword(email, password)
@@ -353,18 +359,7 @@ public class Register extends AppCompatActivity {
                                     Toast.makeText(Register.this, "Account Created.",
                                             Toast.LENGTH_SHORT).show();
 
-                                    if (!Objects.equals(Type, "Agent")) {
-                                        newUser newUserData = new newUser(Type, firstName, lastName, email, "available", "'");
-
-                                        // 將普通用戶資料存入 Firestore
-                                        db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(newUserData)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    navigateToLoginPage();
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    Toast.makeText(Register.this, "Error creating user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                });
-                                    } else {
+                                    if (Objects.equals(Type, "Agent")) {
                                         newAgent newAgentData = new newAgent(firstName, lastName, email, "", isAllowCreateDH, isAllowCreateAgent);
 
                                         // 將Agent用戶資料存入 Firestore
@@ -376,6 +371,30 @@ public class Register extends AppCompatActivity {
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     Toast.makeText(Register.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else if (Objects.equals(Type, "Translator")) {
+                                        newTranslator newTranslator = new newTranslator(firstName, lastName, email, "");
+
+                                        // 將Agent用戶資料存入 Firestore
+                                        db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(newTranslator)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    mAuth.signOut(); // 登出
+                                                    Toast.makeText(Register.this, "A new agent account created successfully", Toast.LENGTH_SHORT).show();
+                                                    navigateToLoginPage();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(Register.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        newUser newUserData = new newUser(Type, firstName, lastName, email, "available", "'");
+
+                                        // 將普通用戶資料存入 Firestore
+                                        db.collection("users").document(email.toLowerCase(Locale.ROOT)).set(newUserData)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    navigateToLoginPage();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(Register.this, "Error creating user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 });
                                     }
                                 } else {
