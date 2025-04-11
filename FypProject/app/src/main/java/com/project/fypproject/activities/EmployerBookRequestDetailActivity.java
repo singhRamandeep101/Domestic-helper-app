@@ -40,7 +40,7 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
     private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName,tvAgentName;
     private ImageButton chatAgent;
 
-    private String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
+    String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
     private String agentEmail;
     LinearLayout layoutEmployerSelectedTime,layoutConfirmedTime;
 
@@ -111,11 +111,13 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         if ("Pending Confirmation".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
-        }else{
+        }else if ("Final Time Confirmed".equals(requestState)){
             layoutEmployerSelectedTime.setVisibility(View.GONE);
             layoutConfirmedTime.setVisibility(View.VISIBLE);
             btnCheckBook.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "confirmedTime", layoutConfirmedTime);
+        }else{
+            layoutEmployerSelectedTime.setVisibility(View.GONE);
         }
     }
 
@@ -221,7 +223,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                                     Intent intent = new Intent(EmployerBookRequestDetailActivity.this, ChatActivity.class);
                                     ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
                                     startActivity(intent); // Start ChatActivity
-                                    finish();
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +

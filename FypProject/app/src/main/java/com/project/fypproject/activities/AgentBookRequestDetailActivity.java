@@ -281,13 +281,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             getSelectedTime(requestID, "translatorSelectedTime", layoutTranslatorSelectedTime);
 
             fetchAndMatchTimes();
-        }else if ("Declined".equals(requestState)) {
-            layoutEmployerSelectedTime.setVisibility(View.GONE);
-            layoutTranslatorSelectedTime.setVisibility(View.GONE);
-            layoutHelperSelectedTime.setVisibility(View.GONE);
-            layoutMatchingTime.setVisibility(View.GONE);
-            layoutConfirmTime.setVisibility(View.GONE);
-        }else{
+        }else if ("Final Time Confirmed".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.GONE);
             layoutTranslatorSelectedTime.setVisibility(View.GONE);
             layoutHelperSelectedTime.setVisibility(View.GONE);
@@ -296,6 +290,12 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             layoutConfirmedTime.setVisibility(View.VISIBLE);
             btnCheckBook.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "confirmedTime", layoutConfirmedTime);
+        }else{
+            layoutEmployerSelectedTime.setVisibility(View.GONE);
+            layoutTranslatorSelectedTime.setVisibility(View.GONE);
+            layoutHelperSelectedTime.setVisibility(View.GONE);
+            layoutMatchingTime.setVisibility(View.GONE);
+            layoutConfirmTime.setVisibility(View.GONE);
         }
     }
 
@@ -401,7 +401,6 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                     Intent intent = new Intent(AgentBookRequestDetailActivity.this, ChatActivity.class);
                                     ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
                                     startActivity(intent); // Start ChatActivity
-                                    finish();
 
                                     // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
@@ -467,7 +466,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                 timeSlotTextView.setText(timeSlot);
                 timeSlotTextView.setTextSize(16);
                 timeSlotTextView.setTextColor(getResources().getColor(R.color.black));
-                timeSlotTextView.setPadding(0, 4, 0, 4);
+                timeSlotTextView.setPadding(0, 30, 0, 4);
                 parentLayout.addView(timeSlotTextView);
             }
         }
@@ -568,7 +567,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                     timeTextView.setText(time);
                     timeTextView.setTextSize(16);
                     timeTextView.setTextColor(getResources().getColor(R.color.black));
-                    timeTextView.setPadding(0, 4, 0, 4);
+                    timeTextView.setPadding(0, 30, 0, 4);
                     timeTextView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     ImageView yesIcon = new ImageView(this);
@@ -618,7 +617,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
         // 添加标题
         TextView titleTextView = new TextView(this);
-        titleTextView.setText("Confirmed Time");
+        titleTextView.setText("Confirm Time");
         titleTextView.setTextSize(20);
         titleTextView.setTextColor(getResources().getColor(R.color.black));
         titleTextView.setTypeface(null, Typeface.BOLD);
@@ -654,7 +653,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                     timeTextView.setText(time);
                     timeTextView.setTextSize(16);
                     timeTextView.setTextColor(getResources().getColor(R.color.black));
-                    timeTextView.setPadding(0, 4, 0, 4);
+                    timeTextView.setPadding(0, 30, 0, 4);
                     timeTextView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     ImageView noIcon = new ImageView(this);
