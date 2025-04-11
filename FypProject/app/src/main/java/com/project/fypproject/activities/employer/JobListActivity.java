@@ -21,6 +21,9 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -156,14 +159,26 @@ public class JobListActivity extends AppCompatActivity {
         btnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                filterLayout.setAlpha(0f);
                 filterLayout.setVisibility(View.VISIBLE);
+                ObjectAnimator fadeIn = ObjectAnimator.ofFloat(filterLayout, "alpha", 0f, 1f);
+                fadeIn.setDuration(300);
+                fadeIn.start();
             }
         });
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filterLayout.setVisibility(View.GONE);
+                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(filterLayout, "alpha", 1f, 0f);
+                fadeOut.setDuration(300);
+                fadeOut.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        filterLayout.setVisibility(View.GONE);
+                    }
+                });
+                fadeOut.start();
             }
         });
 
@@ -185,7 +200,16 @@ public class JobListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 applyFilters();
-                filterLayout.setVisibility(View.GONE);
+                // 加入透明度動畫
+                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(filterLayout, "alpha", 1f, 0f);
+                fadeOut.setDuration(300);
+                fadeOut.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        filterLayout.setVisibility(View.GONE);
+                    }
+                });
+                fadeOut.start();
             }
         });
 

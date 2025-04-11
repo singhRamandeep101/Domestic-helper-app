@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.AgentHomeFragment;
+import com.project.fypproject.activities.BookRecordActivity;
 import com.project.fypproject.activities.ChatMainActivity;
 import com.project.fypproject.activities.DhHomeFragment;
 import com.project.fypproject.activities.Login;
@@ -176,7 +177,10 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
         } else if (id == R.id.nav_notification) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new NotificationFragment()).commit();
         } else if (id == R.id.nav_appointment) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new ApointmentFragment()).commit();
+            Intent intent = new Intent(this, BookRecordActivity.class);
+            startActivity(intent);
+            //Changing animation
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         } else if (id == R.id.nav_logout) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getApplicationContext(), Login.class));

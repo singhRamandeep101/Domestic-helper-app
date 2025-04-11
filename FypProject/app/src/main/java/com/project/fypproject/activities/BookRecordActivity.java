@@ -3,6 +3,7 @@ package com.project.fypproject.activities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -33,6 +34,7 @@ public class BookRecordActivity extends AppCompatActivity {
     List<Map<String, Object>> records;
     FirebaseFirestore db;
     RecyclerView recyclerView;
+    ImageView btnBack;
     FirebaseAuth auth;
     FirebaseUser user;
     String userType;
@@ -47,6 +49,8 @@ public class BookRecordActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.rv_bookRecord);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        btnBack = findViewById(R.id.btnBack);
 
         db = FirebaseFirestore.getInstance();
         records = new ArrayList<>();
@@ -90,6 +94,13 @@ public class BookRecordActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
         });
     }
 
