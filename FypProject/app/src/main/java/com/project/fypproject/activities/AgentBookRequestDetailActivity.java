@@ -131,10 +131,10 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                 db.collection("interview_request")
                         .document(requestID)
                         .update(
-                                "agentState", "Agent Declined",
+                                "agentState", "Agent Decline",
                                 "employerState", "Declined",
-                                "translatorState", "Agent Declined",
-                                "employeeState", "Agent Declined"
+                                "translatorState", "Agent Decline",
+                                "employeeState", "Agent Decline"
                         )
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

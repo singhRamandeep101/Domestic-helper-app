@@ -137,22 +137,15 @@ public class BookingRequestActivity extends AppCompatActivity {
                             bookingRequests.clear();
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                final String docId = document.getId();
+                                final String docId = document.getString("docId");
                                 final String employeeEmail = document.getString("employeeEmail");
                                 final String employerEmail = document.getString("employerEmail");
-                                final String userStatus;
+                                final String agentState = document.getString("agentState");
+                                final String translatorState = document.getString("translatorState");
+                                final String employeeState = document.getString("employeeState");
+                                final String employerState = document.getString("employerState");
 
-                                if("Agent".equals(userType)){
-                                    userStatus = document.getString("agentState");
-                                }else if("Translator".equals(userType)){
-                                    userStatus= document.getString("translatorState");
-                                }else if("DomesticHelper".equals(userType)){
-                                    userStatus= document.getString("employeeState");
-                                }else{
-                                    userStatus= document.getString("employerState");
-                                }
-
-                                getName(docId,employeeEmail, employerEmail, userStatus,userType);
+                                getName(docId,employeeEmail, employerEmail, userType,agentState,translatorState,employeeState,employerState);
                             }
                         } else {
                             bookingRequests.clear();
@@ -182,19 +175,12 @@ public class BookingRequestActivity extends AppCompatActivity {
                                 final String docId = document.getString("docId");
                                 final String employeeEmail = document.getString("employeeEmail");
                                 final String employerEmail = document.getString("employerEmail");
-                                final String userStatus;
+                                final String agentState = document.getString("agentState");
+                                final String translatorState = document.getString("translatorState");
+                                final String employeeState = document.getString("employeeState");
+                                final String employerState = document.getString("employerState");
 
-                                if("Agent".equals(userType)){
-                                    userStatus = document.getString("agentState");
-                                }else if("Translator".equals(userType)){
-                                    userStatus= document.getString("translatorState");
-                                }else if("DomesticHelper".equals(userType)){
-                                    userStatus= document.getString("employeeState");
-                                }else{
-                                    userStatus= document.getString("employerState");
-                                }
-
-                                getName(docId,employeeEmail, employerEmail, userStatus,userType);
+                                getName(docId,employeeEmail, employerEmail, userType,agentState,translatorState,employeeState,employerState);
                             }
                         } else {
                             bookingRequests.clear();
@@ -206,7 +192,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                 });
     }
 
-    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userStatus,String userType) {
+    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userType,final String agentState,final String translatorState,final String employeeState,final String employerState) {
         final HashMap<String, String> requestData = new HashMap<>();
 
         db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
@@ -231,7 +217,10 @@ public class BookingRequestActivity extends AppCompatActivity {
 
                                         requestData.put("docId", docId);
                                         requestData.put("userType", userType);
-                                        requestData.put("userStatus", userStatus);
+                                        requestData.put("agentState", agentState);
+                                        requestData.put("translatorState", translatorState);
+                                        requestData.put("employeeState", employeeState);
+                                        requestData.put("employerState", employerState);
                                         bookingRequests.add(requestData);
                                         adapter.notifyDataSetChanged();
                                     }

@@ -40,33 +40,186 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
         HashMap<String, String> request = bookingRequests.get(position);
         holder.tvHelperName.setText(request.get("helperName"));
         holder.tvUserName.setText(request.get("userName"));
-        holder.userStatus.setText(request.get("userStatus"));
 
-        switch (request.get("userStatus")) {
-            case "Action Required":
-                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
-                holder.stateIcon.setImageResource(R.drawable.ic_action);
-                break;
-            case "Confirmed":
-                holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
-                holder.stateIcon.setImageResource(R.drawable.icon_confirm);
-                break;
-            case "Rejected":
-                holder.userStatus.setTextColor(Color.parseColor("#F44336"));
-                holder.stateIcon.setImageResource(R.drawable.ic_rej);
-                break;
-            default:
+        if(request.get("userType").equals("Agent") && request.get("agentState").equals("Awaiting Both")){
+            holder.userStatus.setText("Awaiting Both");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Agent")
+                && request.get("employeeState").equals("DomesticHelper Confirmed")
+                && request.get("translatorState").equals("Action Required")){
+                holder.userStatus.setText("Awaiting Translator");
                 holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
                 holder.stateIcon.setImageResource(R.drawable.ic_pending);
-                break;
+
+        }else if (request.get("userType").equals("Agent")
+                && request.get("employeeState").equals("Action Required")
+                && request.get("translatorState").equals("Translator Confirmed")){
+                holder.userStatus.setText("Awaiting DomesticHelper");
+                holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+                holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Agent")
+                && request.get("employeeState").equals("DomesticHelper Confirmed")
+                && request.get("translatorState").equals("Translator Confirmed")) {
+            holder.userStatus.setText("Action Required");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_action);
+
+        }else if (request.get("userType").equals("Agent") && request.get("employeeState").equals("DomesticHelper Decline")){
+            holder.userStatus.setText("DomesticHelper Decline");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Agent") && request.get("translatorState").equals("Translator Decline")){
+            holder.userStatus.setText(request.get("Translator Decline"));
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+
+        }else if (request.get("userType").equals("Agent")
+                && request.get("employeeState").equals("Translator Decline")
+                && request.get("translatorState").equals("DomesticHelper Decline")) {
+            holder.userStatus.setText("Both Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Agent") && request.get("agentState").equals("Agent Decline")) {
+            holder.userStatus.setText("Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Agent")
+                && request.get("agentState").equals("Final Time Confirmed")) {
+            holder.userStatus.setText("Final Time Confirmed");
+            holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+            holder.stateIcon.setImageResource(R.drawable.icon_confirm);
+
+        }else if (request.get("userType").equals("Employer")
+                && request.get("employerState").equals("Pending Confirmation")) {
+            holder.userStatus.setText("Pending Confirmation");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Employer")
+                && request.get("employerState").equals("Declined")) {
+            holder.userStatus.setText("Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Employer")
+                && request.get("employerState").equals("Final Time Confirmed")) {
+            holder.userStatus.setText("Final Time Confirmed");
+            holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+            holder.stateIcon.setImageResource(R.drawable.icon_confirm);
+
+
+        }else if (request.get("userType").equals("Employee")
+                && request.get("employeeState").equals("Action Required")) {
+            holder.userStatus.setText("Action Required");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_action);
+
+        }else if (request.get("userType").equals("Employee")
+                && request.get("employeeState").equals("DomesticHelper Confirmed")
+                && request.get("translatorState").equals("Action Required")){
+            holder.userStatus.setText("Awaiting Translator");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Employee")
+                && request.get("employeeState").equals("DomesticHelper Confirmed")
+                && request.get("translatorState").equals("Translator Confirmed")){
+            holder.userStatus.setText("Awaiting Agent");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Employee") && request.get("employeeState").equals("DomesticHelper Decline")){
+            holder.userStatus.setText("Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Employee") && request.get("translatorState").equals("Translator Decline")){
+            holder.userStatus.setText(request.get("Translator Decline"));
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+
+        }else if (request.get("userType").equals("Employee")
+                && request.get("employeeState").equals("Translator Decline")
+                && request.get("translatorState").equals("DomesticHelper Decline")) {
+            holder.userStatus.setText("Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Employee") && request.get("employeeState").equals("Final Time Confirmed")) {
+            holder.userStatus.setText("Final Time Confirmed");
+            holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+            holder.stateIcon.setImageResource(R.drawable.icon_confirm);
         }
+        else if (request.get("userType").equals("Translator")
+                && request.get("translatorState").equals("Action Required")) {
+            holder.userStatus.setText("Action Required");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_action);
+
+        }else if (request.get("userType").equals("Translator")
+                && request.get("translatorState").equals("Translator Confirmed")
+                && request.get("employeeState").equals("Action Required")){
+            holder.userStatus.setText("Awaiting DomesticHelper");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Translator")
+                && request.get("employeeState").equals("DomesticHelper Confirmed")
+                && request.get("translatorState").equals("Translator Confirmed")){
+            holder.userStatus.setText("Awaiting Agent");
+            holder.userStatus.setTextColor(Color.parseColor("#6B7280"));
+            holder.stateIcon.setImageResource(R.drawable.ic_pending);
+
+        }else if (request.get("userType").equals("Translator") && request.get("employeeState").equals("DomesticHelper Decline")){
+            holder.userStatus.setText("DomesticHelper Decline");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Translator") && request.get("translatorState").equals("Translator Decline")){
+            holder.userStatus.setText(request.get("Declined"));
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+
+        }else if (request.get("userType").equals("Translator")
+                && request.get("employeeState").equals("Translator Decline")
+                && request.get("translatorState").equals("DomesticHelper Decline")) {
+            holder.userStatus.setText("Declined");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+
+        }else if (request.get("userType").equals("Translator") && request.get("translatorState").equals("Final Time Confirmed")) {
+            holder.userStatus.setText("Final Time Confirmed");
+            holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
+            holder.stateIcon.setImageResource(R.drawable.icon_confirm);
+        }
+
+
 
         holder.docId.setText("Request ID: "+ request.get("docId"));
 
         holder.btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, AgentBookRequestDetailActivity.class);
+                Class<?> targetClass;
+                if(request.get("userType").equals("Agent")){
+                    targetClass = AgentBookRequestDetailActivity.class;
+                }else if(request.get("userType").equals("Employer")){
+                    targetClass = EmployerBookRequestDetailActivity.class;
+                }else if(request.get("userType").equals("Translator")){
+                    targetClass = TranslatorBookRequestDetailActivity.class;
+                }else{
+                    targetClass = EmployeeBookRequestDetailActivity.class;
+                }
+                Intent intent = new Intent(context, targetClass);
                 intent.putExtra("requestID",request.get("docId"));
                 intent.putExtra("requestState",request.get("userStatus"));
                 intent.putExtra("employerName",request.get("userName"));
