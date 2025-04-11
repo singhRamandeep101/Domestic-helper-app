@@ -419,6 +419,8 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
                         "employeeState", "DomesticHelper Decline")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Request Declined Successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookRecordActivity.class);
+                    startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Failed to decline request", e));
@@ -439,6 +441,8 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
                 .update("helperSelectedTime", formattedConfirmedTimes, "employeeState", "DomesticHelper Confirmed")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Request Confirmed Successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookRecordActivity.class);
+                    startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Failed Confirmed", e));

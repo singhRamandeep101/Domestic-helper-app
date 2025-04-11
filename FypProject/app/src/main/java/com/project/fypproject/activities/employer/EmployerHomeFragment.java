@@ -35,6 +35,7 @@ import com.project.fypproject.activities.InterviewTimeSelectionActivity;
 import com.project.fypproject.activities.Login;
 import com.project.fypproject.activities.MeetingActivity;
 import com.project.fypproject.activities.SalaryRecordSelectorActivity;
+import com.project.fypproject.activities.TranslatorBookRequestDetailActivity;
 
 public class EmployerHomeFragment extends Fragment {
 
@@ -97,7 +98,7 @@ public class EmployerHomeFragment extends Fragment {
         llJobPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeActivity(EmployeeBookRequestDetailActivity.class);
+                changeActivity(AgentBookRequestDetailActivity.class);
             }
         });
 

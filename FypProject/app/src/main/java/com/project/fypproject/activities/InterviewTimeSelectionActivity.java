@@ -63,6 +63,7 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
 
         // Get employeeEmail from the previous activity
         employeeEmail = getIntent().getStringExtra("employeeEmail");
+        employeeEmail = "rodgielyn@gmail.com";
 
         // Initialize current date
         Calendar calendar = Calendar.getInstance();

@@ -54,7 +54,7 @@ public class BookingRequestActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         bookingRequests = new ArrayList<>();
-        adapter = new BookingRequestAdapter(bookingRequests);
+        adapter = new BookingRequestAdapter(this,bookingRequests);
         recyclerView.setAdapter(adapter);
 
         etRequestId.addTextChangedListener(new TextWatcher() {
@@ -152,7 +152,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                                     userStatus= document.getString("employerState");
                                 }
 
-                                getName(docId,employeeEmail, employerEmail, userStatus);
+                                getName(docId,employeeEmail, employerEmail, userStatus,userType);
                             }
                         } else {
                             bookingRequests.clear();
@@ -194,7 +194,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                                     userStatus= document.getString("employerState");
                                 }
 
-                                getName(docId,employeeEmail, employerEmail, userStatus);
+                                getName(docId,employeeEmail, employerEmail, userStatus,userType);
                             }
                         } else {
                             bookingRequests.clear();
@@ -206,7 +206,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                 });
     }
 
-    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userStatus) {
+    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userStatus,String userType) {
         final HashMap<String, String> requestData = new HashMap<>();
 
         db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
@@ -230,6 +230,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                                         }
 
                                         requestData.put("docId", docId);
+                                        requestData.put("userType", userType);
                                         requestData.put("userStatus", userStatus);
                                         bookingRequests.add(requestData);
                                         adapter.notifyDataSetChanged();
