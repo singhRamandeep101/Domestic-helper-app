@@ -3,6 +3,8 @@ package com.project.fypproject.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,10 +25,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -65,6 +70,7 @@ public class HiringManagementActivity extends AppCompatActivity {
     Spinner statusSpinner;
     FirebaseAuth auth;
     FirebaseUser user;
+    String docId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +114,7 @@ public class HiringManagementActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+
                             if (!task.getResult().isEmpty()) {
                                 // 有對應記錄，顯示註冊區
                                 llUpdate.setAlpha(0f);
@@ -116,7 +123,23 @@ public class HiringManagementActivity extends AppCompatActivity {
                                 fadeIn.setDuration(300);
                                 fadeIn.start();
 
-                            } else {
+                                boolean body_check, insurance;
+                                int status;
+
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    body_check = document.getBoolean("body_check");
+                                    insurance = document.getBoolean("insurance");
+                                    status = document.getLong("status").intValue();
+
+                                    cbBodyCheck.setChecked(body_check);
+                                    cbInsurance.setChecked(insurance);
+                                    statusSpinner.setSelection(status - 2);
+
+                                    docId = document.getId();
+                                }
+
+                            }
+                            else {
                                 // 冇對應記錄，顯示更新區
                                 llRegistration.setAlpha(0f);
                                 llRegistration.setVisibility(View.VISIBLE);
@@ -133,41 +156,78 @@ public class HiringManagementActivity extends AppCompatActivity {
                                 btn_register.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        String agent, domestic_helper, employer;
-                                        employer = String.valueOf(Employer_Email.getText());
-                                        agent = user.getEmail();
-                                        domestic_helper = helperEmail;
 
-                                        if(TextUtils.isEmpty(employer)){
+                                        if(TextUtils.isEmpty(String.valueOf(Employer_Email.getText()))){
                                             Toast.makeText(HiringManagementActivity.this, "Enter the employer email", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
 
-                                        newHiringRecord newHiringRecord = new newHiringRecord(agent, false, domestic_helper, employer, false, false, 2);
-                                        db.collection("HiringStatus").add(newHiringRecord)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    ObjectAnimator fadeOut = ObjectAnimator.ofFloat(llRegistration, "alpha", 1f, 0f);
-                                                    fadeOut.setDuration(300);
-                                                    fadeOut.addListener(new AnimatorListenerAdapter() {
-                                                        @Override
-                                                        public void onAnimationEnd(Animator animation) {
-                                                            llRegistration.setVisibility(View.GONE);
-                                                            llUpdate.setAlpha(0f);
-                                                            llUpdate.setVisibility(View.VISIBLE);
-                                                            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(llUpdate, "alpha", 0f, 1f);
-                                                            fadeIn.setDuration(300);
-                                                            fadeIn.start();
-                                                        }
-                                                    });
-                                                    fadeOut.start();
+                                        new AlertDialog.Builder(HiringManagementActivity.this)
+                                            .setTitle("Confirm Registration")
+                                            .setMessage("Are you sure you want to register this hiring record?")
+                                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    String agent, domestic_helper, employer;
+                                                    employer = String.valueOf(Employer_Email.getText());
+                                                    agent = user.getEmail();
+                                                    domestic_helper = helperEmail;
 
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    Toast.makeText(HiringManagementActivity.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                });
+                                                    newHiringRecord newHiringRecord = new newHiringRecord(agent, false, domestic_helper, employer, false, false, 2);
+                                                    db.collection("HiringStatus").add(newHiringRecord)
+                                                        .addOnSuccessListener(aVoid -> {
+                                                            ObjectAnimator fadeOut = ObjectAnimator.ofFloat(llRegistration, "alpha", 1f, 0f);
+                                                            fadeOut.setDuration(300);
+                                                            fadeOut.addListener(new AnimatorListenerAdapter() {
+                                                                @Override
+                                                                public void onAnimationEnd(Animator animation) {
+                                                                    llRegistration.setVisibility(View.GONE);
+                                                                    llUpdate.setAlpha(0f);
+                                                                    llUpdate.setVisibility(View.VISIBLE);
+                                                                    ObjectAnimator fadeIn = ObjectAnimator.ofFloat(llUpdate, "alpha", 0f, 1f);
+                                                                    fadeIn.setDuration(300);
+                                                                    fadeIn.start();
+                                                                }
+                                                            });
+                                                            fadeOut.start();
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            Toast.makeText(HiringManagementActivity.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        });
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", null)
+                                            .show();
                                     }
                                 });
                             }
+
+                            btn_update.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    boolean body_check = cbBodyCheck.isChecked();
+                                    boolean insurance = cbInsurance.isChecked();
+                                    int status = statusSpinner.getSelectedItemPosition() + 2;
+
+                                    DocumentReference washingtonRef = db.collection("HiringStatus").document(docId);
+
+                                    washingtonRef
+                                            .update("body_check", body_check, "insurance", insurance, "status", status)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                    finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            });
                         } else {
                             Log.d("Firestore", "Error getting documents: ", task.getException());
                         }
@@ -175,3 +235,5 @@ public class HiringManagementActivity extends AppCompatActivity {
                 });
     }
 }
+
+
