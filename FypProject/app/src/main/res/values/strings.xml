@@ -25,4 +25,10 @@
         <item>Fair</item>
         <item>Good</item>
     </string-array>
+    <string-array name="status_array">
+        <item>Application in progress</item>
+        <item>Waiting to go to destination</item>
+        <item>Arrival at destination</item>
+        <item>Start working</item>
+    </string-array>
 </resources>
