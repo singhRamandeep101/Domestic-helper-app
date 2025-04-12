@@ -3,6 +3,7 @@ package com.project.fypproject.activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,7 +56,7 @@ public class BookingRequestActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         bookingRequests = new ArrayList<>();
-        adapter = new BookingRequestAdapter(this,bookingRequests);
+        adapter = new BookingRequestAdapter(this, bookingRequests);
         recyclerView.setAdapter(adapter);
 
         etRequestId.addTextChangedListener(new TextWatcher() {
@@ -66,11 +67,11 @@ public class BookingRequestActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-               keyword = charSequence.toString().trim();
+                keyword = charSequence.toString().trim();
 
-                if(keyword.isEmpty()){
+                if (keyword.isEmpty()) {
                     checkUserType(user.getEmail(), "b");
-                }else{
+                } else {
                     checkUserType(user.getEmail(), "a");
                 }
 
@@ -89,10 +90,10 @@ public class BookingRequestActivity extends AppCompatActivity {
             }
         });
 
-        checkUserType(user.getEmail(),"b");
+        checkUserType(user.getEmail(), "b");
     }
 
-    private void checkUserType(final String userEmail,String type) {
+    private void checkUserType(final String userEmail, String type) {
         db.collection("users").whereEqualTo("email", userEmail).get()
                 .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -112,9 +113,9 @@ public class BookingRequestActivity extends AppCompatActivity {
                             }
 
                             if (field != null) {
-                                if(type.equals("a")){
-                                    searchBookingRequests(keyword,userType);
-                                }else{
+                                if (type.equals("a")) {
+                                    searchBookingRequests(keyword, userType);
+                                } else {
                                     loadBookingRequests(field, userEmail, userType);
                                 }
                             } else {
@@ -128,32 +129,36 @@ public class BookingRequestActivity extends AppCompatActivity {
     }
 
     private void loadBookingRequests(final String field, final String userEmail, final String userType) {
-        db.collection("interview_request").whereEqualTo(field, userEmail).orderBy("postTime", Query.Direction.DESCENDING).get()
-                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            tvNoRecord.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                            bookingRequests.clear();
+        db.collection("interview_request")
+                .whereEqualTo(field, userEmail)
+                .orderBy("postTime", Query.Direction.DESCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("Firestore", "Listen failed.", error);
+                        return;
+                    }
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                final String docId = document.getString("docId");
-                                final String employeeEmail = document.getString("employeeEmail");
-                                final String employerEmail = document.getString("employerEmail");
-                                final String agentState = document.getString("agentState");
-                                final String translatorState = document.getString("translatorState");
-                                final String employeeState = document.getString("employeeState");
-                                final String employerState = document.getString("employerState");
+                    if (value != null && !value.isEmpty()) {
+                        tvNoRecord.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        bookingRequests.clear();
 
-                                getName(docId,employeeEmail, employerEmail, userType,agentState,translatorState,employeeState,employerState);
-                            }
-                        } else {
-                            bookingRequests.clear();
-                            adapter.notifyDataSetChanged();
-                            tvNoRecord.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
+                        for (QueryDocumentSnapshot document : value) {
+                            final String docId = document.getString("docId");
+                            final String employeeEmail = document.getString("employeeEmail");
+                            final String employerEmail = document.getString("employerEmail");
+                            final String agentState = document.getString("agentState");
+                            final String translatorState = document.getString("translatorState");
+                            final String employeeState = document.getString("employeeState");
+                            final String employerState = document.getString("employerState");
+
+                            getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
                         }
+                    } else {
+                        bookingRequests.clear();
+                        adapter.notifyDataSetChanged();
+                        tvNoRecord.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
                     }
                 });
     }
@@ -163,70 +168,67 @@ public class BookingRequestActivity extends AppCompatActivity {
                 .orderBy("docId")
                 .startAt(keyword)
                 .endAt(keyword + "\uf8ff")
-                .get()
-                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            tvNoRecord.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                            bookingRequests.clear();
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("Firestore", "Search failed.", error);
+                        return;
+                    }
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                final String docId = document.getString("docId");
-                                final String employeeEmail = document.getString("employeeEmail");
-                                final String employerEmail = document.getString("employerEmail");
-                                final String agentState = document.getString("agentState");
-                                final String translatorState = document.getString("translatorState");
-                                final String employeeState = document.getString("employeeState");
-                                final String employerState = document.getString("employerState");
+                    if (value != null && !value.isEmpty()) {
+                        tvNoRecord.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        bookingRequests.clear();
 
-                                getName(docId,employeeEmail, employerEmail, userType,agentState,translatorState,employeeState,employerState);
-                            }
-                        } else {
-                            bookingRequests.clear();
-                            adapter.notifyDataSetChanged();
-                            tvNoRecord.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
+                        for (QueryDocumentSnapshot document : value) {
+                            final String docId = document.getString("docId");
+                            final String employeeEmail = document.getString("employeeEmail");
+                            final String employerEmail = document.getString("employerEmail");
+                            final String agentState = document.getString("agentState");
+                            final String translatorState = document.getString("translatorState");
+                            final String employeeState = document.getString("employeeState");
+                            final String employerState = document.getString("employerState");
+
+                            getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
                         }
+                    } else {
+                        bookingRequests.clear();
+                        adapter.notifyDataSetChanged();
+                        tvNoRecord.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
                     }
                 });
     }
 
-    private void getName(final String docId,final String employeeEmail, final String employerEmail, final String userType,final String agentState,final String translatorState,final String employeeState,final String employerState) {
+    private void getName(final String docId, final String employeeEmail, final String employerEmail, final String userType,
+                         final String agentState, final String translatorState, final String employeeState, final String employerState) {
         final HashMap<String, String> requestData = new HashMap<>();
 
         db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
-                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            requestData.put("helperName", task.getResult().getDocuments().get(0).getString("name"));
-                        } else {
-                            requestData.put("helperName", "Unknown");
-                        }
-
-                        db.collection("users").whereEqualTo("email", employerEmail).get()
-                                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> userTask) {
-                                        if (userTask.isSuccessful() && !userTask.getResult().isEmpty()) {
-                                            requestData.put("userName", userTask.getResult().getDocuments().get(0).getString("lastName")+ " "+ userTask.getResult().getDocuments().get(0).getString("firstName"));
-                                        } else {
-                                            requestData.put("userName", "Unknown");
-                                        }
-
-                                        requestData.put("docId", docId);
-                                        requestData.put("userType", userType);
-                                        requestData.put("agentState", agentState);
-                                        requestData.put("translatorState", translatorState);
-                                        requestData.put("employeeState", employeeState);
-                                        requestData.put("employerState", employerState);
-                                        bookingRequests.add(requestData);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        requestData.put("helperName", task.getResult().getDocuments().get(0).getString("name"));
+                    } else {
+                        requestData.put("helperName", "Unknown");
                     }
+
+                    db.collection("users").whereEqualTo("email", employerEmail).get()
+                            .addOnCompleteListener(userTask -> {
+                                if (userTask.isSuccessful() && !userTask.getResult().isEmpty()) {
+                                    requestData.put("userName", userTask.getResult().getDocuments().get(0).getString("lastName") + " " + userTask.getResult().getDocuments().get(0).getString("firstName"));
+                                } else {
+                                    requestData.put("userName", "Unknown");
+                                }
+
+                                requestData.put("docId", docId);
+                                requestData.put("userType", userType);
+                                requestData.put("agentState", agentState);
+                                requestData.put("translatorState", translatorState);
+                                requestData.put("employeeState", employeeState);
+                                requestData.put("employerState", employerState);
+
+                                bookingRequests.add(requestData);
+                                adapter.notifyDataSetChanged();
+                            });
                 });
     }
 }
