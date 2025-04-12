@@ -30,13 +30,23 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/bookRecordID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Booking ID: 12345"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#1E1E1E" />
+
+            <TextView
                 android:id="@+id/tvHelperName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Booking Request"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#1E1E1E" />
+                android:textSize="15sp"
+                android:textColor="#1E1E1E"
+                android:layout_marginTop="10dp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -118,23 +128,21 @@
             android:layout_marginTop="40dp">
 
             <TextView
-                android:id="@+id/bookRecordID"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Booking ID: 12345"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#4B5563" />
-
-            <TextView
                 android:id="@+id/booktatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Pending Confirmation"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#4B5563" />
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:id="@+id/DetailIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_arrow_circle_right" />
 
         </LinearLayout>
 
@@ -142,7 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/infoSection"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="40dp"
             android:background="#E5E7EB" />
 
         <LinearLayout
@@ -196,7 +204,7 @@
                     android:textColor="@android:color/white"
                     android:textAllCaps="false"
                     android:elevation="4dp"
-                    android:cornerRadius="25dp" />
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btnCancel"
@@ -209,7 +217,7 @@
                     android:textColor="@android:color/white"
                     android:textAllCaps="false"
                     android:elevation="4dp"
-                    android:cornerRadius="25dp" />
+                    android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

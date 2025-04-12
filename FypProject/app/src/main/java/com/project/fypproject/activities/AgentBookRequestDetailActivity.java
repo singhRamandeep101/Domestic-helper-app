@@ -41,7 +41,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
     private ImageButton chatEmployer, chatHelper, chatTranslator;
 
     private String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
-    private String currentUserEmail;
+    private String currentUserEmail,translatorName,agentName;
     LinearLayout layoutEmployerSelectedTime, layoutHelperSelectedTime, layoutTranslatorSelectedTime, layoutMatchingTime, layoutConfirmedTime,layoutConfirmTime;
 
     private FirebaseFirestore db;
@@ -188,8 +188,13 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                         bookingData.put("employeeEmail", employeeEmail);
                                         bookingData.put("employerEmail", employerEmail);
                                         bookingData.put("translatorEmail", translatorEmail);
+                                        bookingData.put("agentName", agentName);
+                                        bookingData.put("employeeName", helperName);
+                                        bookingData.put("employerName", employerName);
+                                        bookingData.put("translatorName", translatorName);
                                         bookingData.put("date", confirmedDate);
-                                        bookingData.put("state", "Waiting for interview");
+                                        bookingData.put("meetingStatus", "Waiting for interview");
+                                        bookingData.put("meetingID","MEETING-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
                                         db.collection("booking")
                                                 .add(bookingData)
@@ -197,6 +202,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(DocumentReference documentReference) {
                                                         Log.d("Firestore", "Booking added with ID: " + documentReference.getId());
+                                                        documentReference.update("bookingID", documentReference.getId());
                                                         Toast.makeText(AgentBookRequestDetailActivity.this, "The Confirmation Request Has Been Sent Successfully.", Toast.LENGTH_SHORT).show();
                                                         Intent intent = new Intent(AgentBookRequestDetailActivity.this, BookingRequestActivity.class);
                                                         startActivity(intent);
@@ -285,7 +291,8 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                                 if (userTask.isSuccessful() && !userTask.getResult().isEmpty()) {
                                                     String firstName = userTask.getResult().getDocuments().get(0).getString("firstName");
                                                     String lastName = userTask.getResult().getDocuments().get(0).getString("lastName");
-                                                    tvTranName.setText("Translator Name: " + lastName + " " + firstName);
+                                                    translatorName =  lastName + " " + firstName;
+                                                    tvTranName.setText("Translator Name: " + translatorName);
                                                 } else {
                                                     Log.e("Translator", "Translator Not Found");
                                                 }
@@ -305,8 +312,9 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                                                 if (agentTask.isSuccessful() && !agentTask.getResult().isEmpty()) {
                                                     String firstName = agentTask.getResult().getDocuments().get(0).getString("firstName");
                                                     String lastName = agentTask.getResult().getDocuments().get(0).getString("lastName");
+                                                    agentName =  lastName + " " + firstName;
                                                     TextView tvAgentName = findViewById(R.id.tvAgentName);
-                                                    tvAgentName.setText("Agent Name: " + lastName + " " + firstName);
+                                                    tvAgentName.setText("Agent Name: " + agentName);
                                                 } else {
                                                     Log.e("Agent", "Agent Not Found");
                                                 }
