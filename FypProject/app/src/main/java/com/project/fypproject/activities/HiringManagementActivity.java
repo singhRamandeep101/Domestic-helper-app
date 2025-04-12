@@ -1,5 +1,7 @@
 package com.project.fypproject.activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -32,6 +34,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -63,7 +66,7 @@ public class HiringManagementActivity extends AppCompatActivity {
     }
 
     ImageView btnBack;
-    LinearLayout llRegistration, llUpdate;
+    LinearLayout llRegistration, llUpdate, btnDismiss;
     EditText DH_Email, Agent_Email, Employer_Email;
     Button btn_register, btn_update;
     CheckBox cbBodyCheck, cbInsurance;
@@ -95,6 +98,7 @@ public class HiringManagementActivity extends AppCompatActivity {
         cbInsurance = findViewById(R.id.cbInsurance);
         statusSpinner = findViewById(R.id.statusSpinner);
         btn_update = findViewById(R.id.btn_update);
+        btnDismiss = findViewById(R.id.btn_dismiss);
         //</editor-fold>
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -116,7 +120,7 @@ public class HiringManagementActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             if (!task.getResult().isEmpty()) {
-                                // 有對應記錄，顯示註冊區
+                                // 有對應記錄，顯示更新區
                                 llUpdate.setAlpha(0f);
                                 llUpdate.setVisibility(View.VISIBLE);
                                 ObjectAnimator fadeIn = ObjectAnimator.ofFloat(llUpdate, "alpha", 0f, 1f);
@@ -140,7 +144,7 @@ public class HiringManagementActivity extends AppCompatActivity {
 
                             }
                             else {
-                                // 冇對應記錄，顯示更新區
+                                // 冇對應記錄，顯示註冊區
                                 llRegistration.setAlpha(0f);
                                 llRegistration.setVisibility(View.VISIBLE);
                                 ObjectAnimator fadeIn = ObjectAnimator.ofFloat(llRegistration, "alpha", 0f, 1f);
@@ -194,6 +198,39 @@ public class HiringManagementActivity extends AppCompatActivity {
                                                         .addOnFailureListener(e -> {
                                                             Toast.makeText(HiringManagementActivity.this, "Error creating agent: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                         });
+
+
+                                                    //Update - Adding employer's email and domestic helper's email to each other dataset.
+                                                    DocumentReference washingtonRef = db.collection("users").document(employer);
+                                                    washingtonRef
+                                                            .update("domesticHelper", domestic_helper).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+
+                                                    washingtonRef = db.collection("users").document(domestic_helper);
+                                                    washingtonRef
+                                                            .update("employer", employer).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+
                                                 }
                                             })
                                             .setNegativeButton("Cancel", null)
@@ -208,11 +245,12 @@ public class HiringManagementActivity extends AppCompatActivity {
                                     boolean body_check = cbBodyCheck.isChecked();
                                     boolean insurance = cbInsurance.isChecked();
                                     int status = statusSpinner.getSelectedItemPosition() + 2;
+                                    boolean ready = body_check && insurance && status > 4;
 
                                     DocumentReference washingtonRef = db.collection("HiringStatus").document(docId);
 
                                     washingtonRef
-                                            .update("body_check", body_check, "insurance", insurance, "status", status)
+                                            .update("body_check", body_check, "insurance", insurance, "status", status, "ready", ready)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
@@ -228,11 +266,106 @@ public class HiringManagementActivity extends AppCompatActivity {
                                             });
                                 }
                             });
+
+                            btnDismiss.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    db.collection("HiringStatus")
+                                            .whereEqualTo("domestic_helper", helperEmail)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+
+                                                        if (!task.getResult().isEmpty()) {
+
+                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                //
+                                                                String employer = document.getString("employer");
+                                                                String helperEmail = document.getString("domestic_helper");
+
+                                                                Log.d("Dennis", "The employer email is :" + employer + "\nThe helper email is: " + helperEmail);
+
+                                                                DocumentReference washingtonRef = db.collection("users").document(employer);
+                                                                washingtonRef
+                                                                        .update("domesticHelper", "").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+
+                                                                washingtonRef = db.collection("users").document(helperEmail);
+                                                                washingtonRef
+                                                                        .update("employer", "").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+
+                                                                db.collection("HiringStatus").document(docId)
+                                                                        .delete()
+                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Log.d("Dennis", "Deleted successfully");
+                                                                                Log.d("Dennis", "Using docId = " + docId);
+                                                                                finish();
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.w(TAG, "Error deleting document", e);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        }
+                                                        else {
+                                                            Log.d("Dennis", "Document dones't exist");
+                                                        }
+                                                    } else {
+                                                        Log.d("Firestore", "Error getting documents: ", task.getException());
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
                         } else {
                             Log.d("Firestore", "Error getting documents: ", task.getException());
                         }
                     }
                 });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btnDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
     }
 }
 
