@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.Login;
+import com.project.fypproject.activities.MeetingActivity;
 
 public class EmployerHomeFragment extends Fragment {
 
@@ -59,7 +60,7 @@ public class EmployerHomeFragment extends Fragment {
         llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeActivity(JobListActivity.class);
+                changeActivity(MeetingActivity.class);
             }
         });
 

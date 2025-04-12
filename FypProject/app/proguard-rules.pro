@@ -4,6 +4,8 @@
 #
 -keep class org.jitsi.** { *; }
 -keep class com.facebook.react.** { *; }
+-dontwarn org.jitsi.meet.**
+-dontwarn org.webrtc.**
 -dontwarn org.jitsi.**
 -dontwarn com.facebook.react.**
 # For more details, see

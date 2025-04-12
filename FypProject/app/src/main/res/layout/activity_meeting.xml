@@ -1,109 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E0F7FA">
+    android:background="#E0F7FA"
+    android:padding="16dp">
 
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#757575"
+        android:text="@string/back"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:contentDescription="@string/back_button_description"
+        app:icon="@drawable/ic_arrow_back"
+        app:iconTint="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Meeting Code Input -->
     <EditText
         android:id="@+id/inputBox"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="48dp"
-        android:hint="Enter meeting code"
-        android:inputType="text"
-        android:padding="16dp"
+        android:layout_marginTop="24dp"
         android:background="@android:drawable/edit_text"
         android:backgroundTint="#FFFFFF"
+        android:hint="@string/enter_meeting_code"
+        android:inputType="text"
+        android:padding="12dp"
         android:textColor="#212121"
         android:textColorHint="#90A4AE"
         android:textSize="18sp"
-        android:fontFamily="sans-serif-medium" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backButton" />
 
-    <!-- Join/Create button -->
+    <!-- Join/Create Button -->
     <Button
         android:id="@+id/joinCreateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/inputBox"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Join/Create"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#0288D1"
+        android:contentDescription="@string/join_create_button_description"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="12dp"
+        android:text="@string/join_create"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:fontFamily="sans-serif-bold"
-        android:textAllCaps="false"
-        android:stateListAnimator="@null" />
+        app:layout_constraintStart_toStartOf="@id/inputBox"
+        app:layout_constraintTop_toBottomOf="@id/inputBox" />
 
-    <!-- Share button -->
+    <!-- Share Button -->
     <Button
         android:id="@+id/ShareCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/joinCreateButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Share Code"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#388E3C"
+        android:contentDescription="@string/share_button_description"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="12dp"
+        android:text="@string/share"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:fontFamily="sans-serif-bold"
-        android:textAllCaps="false"
-        android:stateListAnimator="@null" />
+        app:icon="@drawable/ic_share"
+        app:iconTint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="@id/inputBox"
+        app:layout_constraintTop_toBottomOf="@id/inputBox" />
 
-    <!-- Container for Jitsi meeting view -->
+    <!-- Translation Output -->
+    <TextView
+        android:id="@+id/translationOutput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#CC000000"
+        android:elevation="8dp"
+        android:maxLines="5"
+        android:padding="12dp"
+        android:scrollbars="vertical"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/copyTranslationButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ShareCode" />
+
+    <!-- Copy Translation Button -->
+    <Button
+        android:id="@+id/copyTranslationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#4CAF50"
+        android:text="@string/copy"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:contentDescription="@string/copy_translation_description"
+        app:icon="@drawable/ic_content_copy"
+        app:iconTint="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/translationOutput"
+        app:layout_constraintEnd_toStartOf="@id/translationHistoryButton"
+        app:layout_constraintTop_toTopOf="@id/translationOutput" />
+
+    <!-- Translation History Button -->
+    <Button
+        android:id="@+id/translationHistoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#757575"
+        android:text="@string/history"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:contentDescription="@string/translation_history_description"
+        app:icon="@drawable/ic_history"
+        app:iconTint="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/translationOutput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/translationOutput" />
+
+    <!-- Chat Input Container -->
+    <LinearLayout
+        android:id="@+id/chat_input_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:elevation="10dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/translationOutput">
+
+        <EditText
+            android:id="@+id/chatInputBox"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@android:drawable/edit_text"
+            android:backgroundTint="#FFFFFF"
+            android:hint="@string/type_message_to_translate"
+            android:inputType="text"
+            android:paddingStart="12dp"
+            android:paddingEnd="10dp"
+            android:textColor="#212121"
+            android:textColorHint="#90A4AE"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/voiceTranslateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#4CAF50"
+            android:text="@string/voice"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:contentDescription="@string/voice_translate_description"
+            app:icon="@drawable/ic_mic"
+            app:iconTint="@android:color/white" />
+
+        <Button
+            android:id="@+id/sendChatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:backgroundTint="#0288D1"
+            android:paddingHorizontal="16dp"
+            android:text="@string/send"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:contentDescription="@string/send_chat_description"
+            app:icon="@drawable/ic_send"
+            app:iconTint="@android:color/white" />
+    </LinearLayout>
+
+    <!-- Meeting Container (Jitsi View) -->
     <FrameLayout
         android:id="@+id/meetingContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/ShareCode"
-        android:layout_marginTop="32dp"
-        android:background="#263238" >
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:background="#263238"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_input_container" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/leaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:contentDescription="Leave meeting"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:backgroundTint="#EF5350"
-            app:elevation="8dp"
-            app:fabSize="normal"
-            app:pressedTranslationZ="12dp"
-            app:rippleColor="#D81B60" />
+    <!-- Meeting Timer -->
+    <TextView
+        android:id="@+id/meetingTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#80000000"
+        android:padding="4dp"
+        android:text="@string/timer_reset"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/meetingContainer"
+        app:layout_constraintTop_toTopOf="@id/meetingContainer" />
 
-    </FrameLayout>
-
-    <!-- Questions button (FAB, middle-right) -->
+    <!-- Questions Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/questionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="32dp"
-        android:src="@android:drawable/ic_menu_help"
-        android:contentDescription="Show meeting questions"
-        app:backgroundTint="#FFCA28"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/questions_button_description"
+        android:src="@android:drawable/ic_menu_info_details"
+        android:tint="@android:color/white"
+        android:visibility="gone"
+        app:backgroundTint="#0288D1"
+        app:elevation="6dp"
         app:fabSize="normal"
-        app:rippleColor="#FFB300"
-        app:elevation="8dp"
-        app:pressedTranslationZ="12dp" />
+        app:rippleColor="#0277BD"
+        app:layout_constraintBottom_toTopOf="@id/translateButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/meetingContainer"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <!-- Leave button (FAB, bottom-right) -->
+    <!-- Translate Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/translateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/translate_button_description"
+        android:src="@android:drawable/ic_menu_add"
+        android:tint="@android:color/white"
+        android:visibility="gone"
+        app:backgroundTint="#FF9800"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:rippleColor="#F57C00"
+        app:layout_constraintBottom_toBottomOf="@id/meetingContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/questionsButton" />
 
-</RelativeLayout>
+    <!-- Leave Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/leaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/leave_button_description"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:tint="@android:color/white"
+        android:visibility="gone"
+        app:backgroundTint="#F44336"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:rippleColor="#D32F2F"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
