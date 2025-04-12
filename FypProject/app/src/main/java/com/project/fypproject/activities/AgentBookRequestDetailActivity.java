@@ -248,6 +248,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             layoutHelperSelectedTime.setVisibility(View.VISIBLE);
             layoutTranslatorSelectedTime.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
+            btnSendDecline.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
             getSelectedTime(requestID, "helperSelectedTime", layoutHelperSelectedTime);
             getSelectedTime(requestID, "translatorSelectedTime", layoutTranslatorSelectedTime);
@@ -384,7 +385,12 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                             Map<String, Object> selectedTime = (Map<String, Object>) document.get(timeType);
 
                             if (selectedTime != null) {
-                                for (String date : selectedTime.keySet()) {
+
+                                List<String> sortedDates = new ArrayList<>(selectedTime.keySet());
+                                Collections.sort(sortedDates);
+
+
+                                for (String date : sortedDates) {
                                     Map<String, Boolean> timeSlots = (Map<String, Boolean>) selectedTime.get(date);
                                     addDateAndTimeSlotsToLayout(date, timeSlots, targetLayout);
                                 }
@@ -488,10 +494,13 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             layoutMatchingTime.setVisibility(View.VISIBLE);
         } else {
             tvNoMatchTime.setVisibility(View.GONE);
-            btnSendDecline.setVisibility(View.GONE);
+            btnSendDecline.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
 
-            for (String date : matchingTimes.keySet()) {
+            List<String> sortedDates = new ArrayList<>(matchingTimes.keySet());
+            Collections.sort(sortedDates);
+
+            for (String date : sortedDates) {
                 TextView dateTextView = new TextView(this);
                 dateTextView.setText(date);
                 dateTextView.setTextSize(18);
@@ -570,7 +579,11 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
             layoutConfirmTime.setVisibility(View.VISIBLE);
             btnBook.setVisibility(View.VISIBLE);
 
-            for (String date : confirmedTimes.keySet()) {
+
+            List<String> sortedDates = new ArrayList<>(confirmedTimes.keySet());
+            Collections.sort(sortedDates);
+
+            for (String date : sortedDates) {
                 TextView dateTextView = new TextView(this);
                 dateTextView.setText(date);
                 dateTextView.setTextSize(18);

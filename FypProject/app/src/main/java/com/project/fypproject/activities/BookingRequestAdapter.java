@@ -3,6 +3,7 @@ package com.project.fypproject.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
 
     private List<HashMap<String, String>> bookingRequests;
     Context context;
-    String userState;
 
     public BookingRequestAdapter(Context context,List<HashMap<String, String>> bookingRequests) {
         this.bookingRequests = bookingRequests;
@@ -38,6 +38,8 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        String userState="";
         HashMap<String, String> request = bookingRequests.get(position);
         holder.tvHelperName.setText(request.get("helperName"));
         holder.tvUserName.setText(request.get("userName"));
@@ -94,10 +96,10 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             userState = "Both Declined";
 
         }else if (request.get("userType").equals("Agent") && request.get("agentState").equals("Agent Decline")) {
-            holder.userStatus.setText("Declined");
+            holder.userStatus.setText("Agent Decline");
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
-            userState = "Declined";
+            userState = "Agent Decline";
 
         }else if (request.get("userType").equals("Agent")
                 && request.get("agentState").equals("Final Time Confirmed")) {
@@ -128,14 +130,14 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             userState = "Final Time Confirmed";
 
 
-        }else if (request.get("userType").equals("Employee")
+        }else if (request.get("userType").equals("DomesticHelper")
                 && request.get("employeeState").equals("Action Required")) {
             holder.userStatus.setText("Action Required");
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_action);
             userState = "Action Required";
 
-        }else if (request.get("userType").equals("Employee")
+        }else if (request.get("userType").equals("DomesticHelper")
                 && request.get("employeeState").equals("DomesticHelper Confirmed")
                 && request.get("translatorState").equals("Action Required")){
             holder.userStatus.setText("Awaiting Translator");
@@ -143,7 +145,7 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             holder.stateIcon.setImageResource(R.drawable.ic_pending);
             userState = "Awaiting Translator";
 
-        }else if (request.get("userType").equals("Employee")
+        }else if (request.get("userType").equals("DomesticHelper")
                 && request.get("employeeState").equals("DomesticHelper Confirmed")
                 && request.get("translatorState").equals("Translator Confirmed")){
             holder.userStatus.setText("Awaiting Agent");
@@ -151,20 +153,20 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             holder.stateIcon.setImageResource(R.drawable.ic_pending);
             userState = "Awaiting Agent";
 
-        }else if (request.get("userType").equals("Employee") && request.get("employeeState").equals("DomesticHelper Decline")){
-            holder.userStatus.setText("Declined");
+        }else if (request.get("userType").equals("DomesticHelper") && request.get("employeeState").equals("DomesticHelper Decline")){
+            holder.userStatus.setText("DomesticHelper Decline");
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
-            userState = "Declined";
+            userState = "DomesticHelper Decline";
 
-        }else if (request.get("userType").equals("Employee") && request.get("translatorState").equals("Translator Decline")){
+        }else if (request.get("userType").equals("DomesticHelper") && request.get("translatorState").equals("Translator Decline")){
             holder.userStatus.setText("Translator Decline");
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
             userState = "Translator Decline";
 
 
-        }else if (request.get("userType").equals("Employee")
+        }else if (request.get("userType").equals("DomesticHelper")
                 && request.get("employeeState").equals("Translator Decline")
                 && request.get("translatorState").equals("DomesticHelper Decline")) {
             holder.userStatus.setText("Declined");
@@ -172,7 +174,14 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
             userState = "Declined";
 
-        }else if (request.get("userType").equals("Employee") && request.get("employeeState").equals("Final Time Confirmed")) {
+        }else if (request.get("userType").equals("DomesticHelper")
+                && request.get("employeeState").equals("Agent Decline")){
+            holder.userStatus.setText("Agent Decline");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+            userState = "Agent Decline";
+
+        }else if (request.get("userType").equals("DomesticHelper") && request.get("employeeState").equals("Final Time Confirmed")) {
             holder.userStatus.setText("Final Time Confirmed");
             holder.userStatus.setTextColor(Color.parseColor("#4CAF50"));
             holder.stateIcon.setImageResource(R.drawable.icon_confirm);
@@ -208,10 +217,10 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             userState = "DomesticHelper Decline";
 
         }else if (request.get("userType").equals("Translator") && request.get("translatorState").equals("Translator Decline")){
-            holder.userStatus.setText("Declined");
+            holder.userStatus.setText("Translator Decline");
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
-            userState = "Declined";
+            userState = "Translator Decline";
 
 
         }else if (request.get("userType").equals("Translator")
@@ -221,6 +230,13 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
             holder.userStatus.setTextColor(Color.parseColor("#F44336"));
             holder.stateIcon.setImageResource(R.drawable.ic_rej);
             userState = "Declined";
+
+        }else if (request.get("userType").equals("Translator")
+                && request.get("translatorState").equals("Agent Decline")){
+            holder.userStatus.setText("Agent Decline");
+            holder.userStatus.setTextColor(Color.parseColor("#F44336"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+            userState = "Agent Decline";
 
         }else if (request.get("userType").equals("Translator") && request.get("translatorState").equals("Final Time Confirmed")) {
             holder.userStatus.setText("Final Time Confirmed");
@@ -233,6 +249,7 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
 
         holder.docId.setText("Request ID: "+ request.get("docId"));
 
+        String finalUserState = userState;
         holder.btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -248,7 +265,7 @@ public class BookingRequestAdapter extends RecyclerView.Adapter<BookingRequestAd
                 }
                 Intent intent = new Intent(context, targetClass);
                 intent.putExtra("requestID",request.get("docId"));
-                intent.putExtra("requestState",userState);
+                intent.putExtra("requestState",finalUserState);
                 intent.putExtra("employerName",request.get("userName"));
                 intent.putExtra("helperName",request.get("helperName"));
                 context.startActivity(intent);

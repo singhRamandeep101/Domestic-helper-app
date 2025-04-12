@@ -241,7 +241,10 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
                         Map<String, Object> selectedTime = (Map<String, Object>) document.get(timeType);
 
                         if (selectedTime != null) {
-                            for (String date : selectedTime.keySet()) {
+
+                            List<String> sortedDates = new ArrayList<>(selectedTime.keySet());
+                            Collections.sort(sortedDates);
+                            for (String date : sortedDates) {
                                 Map<String, Boolean> timeSlots = (Map<String, Boolean>) selectedTime.get(date);
 
                                 if(targetLayout.equals(layoutEmployerSelectedTime)){
@@ -401,9 +404,17 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
         titleTextView.setPadding(0, 16, 0, 8);
         layoutEmployerSelectedTime.addView(titleTextView);
 
-        for (String date : selectedTimes.keySet()) {
+
+        List<String> sortedDates = new ArrayList<>(selectedTimes.keySet());
+        Collections.sort(sortedDates);
+
+        for (String date : sortedDates) {
+
+            List<String> sortedTimes = new ArrayList<>(selectedTimes.get(date));
+            Collections.sort(sortedTimes);
+
             Map<String, Boolean> timeSlots = new HashMap<>();
-            for (String time : selectedTimes.get(date)) {
+            for (String time : sortedTimes) {
                 timeSlots.put(time, true);
             }
             addDateAndTimeSlotsToLayout(date, timeSlots, layoutEmployerSelectedTime);
@@ -419,7 +430,7 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
                         "employeeState", "DomesticHelper Decline")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Request Declined Successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookRecordActivity.class);
+                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookingRequestActivity.class);
                     startActivity(intent);
                     finish();
                 })
@@ -438,10 +449,10 @@ public class EmployeeBookRequestDetailActivity extends AppCompatActivity {
 
         db.collection("interview_request")
                 .document(requestID)
-                .update("helperSelectedTime", formattedConfirmedTimes, "employeeState", "DomesticHelper Confirmed")
+                .update("helperSelectedTime", formattedConfirmedTimes, "employeeState", "DomesticHelper Confirmed","agentState", "DomesticHelper Confirmed")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Request Confirmed Successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookRecordActivity.class);
+                    Intent intent = new Intent(EmployeeBookRequestDetailActivity.this, BookingRequestActivity.class);
                     startActivity(intent);
                     finish();
                 })

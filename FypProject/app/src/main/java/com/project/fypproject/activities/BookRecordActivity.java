@@ -112,11 +112,13 @@ public class BookRecordActivity extends AppCompatActivity {
             emailField = "employerEmail";
         } else if ("Agent".equals(userType)) {
             emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
+        } else if ("DomesticHelper".equals(userType)){
             emailField = "employeeEmail";
+        }else{
+            emailField = "translatorEmail";
         }
 
-        db.collection("bookings")
+        db.collection("booking")
                 .whereEqualTo(emailField, user.getEmail())
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
@@ -193,11 +195,13 @@ public class BookRecordActivity extends AppCompatActivity {
             emailField = "employerEmail";
         } else if ("Agent".equals(userType)) {
             emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
+        } else if ("DomesticHelper".equals(userType)){
             emailField = "employeeEmail";
+        }else{
+            emailField = "translatorEmail";
         }
 
-        db.collection("bookings")
+        db.collection("booking")
                 .whereEqualTo(emailField, user.getEmail())
                 .whereGreaterThanOrEqualTo("date", today)
                 .whereLessThanOrEqualTo("date", sevenDaysLater)
@@ -276,11 +280,13 @@ public class BookRecordActivity extends AppCompatActivity {
             emailField = "employerEmail";
         } else if ("Agent".equals(userType)) {
             emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
+        } else if ("DomesticHelper".equals(userType)){
             emailField = "employeeEmail";
+        }else{
+            emailField = "translatorEmail";
         }
 
-        db.collection("bookings")
+        db.collection("booking")
                 .whereEqualTo(emailField, user.getEmail())
                 .whereGreaterThanOrEqualTo("date", today)
                 .whereLessThanOrEqualTo("date", oneMonthLater)

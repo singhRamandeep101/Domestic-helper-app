@@ -123,7 +123,7 @@ public class AgentHomeFragment extends Fragment {
         llPublicholiday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
+                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
                 startActivity(intent);
             }
         });

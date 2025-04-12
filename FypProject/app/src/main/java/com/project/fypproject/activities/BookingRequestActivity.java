@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
@@ -127,7 +128,7 @@ public class BookingRequestActivity extends AppCompatActivity {
     }
 
     private void loadBookingRequests(final String field, final String userEmail, final String userType) {
-        db.collection("interview_request").whereEqualTo(field, userEmail).get()
+        db.collection("interview_request").whereEqualTo(field, userEmail).orderBy("postTime", Query.Direction.DESCENDING).get()
                 .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {

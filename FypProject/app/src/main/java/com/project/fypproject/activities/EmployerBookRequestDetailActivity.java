@@ -236,7 +236,9 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                             Map<String, Object> selectedTime = (Map<String, Object>) document.get(timeType);
 
                             if (selectedTime != null) {
-                                for (String date : selectedTime.keySet()) {
+                                List<String> sortedDates = new ArrayList<>(selectedTime.keySet());
+                                Collections.sort(sortedDates);
+                                for (String date : sortedDates) {
                                     Map<String, Boolean> timeSlots = (Map<String, Boolean>) selectedTime.get(date);
                                     addDateAndTimeSlotsToLayout(date, timeSlots, targetLayout);
                                 }
