@@ -39,7 +39,6 @@ import com.project.fypproject.activities.TranslatorBookRequestDetailActivity;
 
 public class EmployerHomeFragment extends Fragment {
 
-    Button btnLogout;
     LinearLayout llPublicHoliday, llJobList, llJobPost;
     FirebaseAuth auth;
     FirebaseUser user;
@@ -77,8 +76,6 @@ public class EmployerHomeFragment extends Fragment {
         user = auth.getCurrentUser();
         if (user == null) {
             changeActivity(Login.class);
-        }else{
-            // Implement the code the here!
         }
 
         llJobList.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +113,7 @@ public class EmployerHomeFragment extends Fragment {
                         MyDomesticHelper = document.getString("domesticHelper");
                         Log.d("Dennis", "My domestic helper email is " + MyDomesticHelper);
                         LinearLayout mainContainer = view.findViewById(R.id.MyDomesticHelper_Container);
-                        if(MyDomesticHelper != null){
+                        if(MyDomesticHelper != null && !MyDomesticHelper.trim().isEmpty()){
                             // 2. 建立新的 LinearLayout
                             LinearLayout newLayout = new LinearLayout(getContext());
                             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
