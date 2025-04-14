@@ -32,6 +32,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 
 import org.jitsi.meet.sdk.JitsiMeet;
@@ -93,13 +97,56 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     private long meetingStartTime;
     private Runnable timerRunnable;
 
+    // Firebase variables
+    private FirebaseFirestore db;
+    private String email;
+    private String meetingID;
+    private String bookingDocId; // Store the Firestore document ID
+    private String userType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
 
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Initialize Firebase Auth and get the current user
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        // Check if user is signed in
+        if (user == null) {
+            Log.e(TAG, "No user is signed in, redirecting to LoginActivity");
+            Toast.makeText(this, "Please sign in to continue.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Login.class); // Replace with your login activity
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Get the email from Firebase Auth
+        email = user.getEmail();
+        if (email == null || email.isEmpty()) {
+            Log.e(TAG, "User email is null or empty, redirecting to LoginActivity");
+            Toast.makeText(this, "User email not found. Please sign in again.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Get bookingID and meetingCode from Intent
+        bookingDocId = getIntent().getStringExtra("bookingID"); // Expecting the Firestore document ID
+        String meetingCode = getIntent().getStringExtra("meetingCode");
+
+        // Assign to class variables
+        this.email = email.toLowerCase(); // Normalize email to lowercase
+        this.meetingID = null; // Will be fetched from Firestore
+
         // Reset state to ensure initial UI is shown
-        isMeetingActive = false; // Force reset to false
+        isMeetingActive = false;
         isTranslationEnabled = false;
         isVoiceTranslating = false;
         sourceLanguage = "en";
@@ -123,6 +170,104 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         Log.d(TAG, "onCreate: Forcing initial UI visibility");
         toggleUiVisibility(true);
         setInitialVisibility();
+
+        // Fetch userType and meetingID from Firestore
+        fetchFirestoreData(meetingCode);
+    }
+
+    private void fetchFirestoreData(String meetingCode) {
+        // Fetch userType from Firestore
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
+                        userType = userDoc.getString("userType");
+                        Log.d(TAG, "Retrieved userType: " + userType);
+
+                        // Check if bookingID was provided via Intent
+                        if (bookingDocId == null || bookingDocId.isEmpty()) {
+                            Log.e(TAG, "bookingID not provided via Intent");
+                            showToast("Booking ID not provided.");
+                            finish();
+                            return;
+                        }
+
+                        // Fetch the booking document using the bookingID
+                        Log.d(TAG, "Fetching booking document with bookingID: " + bookingDocId);
+                        db.collection("booking")
+                                .document(bookingDocId)
+                                .get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        // Verify the user's email matches one of the participants
+                                        String agentEmail = documentSnapshot.getString("agentEmail");
+                                        String translatorEmail = documentSnapshot.getString("translatorEmail");
+                                        String employeeEmail = documentSnapshot.getString("employeeEmail");
+                                        String employerEmail = documentSnapshot.getString("employerEmail");
+
+                                        if (!(email.equalsIgnoreCase(agentEmail) ||
+                                                email.equalsIgnoreCase(translatorEmail) ||
+                                                email.equalsIgnoreCase(employeeEmail) ||
+                                                email.equalsIgnoreCase(employerEmail))) {
+                                            Log.e(TAG, "User email does not match any participant in the booking: " + email);
+                                            showToast("You are not authorized to join this meeting.");
+                                            finish();
+                                            return;
+                                        }
+
+                                        meetingID = documentSnapshot.getString("meetingID");
+                                        String meetingStatus = documentSnapshot.getString("meetingStatus");
+                                        Log.d(TAG, "Retrieved meetingID from Firestore: " + meetingID);
+                                        Log.d(TAG, "Booking document ID: " + bookingDocId);
+                                        Log.d(TAG, "Meeting status: " + meetingStatus);
+
+                                        // Check if the meeting has already ended
+                                        if ("Ended Interview".equals(meetingStatus)) {
+                                            Log.w(TAG, "Meeting has already ended: " + meetingID);
+                                            showToast("This meeting has already ended.");
+                                            finish();
+                                            return;
+                                        }
+
+                                        // Auto-populate inputBox and join meeting if meetingCode is not provided
+                                        if (meetingCode == null || meetingCode.isEmpty()) {
+                                            if (meetingID != null && !meetingID.isEmpty()) {
+                                                Log.d(TAG, "Auto-populating inputBox with meetingID: " + meetingID);
+                                                inputBox.setText(meetingID);
+                                                handleJoinCreateClick();
+                                            } else {
+                                                Log.e(TAG, "MeetingID is null or empty in booking document");
+                                                showToast("Failed to retrieve meeting ID.");
+                                                finish();
+                                            }
+                                        } else {
+                                            inputBox.setText(meetingCode);
+                                            handleJoinCreateClick();
+                                        }
+                                    } else {
+                                        Log.e(TAG, "Booking document not found for bookingID: " + bookingDocId);
+                                        showToast("Booking not found.");
+                                        finish();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to fetch booking document: ", e);
+                                    showToast("Failed to retrieve booking information.");
+                                    finish();
+                                });
+                    } else {
+                        Log.e(TAG, "User not found in Firebase");
+                        showToast("User not found");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch user data", e);
+                    showToast("Failed to fetch user data");
+                    finish();
+                });
     }
 
     private void initializeViews() {
@@ -203,7 +348,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         });
         voiceTranslateButton.setOnClickListener(v -> toggleVoiceTranslation());
         copyTranslationButton.setOnClickListener(v -> copyTranslatedText());
-        backButton.setOnClickListener(v -> finish()); // Navigate back to previous activity
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void setupSpeechListener() {
@@ -231,7 +376,10 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             @Override
             public void onResults(Bundle results) {
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (matches != null && !matches.isEmpty()) translateAndSendMessage(matches.get(0));
+                if (matches != null && !matches.isEmpty()) {
+                    Log.d(TAG, "Voice translation using targetLanguage: " + targetLanguage);
+                    translateAndSendMessage(matches.get(0));
+                }
                 stopVoiceTranslation();
             }
             @Override
@@ -419,7 +567,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
                     String finalText = "[Translated from " + sourceLanguage + " to " + targetLanguage + "] " + translatedText;
                     translationCache.put(cacheKey, finalText);
-                    // Move UI update to the main thread
                     handler.post(() -> updateTranslationUI(finalText));
                 } else {
                     handler.post(() -> showToast(R.string.translation_failed));
@@ -459,6 +606,12 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 .setTitle(R.string.translation_history_title)
                 .setItems(translationCache.values().toArray(new String[0]), null)
                 .setPositiveButton(R.string.close, null)
+                .setNeutralButton("Clear", (dialog, which) -> {
+                    translationCache.clear();
+                    Log.d(TAG, "Translation history cleared");
+                    showToast("Translation history cleared");
+                    dialog.dismiss();
+                })
                 .show();
     }
 
@@ -486,6 +639,35 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         if (!isNetworkAvailable()) {
             showToast(R.string.no_internet);
             return;
+        }
+
+        if (email == null || email.isEmpty()) {
+            Log.e(TAG, "Email is null or empty, cannot join meeting");
+            showToast("User email not found. Please sign in again.");
+            return;
+        }
+
+        if (bookingDocId == null || bookingDocId.isEmpty()) {
+            Log.e(TAG, "Booking document ID is null or empty, skipping Firestore updates");
+            showToast("Booking document ID not provided. Status update skipped.");
+        } else {
+            if ("Agent".equals(userType)) {
+                Log.d(TAG, "joinMeeting: Updating meeting status to Started Interview in Firestore");
+                db.collection("booking")
+                        .document(bookingDocId)
+                        .update("meetingStatus", "Started Interview")
+                        .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Started Interview"))
+                        .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status to Started Interview", e));
+            } else {
+                Log.d(TAG, "User is not an Agent, skipping status update");
+            }
+
+            Log.d(TAG, "joinMeeting: Storing meeting code in Firestore");
+            db.collection("booking")
+                    .document(bookingDocId)
+                    .update("meetingCode", meetingCode)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting code stored in Firestore: " + meetingCode))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to store meeting code", e));
         }
 
         executorService.execute(() -> {
@@ -532,7 +714,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 Log.e(TAG, "joinMeeting: Failed to initialize Jitsi view", e);
                 handler.post(() -> {
                     showToast(R.string.meeting_setup_failed);
-                    toggleUiVisibility(true); // Show initial UI if meeting fails
+                    toggleUiVisibility(true);
                     isMeetingActive = false;
                 });
             }
@@ -659,7 +841,13 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (conferenceReceiver != null) unregisterReceiver(conferenceReceiver);
+        if (conferenceReceiver != null) {
+            try {
+                unregisterReceiver(conferenceReceiver);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "Receiver not registered", e);
+            }
+        }
         speechRecognizer.destroy();
         cleanupJitsiView();
         executorService.shutdown();
@@ -699,6 +887,22 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             if (!isTranslationEnabled) setTranslationVisibility(View.GONE);
             stopVoiceTranslation();
             Log.d(TAG, "cleanupJitsiView: Jitsi view cleaned up successfully");
+
+            if (bookingDocId == null || bookingDocId.isEmpty()) {
+                Log.e(TAG, "Booking document ID is null or empty, skipping Firestore updates in cleanup");
+                showToast("Booking document ID not provided. Status update skipped.");
+            } else {
+                if ("Agent".equals(userType)) {
+                    Log.d(TAG, "cleanupJitsiView: Updating meeting status to Ended Interview in Firestore");
+                    db.collection("booking")
+                            .document(bookingDocId)
+                            .update("meetingStatus", "Waiting for Employer Response...")
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Ended Interview"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
+                } else {
+                    Log.d(TAG, "User is not an Agent, skipping status update in cleanup");
+                }
+            }
         }
     }
 
