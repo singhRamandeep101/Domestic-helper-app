@@ -146,7 +146,36 @@ public class BookRecordActivity extends AppCompatActivity {
     }
 
     private void fetchAllBookings() {
-        fetchBookingsByDateRange(null, null);
+        // Fetch all bookings without filtering by meetingStatus
+        if (emailField == null || userEmail == null) {
+            Log.e("Error", "emailField or userEmail is null. Skipping query.");
+            return;
+        }
+
+        db.collection("booking")
+                .whereEqualTo(emailField, userEmail)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("Firestore Error", "Error fetching bookings", e);
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        bookingList.clear();
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            bookingList.add(document);
+                        }
+
+                        if (bookingList.isEmpty()) {
+                            tvNoRecord.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        } else {
+                            tvNoRecord.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     private void fetchBookingsForNextMonth() {
@@ -171,6 +200,7 @@ public class BookRecordActivity extends AppCompatActivity {
 
         db.collection("booking")
                 .whereEqualTo(emailField, userEmail)
+                .whereEqualTo("meetingStatus", "Waiting for interview") // Keep this condition for specific date ranges
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("Firestore Error", "Error fetching bookings", e);
@@ -181,11 +211,15 @@ public class BookRecordActivity extends AppCompatActivity {
                         bookingList.clear();
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             try {
-                                String dateStr = document.getString("date");
-                                Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
+                                if (startDate != null && endDate != null) {
+                                    String dateStr = document.getString("date");
+                                    Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
 
-                                if ((startDate == null || !bookingDate.before(startDate)) &&
-                                        (endDate == null || !bookingDate.after(endDate))) {
+                                    if ((startDate == null || !bookingDate.before(startDate)) &&
+                                            (endDate == null || !bookingDate.after(endDate))) {
+                                        bookingList.add(document);
+                                    }
+                                } else {
                                     bookingList.add(document);
                                 }
                             } catch (Exception ex) {
