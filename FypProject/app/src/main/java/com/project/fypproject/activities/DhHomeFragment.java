@@ -153,7 +153,7 @@ public class DhHomeFragment extends Fragment {
                         }
                         else {
                             TextView textView = new TextView(getContext());
-                            textView.setText("Let's finding your employer");
+                            textView.setText("Let's find a new employer");
                             textView.setTextSize(18);
                             textView.setGravity(Gravity.CENTER);
                             textView.setPadding(16, 50, 16, 50);

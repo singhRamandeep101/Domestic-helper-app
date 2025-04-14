@@ -174,7 +174,7 @@ public class EmployerHomeFragment extends Fragment {
                         }
                         else {
                             TextView textView = new TextView(getContext());
-                            textView.setText("Let's hiring your first Domestic");
+                            textView.setText("Let's hire a new domestic");
                             textView.setTextSize(18);
                             textView.setGravity(Gravity.CENTER);
                             textView.setPadding(16, 50, 16, 50);
