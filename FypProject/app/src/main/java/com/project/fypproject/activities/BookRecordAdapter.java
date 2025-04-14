@@ -175,7 +175,7 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
         holder.btnJoin.setOnClickListener(v -> {
             android.content.Context context = holder.itemView.getContext();
             android.content.Intent intent = new android.content.Intent(context, MeetingActivity.class);
-            intent.putExtra("meetingID", meetingID);
+            intent.putExtra("bookingID", document.getString("bookingID"));
             context.startActivity(intent);
         });
 
