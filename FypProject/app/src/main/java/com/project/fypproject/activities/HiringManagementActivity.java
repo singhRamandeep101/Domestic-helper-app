@@ -175,7 +175,7 @@ public class HiringManagementActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     String agent, domestic_helper, employer;
-                                                    employer = String.valueOf(Employer_Email.getText());
+                                                    employer = String.valueOf(Employer_Email.getText()).toLowerCase();
                                                     agent = user.getEmail();
                                                     domestic_helper = helperEmail;
 
@@ -220,7 +220,7 @@ public class HiringManagementActivity extends AppCompatActivity {
 
                                                     washingtonRef = db.collection("users").document(domestic_helper);
                                                     washingtonRef
-                                                            .update("employer", employer).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            .update("employer", employer, "availability", "non-available").addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
@@ -306,7 +306,7 @@ public class HiringManagementActivity extends AppCompatActivity {
 
                                                                 washingtonRef = db.collection("users").document(helperEmail);
                                                                 washingtonRef
-                                                                        .update("employer", "").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        .update("employer", "", "availability", "available").addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
