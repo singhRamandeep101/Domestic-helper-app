@@ -499,6 +499,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                 String firstName = Doc.getString("firstName");
                                 String lastName = Doc.getString("lastName");
                                 String userType = Doc.getString("userType");
+                                
 
                                 if (firstName != null && lastName != null) {
                                     // Step 4: Create and set ChatModel
