@@ -20,20 +20,6 @@
         android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/last_filter_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Last applied filters: None"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/btn_filter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 
     <TextView
         android:id="@+id/no_result_text"
@@ -47,7 +33,7 @@
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/last_filter_history" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_filter" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_job_list"
@@ -57,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/last_filter_history" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_filter" />
 
     <FrameLayout
         app:layout_constraintTop_toBottomOf="@+id/btn_filter"
@@ -96,26 +82,15 @@
                         android:backgroundTint="#FF0000"
                         android:textColor="@android:color/white" />
 
-                    <Button
-                        style="@style/Widget.Material3.Button.Icon"
-                        android:id="@+id/btn_clear_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Clear All"
-                        android:textSize="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:layout_toEndOf="@id/btn_close_filter"
-                        android:layout_marginStart="16dp"
-                        android:backgroundTint="#FFA500"
-                        android:textColor="@android:color/white" />
-
                     <ImageView
                         android:id="@+id/btn_bookmark_filter"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_alignParentEnd="true"
+                        android:text="Close"
                         android:layout_marginBottom="16dp"
-                        android:src="@drawable/icon_bookmark_outline" />
+                        android:src="@drawable/icon_bookmark_outline"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/white" />
 
                 </RelativeLayout>
 

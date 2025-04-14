@@ -123,9 +123,9 @@
         <activity
             android:name=".activities.ResumeDetailActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".activities.employer.JobDetailActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".activities.employer.JobDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.Login"
             android:exported="true"

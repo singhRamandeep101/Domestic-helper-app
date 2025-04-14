@@ -8,8 +8,6 @@ public class HelperInfo {
     String email;
     String age;
 
-    private String image_url;
-
     public String getReligion() {
         return religion;
     }
@@ -31,14 +29,6 @@ public class HelperInfo {
         this.email = email;
         this.age = age;
         this.religion = religion;
-    }
-
-    public String getImage_url() {
-        return image_url;
-    }
-
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
     }
 
     public String getName() {
