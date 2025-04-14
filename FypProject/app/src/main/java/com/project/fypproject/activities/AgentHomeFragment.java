@@ -29,6 +29,12 @@ public class AgentHomeFragment extends Fragment {
     FirebaseAuth auth;
     FirebaseUser user;
 
+    public void changeActivityWithBookingId(Class<?> cls, String bookingId) {
+        Intent intent = new Intent(getActivity(), cls);
+        intent.putExtra("bookingID", bookingId);
+        startActivity(intent);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
