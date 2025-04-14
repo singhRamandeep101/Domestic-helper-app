@@ -20,6 +20,76 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="open_nav">Open Navigation Drawer</string>
     <string name="close_nav">Close Navigation Drawer</string>
+
+    <!-- Meeting Activity -->
+    <string name="back">Back</string>
+    <string name="enter_meeting_code">Enter meeting code</string>
+    <string name="join_create">Join/Create</string>
+    <string name="share">Share</string>
+    <string name="type_message_to_translate">Type your message to translate</string>
+    <string name="send">Send</string>
+    <string name="copy">Copy</string>
+    <string name="history">History</string>
+    <string name="voice">Voice</string>
+    <string name="stop">Stop</string>
+    <string name="timer_reset">00:00:00</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="back_button_description">Go back to previous screen</string>
+    <string name="join_create_button_description">Join or create a meeting</string>
+    <string name="share_button_description">Share the meeting code</string>
+    <string name="copy_translation_description">Copy the translated text</string>
+    <string name="translation_history_description">View translation history</string>
+    <string name="voice_translate_description">Start voice translation</string>
+    <string name="send_chat_description">Send the chat message</string>
+    <string name="questions_button_description">Show preset questions</string>
+    <string name="translate_button_description">Toggle translation mode</string>
+    <string name="leave_button_description">Leave the meeting</string>
+
+    <!-- Dialogs and Prompts -->
+    <string name="select_source_language">Select Source Language</string>
+    <string name="source_language_set_to">Source language set to %s</string>
+    <string name="select_target_language">Select Target Language</string>
+    <string name="translation_set_to">Translation set to %s</string>
+    <string name="languages_cannot_be_same">Source and target languages cannot be the same</string>
+    <string name="select_question_preset">Select Question Preset</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="leave_meeting_title">Leave Meeting</string>
+    <string name="leave_meeting_message">Are you sure you want to leave the meeting?</string>
+    <string name="translation_history_title">Translation History</string>
+
+    <!-- Toast Messages -->
+    <string name="enter_meeting_code_prompt">Please enter a meeting code</string>
+    <string name="meeting_code_copied">Meeting code copied</string>
+    <string name="no_meeting_code_to_share">No meeting code to share</string>
+    <string name="share_meeting_text" formatted="false">Join my meeting:\nBrowser: %s/%s</string>
+    <string name="share_meeting_code">Share Meeting Code</string>
+    <string name="joined_meeting_success">Joined meeting successfully</string>
+    <string name="meeting_setup_failed">Meeting setup failed</string>
+    <string name="permissions_required">Camera and microphone permissions required</string>
+    <string name="translation_enabled">Translation enabled</string>
+    <string name="translation_disabled">Translation disabled</string>
+    <string name="enable_translation_first">Enable translation first</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="share_failed">Cannot Share</string>
+    <string name="listening">Listening...</string>
+    <string name="speech_recognition_failed">Speech recognition failed</string>
+    <string name="simulated_voice_input">Simulated voice input: Hello</string>
+    <string name="voice_error_generic">Voice recognition error</string>
+    <string name="voice_error_server">Server error during voice recognition</string>
+    <string name="voice_error_no_match">No speech detected</string>
+    <string name="voice_error_audio">Audio recording error</string>
+    <string name="enter_message">Please enter a message</string>
+    <string name="translation_failed">Translation failed</string>
+    <string name="translation_error">Error during translation</string>
+    <string name="no_text_to_copy">No text to copy</string>
+    <string name="copied_text">Copied: %s</string>
+    <string name="no_translation_history">No translation history yet</string>
+    <string name="error_init_meeting_server">Error initializing meeting server</string>
+
     <string-array name="language_skill_levels">
         <item>Poor</item>
         <item>Fair</item>
