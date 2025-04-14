@@ -105,6 +105,8 @@ public class HiringManagementActivity extends AppCompatActivity {
 
         String helperEmail = getIntent().getStringExtra("email");
 
+        String employerEmail = getIntent().getStringExtra("employerEmail");
+
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 

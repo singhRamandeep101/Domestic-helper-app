@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.project.fypproject.R;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.project.fypproject.activities.employer.HiringStatusActivity;
+
 import java.util.List;
 
 public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.ViewHolder> {
@@ -52,34 +54,121 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
         } else if ("Started interview".equals(meetingStatus)) {
             holder.stateIcon.setImageResource(R.drawable.icon_start);
             holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
-        } else if ("Ended interview".equals(meetingStatus)) {
-            holder.stateIcon.setImageResource(R.drawable.icon_end);
-            holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#616161"));
+        } else if ("Waiting for Employer Response".equals(meetingStatus)) {
+            if(userType.equals("Employer")){
+                holder.stateIcon.setImageResource(R.drawable.ic_action);
+                holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#F44336"));
+            }else{
+                holder.stateIcon.setImageResource(R.drawable.ic_pending);
+                holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#6B7280"));
+            }
+        }else if ("Waiting for Agent Confirm".equals(meetingStatus)) {
+            if(userType.equals("Agent")){
+                holder.stateIcon.setImageResource(R.drawable.ic_action);
+                holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#F44336"));
+            }else{
+                holder.stateIcon.setImageResource(R.drawable.ic_pending);
+                holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#6B7280"));
+            }
+        }else if ("Confirmed".equals(meetingStatus)) {
+                holder.stateIcon.setImageResource(R.drawable.icon_confirm);
+                holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
         }else{
-            holder.stateIcon.setImageResource(R.drawable.ic_cancel);
-            holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#E53935"));
+            holder.stateIcon.setImageResource(R.drawable.ic_rej);
+            holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#F44336"));
         }
 
         if ("Waiting for interview".equals(meetingStatus)&& userType.equals("Agent")){
             holder.btnJoin.setVisibility(View.VISIBLE);
             holder.btnCancel.setVisibility(View.VISIBLE);
+            holder.btnHire.setVisibility(View.GONE);
+            holder.btnNotHiring.setVisibility(View.GONE);
+            holder.btnConfirm.setVisibility(View.GONE);
 
         } else if ("Started interview".equals(meetingStatus)) {
             holder.btnJoin.setVisibility(View.VISIBLE);
             holder.btnCancel.setVisibility(View.GONE);
+            holder.btnHire.setVisibility(View.GONE);
+            holder.btnNotHiring.setVisibility(View.GONE);
+            holder.btnConfirm.setVisibility(View.GONE);
+
+        }else if("Waiting for Employer Response".equals(meetingStatus)) {
+            if (userType.equals("Employer")) {
+                holder.btnJoin.setVisibility(View.GONE);
+                holder.btnCancel.setVisibility(View.GONE);
+                holder.btnHire.setVisibility(View.VISIBLE);
+                holder.btnNotHiring.setVisibility(View.VISIBLE);
+                holder.btnConfirm.setVisibility(View.GONE);
+            }else{
+                holder.btnJoin.setVisibility(View.GONE);
+                holder.btnCancel.setVisibility(View.GONE);
+                holder.btnHire.setVisibility(View.GONE);
+                holder.btnNotHiring.setVisibility(View.GONE);
+                holder.btnConfirm.setVisibility(View.GONE);
+            }
+        }else if("Waiting for Agent Confirm".equals(meetingStatus)){
+            if (userType.equals("Agent")) {
+                holder.btnJoin.setVisibility(View.GONE);
+                holder.btnCancel.setVisibility(View.GONE);
+                holder.btnHire.setVisibility(View.GONE);
+                holder.btnNotHiring.setVisibility(View.GONE);
+                holder.btnConfirm.setVisibility(View.VISIBLE);
+            }else{
+                holder.btnJoin.setVisibility(View.GONE);
+                holder.btnCancel.setVisibility(View.GONE);
+                holder.btnHire.setVisibility(View.GONE);
+                holder.btnNotHiring.setVisibility(View.GONE);
+                holder.btnConfirm.setVisibility(View.GONE);
+            }
         }else{
             holder.btnJoin.setVisibility(View.GONE);
             holder.btnCancel.setVisibility(View.GONE);
+            holder.btnHire.setVisibility(View.GONE);
+            holder.btnNotHiring.setVisibility(View.GONE);
+            holder.btnConfirm.setVisibility(View.GONE);
         }
 
         holder.btnCancel.setOnClickListener(v -> {
             document.getReference().update("meetingStatus", "Cancel interview")
                     .addOnSuccessListener(aVoid -> {
-                        holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#E53935"));
-                        holder.stateIcon.setImageResource(R.drawable.ic_cancel);
+
                     })
                     .addOnFailureListener(e -> {
                         android.widget.Toast.makeText(holder.itemView.getContext(), "Failed to cancel booking", android.widget.Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        holder.btnHire.setOnClickListener(v -> {
+            document.getReference().update("meetingStatus", "Waiting for Agent Confirm")
+                    .addOnSuccessListener(aVoid -> {
+
+                    })
+                    .addOnFailureListener(e -> {
+                        android.widget.Toast.makeText(holder.itemView.getContext(), "Failed to Hire", android.widget.Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        holder.btnNotHiring.setOnClickListener(v -> {
+            document.getReference().update("meetingStatus", "Declined")
+                    .addOnSuccessListener(aVoid -> {
+
+                    })
+                    .addOnFailureListener(e -> {
+                        android.widget.Toast.makeText(holder.itemView.getContext(), "Failed to Not Hire", android.widget.Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        holder.btnConfirm.setOnClickListener(v -> {
+            document.getReference().update("meetingStatus", "Confirmed")
+                    .addOnSuccessListener(aVoid -> {
+                        android.content.Context context = holder.itemView.getContext();
+                        android.content.Intent intent = new android.content.Intent(context, HiringManagementActivity.class);
+                        intent.putExtra("email", document.getString("employeeEmail"));
+                        intent.putExtra("employerEmail", document.getString("employerEmail"));
+                        context.startActivity(intent);
+                    })
+                    .addOnFailureListener(e -> {
+                        android.widget.Toast.makeText(holder.itemView.getContext(), "Failed to Not Hire", android.widget.Toast.LENGTH_SHORT).show();
                     });
         });
 
@@ -121,7 +210,7 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvHelperName, tvEmployerName, tvAgentName, tvTranName, tvDate, tvTime, bookRecordID, bookStatus;
-        Button btnJoin, btnCancel;
+        Button btnJoin, btnCancel,btnHire,btnNotHiring,btnConfirm;
         ImageView stateIcon,detailIcon;
 
         public ViewHolder(@NonNull View itemView) {
@@ -138,6 +227,9 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
             btnCancel = itemView.findViewById(R.id.btnCancel);
             stateIcon = itemView.findViewById(R.id.stateIcon);
             detailIcon = itemView.findViewById(R.id.DetailIcon);
+            btnHire = itemView.findViewById(R.id.btnHire);
+            btnNotHiring = itemView.findViewById(R.id.btnNotHiring);
+            btnConfirm = itemView.findViewById(R.id.btnConfirm);
         }
     }
 }
