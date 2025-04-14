@@ -29,6 +29,7 @@ import java.util.List;
 
 public class AgentHomeFragment extends Fragment {
 
+    private static final String TAG = "AgentHomeFragment";
     LinearLayout llAdd_dh, llJobList, llPublicholiday, llHiring, llAddAgent;
     FirebaseAuth auth;
     FirebaseUser user;
