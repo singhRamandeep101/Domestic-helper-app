@@ -3,13 +3,23 @@ package com.project.fypproject.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.TestLooperManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.fypproject.R;
 
 /**
@@ -24,6 +34,10 @@ public class TranslatorHomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     LinearLayout llBookingRequest;
+
+    TextView txtName;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,7 +80,29 @@ public class TranslatorHomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_translator_home, container, false);
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(getActivity(), Login.class);
+            startActivity(intent);
+        }
+
         llBookingRequest = view.findViewById(R.id.btn_request);
+        txtName = view.findViewById(R.id.txtName);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        txtName.setText(document.getString("firstName"));
+                    }
+                }
+            }
+        });
 
         llBookingRequest.setOnClickListener(new View.OnClickListener() {
             @Override

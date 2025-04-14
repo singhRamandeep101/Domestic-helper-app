@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,7 @@ public class AgentHomeFragment extends Fragment {
 
     private static final String TAG = "AgentHomeFragment";
     LinearLayout llAdd_dh, llJobList, llBookingRequest, llHiring, llAddAgent;
+    TextView txtName;
     FirebaseAuth auth;
     FirebaseUser user;
     String userEmail;
@@ -48,6 +50,8 @@ public class AgentHomeFragment extends Fragment {
         llBookingRequest = view.findViewById(R.id.btn_request);
         llHiring = view.findViewById(R.id.btn_Hiring);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
+
+        txtName = view.findViewById(R.id.txtName);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -70,10 +74,24 @@ public class AgentHomeFragment extends Fragment {
             }
         });
 
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        String name = document.getString("firstName");
+                        txtName.setText(name);
+                        Log.d("Dennis", "My name is " + name);
+                    }
+                }
+            }
+        });
+
         llAddAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DocumentReference docRef = db.collection("users").document(user.getEmail());
                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
