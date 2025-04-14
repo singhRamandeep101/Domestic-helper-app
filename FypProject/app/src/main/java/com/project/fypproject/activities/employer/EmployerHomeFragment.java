@@ -56,6 +56,12 @@ public class EmployerHomeFragment extends Fragment {
         return Math.round(dp * density);
     }
 
+    public void changeActivityWithBookingId(Class<?> cls, String bookingId) {
+        Intent intent = new Intent(getActivity(), cls);
+        intent.putExtra("bookingID", bookingId);
+        startActivity(intent);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
