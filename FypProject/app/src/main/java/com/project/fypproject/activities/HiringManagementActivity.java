@@ -155,9 +155,17 @@ public class HiringManagementActivity extends AppCompatActivity {
 
                                 DH_Email.setText(helperEmail);
                                 DH_Email.setEnabled(false);
+                                Employer_Email.setTextColor(555555);
 
                                 Agent_Email.setText(user.getEmail());
                                 Agent_Email.setEnabled(false);
+                                Employer_Email.setTextColor(555555);
+
+                                if (employerEmail != null && !employerEmail.trim().isEmpty()){
+                                    Employer_Email.setText(employerEmail);
+                                    Employer_Email.setEnabled(false);
+                                    Employer_Email.setTextColor(555555);
+                                }
 
                                 btn_register.setOnClickListener(new View.OnClickListener() {
                                     @Override
