@@ -175,7 +175,7 @@ public class BookRecordActivity extends AppCompatActivity {
 
         // 如果需要，加入 meetingStatus 條件
         if (filterMeetingStatus) {
-            query = query.whereEqualTo("meetingStatus", "abc");
+            query = query.whereEqualTo("meetingStatus", "Waiting for interview");
         }
 
         query.addSnapshotListener((querySnapshot, e) -> {
