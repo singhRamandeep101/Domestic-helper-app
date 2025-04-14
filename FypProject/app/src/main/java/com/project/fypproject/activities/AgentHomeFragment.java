@@ -128,13 +128,15 @@ public class AgentHomeFragment extends Fragment {
             }
         });
 
-        llPublicholiday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
-                startActivity(intent);
-            }
-        });
+//        llPublicholiday.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        llPublicholiday.setOnClickListener(v -> fetchBookingAndStartMeeting());
 
         return view;
     }

@@ -75,8 +75,7 @@
                 android:orientation="vertical"
                 android:background="@drawable/block"
                 android:gravity="center_horizontal"
-                android:layout_margin="10dp"
-                android:visibility="gone">
+                android:layout_margin="10dp">
 
                 <RelativeLayout
                     android:layout_width="75dp"
