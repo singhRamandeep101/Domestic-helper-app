@@ -69,7 +69,7 @@
 
 
             <LinearLayout
-                android:id="@+id/btn_meeting"
+                android:id="@+id/btn_request"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
                 android:orientation="vertical"
@@ -96,7 +96,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:text="Meeting"
+                    android:text="@string/booking_request"
                     android:gravity="center" />
 
             </LinearLayout>

@@ -69,14 +69,13 @@
 
 
             <LinearLayout
-                android:id="@+id/btn_meeting"
+                android:id="@+id/btn_request"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
                 android:orientation="vertical"
                 android:background="@drawable/block"
                 android:gravity="center_horizontal"
-                android:layout_margin="10dp"
-                android:visibility="gone">
+                android:layout_margin="10dp">
 
                 <RelativeLayout
                     android:layout_width="75dp"
@@ -97,7 +96,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:text="Meeting"
+                    android:text="@string/booking_request"
                     android:gravity="center" />
 
             </LinearLayout>

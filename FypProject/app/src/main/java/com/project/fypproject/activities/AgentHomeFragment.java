@@ -30,7 +30,7 @@ import java.util.List;
 public class AgentHomeFragment extends Fragment {
 
     private static final String TAG = "AgentHomeFragment";
-    LinearLayout llAdd_dh, llJobList, llPublicholiday, llHiring, llAddAgent;
+    LinearLayout llAdd_dh, llJobList, llBookingRequest, llHiring, llAddAgent;
     FirebaseAuth auth;
     FirebaseUser user;
     String userEmail;
@@ -45,7 +45,7 @@ public class AgentHomeFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
         llJobList = view.findViewById(R.id.btn_Find);
-        llPublicholiday = view.findViewById(R.id.btn_meeting);
+        llBookingRequest = view.findViewById(R.id.btn_request);
         llHiring = view.findViewById(R.id.btn_Hiring);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
 
@@ -129,15 +129,14 @@ public class AgentHomeFragment extends Fragment {
             }
         });
 
-//        llPublicholiday.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        llBookingRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        llPublicholiday.setOnClickListener(v -> fetchBookingAndStartMeeting());
 
         return view;
     }

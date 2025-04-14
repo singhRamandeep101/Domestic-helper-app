@@ -12,7 +12,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,23 +23,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.project.fypproject.R;
-import com.project.fypproject.activities.AgentBookRequestDetailActivity;
-import com.project.fypproject.activities.BookRecordActivity;
 import com.project.fypproject.activities.BookingRequestActivity;
-import com.project.fypproject.activities.ChatMainActivity;
-import com.project.fypproject.activities.EmployeeBookRequestDetailActivity;
-import com.project.fypproject.activities.EmployerBookRequestDetailActivity;
-import com.project.fypproject.activities.InterviewTimeSelectionActivity;
 import com.project.fypproject.activities.Login;
 import com.project.fypproject.activities.MeetingActivity;
-import com.project.fypproject.activities.SalaryRecordSelectorActivity;
-import com.project.fypproject.activities.TranslatorBookRequestDetailActivity;
 
 public class EmployerHomeFragment extends Fragment {
 
-    LinearLayout llPublicHoliday, llJobList, llJobPost;
+    LinearLayout llMeetingRequest, llJobList, llJobPost;
     FirebaseAuth auth;
     FirebaseUser user;
     String MyDomesticHelper;
@@ -69,7 +59,7 @@ public class EmployerHomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_emplyer_home, container, false);
 
-        llPublicHoliday = view.findViewById(R.id.btn_meeting);
+        llMeetingRequest = view.findViewById(R.id.btn_request);
         llJobList = view.findViewById(R.id.btn_Find);
         llJobPost = view.findViewById(R.id.btn_JobPost);
 
@@ -86,10 +76,10 @@ public class EmployerHomeFragment extends Fragment {
             }
         });
 
-        llPublicHoliday.setOnClickListener(new View.OnClickListener() {
+        llMeetingRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeActivity(MeetingActivity.class);
+                changeActivity(BookingRequestActivity.class);
             }
         });
 

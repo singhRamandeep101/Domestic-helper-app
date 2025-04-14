@@ -29,7 +29,7 @@ import com.project.fypproject.activities.employer.HiringStatusActivity;
 public class DhHomeFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
-    LinearLayout llMeeting, llInterviewInvitation;
+    LinearLayout llMeetingRequest, llInterviewInvitation;
     FirebaseAuth auth;
     FirebaseUser user;
     String employer;
@@ -47,7 +47,7 @@ public class DhHomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dh_home, container, false);
 
         llInterviewInvitation = view.findViewById(R.id.btn_InterviewInvitation);
-        llMeeting = view.findViewById(R.id.btn_meeting);
+        llMeetingRequest = view.findViewById(R.id.btn_request);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -64,10 +64,10 @@ public class DhHomeFragment extends Fragment {
             }
         });
 
-        llMeeting.setOnClickListener(new View.OnClickListener() {
+        llMeetingRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
+                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
                 startActivity(intent);
             }
         });

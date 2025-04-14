@@ -69,25 +69,26 @@
 
 
             <LinearLayout
-                android:id="@+id/btn_meeting"
-                android:layout_width="200dp"
-                android:layout_height="300dp"
+                android:id="@+id/btn_oo"
+                android:layout_width="150dp"
+                android:layout_height="225dp"
                 android:orientation="vertical"
                 android:background="@drawable/block"
                 android:gravity="center_horizontal"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:visibility="gone">
 
                 <RelativeLayout
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     android:background="@drawable/circle"
                     android:orientation="vertical"
                     android:layout_margin="12dp"
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
                         android:src="@drawable/icon_date_surface_tint">
                     </ImageView>
 
@@ -98,10 +99,46 @@
                     android:layout_height="wrap_content"
                     android:text="Meeting"
                     android:gravity="center"
-                    android:textSize="40dp"
+                    android:textSize="30dp"
                     android:layout_marginTop="20dp"/>
 
-            </LinearLayout>        </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_request"
+                android:layout_width="150dp"
+                android:layout_height="225dp"
+                android:orientation="vertical"
+                android:background="@drawable/block"
+                android:gravity="center_horizontal"
+                android:layout_margin="10dp">
+
+                <RelativeLayout
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:background="@drawable/circle"
+                    android:orientation="vertical"
+                    android:layout_margin="12dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/icon_date_surface_tint">
+                    </ImageView>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/booking_request"
+                    android:gravity="center"
+                    android:textSize="25dp"
+                    android:layout_marginTop="20dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
