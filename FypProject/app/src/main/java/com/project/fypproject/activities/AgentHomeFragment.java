@@ -33,6 +33,8 @@ public class AgentHomeFragment extends Fragment {
     LinearLayout llAdd_dh, llJobList, llPublicholiday, llHiring, llAddAgent;
     FirebaseAuth auth;
     FirebaseUser user;
+    String userEmail;
+    FirebaseFirestore db;
 
     public void changeActivityWithBookingId(Class<?> cls, String bookingId) {
         Intent intent = new Intent(getActivity(), cls);
@@ -46,12 +48,13 @@ public class AgentHomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_agent_home, container, false);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
         llJobList = view.findViewById(R.id.btn_Find);
         llPublicholiday = view.findViewById(R.id.btn_meeting);
         llHiring = view.findViewById(R.id.btn_Hiring);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
+        userEmail = user.getEmail();
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
