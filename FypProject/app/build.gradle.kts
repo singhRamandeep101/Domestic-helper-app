@@ -81,9 +81,10 @@ dependencies {
     implementation (libs.pdfbox.android)
     implementation(libs.libausbc)
     implementation(libs.cardview)
+    implementation(libs.core)
     annotationProcessor(libs.glide.compiler)
 
-    implementation("org.jitsi.react:jitsi-meet-sdk:10.3.0") {
+    implementation("org.jitsi.react:jitsi-meet-sdk:11.1.0") {
         isTransitive = true
     }
 }
