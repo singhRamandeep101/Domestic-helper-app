@@ -138,28 +138,32 @@ public class BookingRequestActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (value != null && !value.isEmpty()) {
-                        tvNoRecord.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
+                    if (value != null) {
+                        // 清除舊的資料，避免重複
                         bookingRequests.clear();
 
-                        for (QueryDocumentSnapshot document : value) {
-                            final String docId = document.getString("docId");
-                            final String employeeEmail = document.getString("employeeEmail");
-                            final String employerEmail = document.getString("employerEmail");
-                            final String agentState = document.getString("agentState");
-                            final String translatorState = document.getString("translatorState");
-                            final String employeeState = document.getString("employeeState");
-                            final String employerState = document.getString("employerState");
+                        if (!value.isEmpty()) {
+                            tvNoRecord.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
 
-                            getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
+                            for (QueryDocumentSnapshot document : value) {
+                                final String docId = document.getString("docId");
+                                final String employeeEmail = document.getString("employeeEmail");
+                                final String employerEmail = document.getString("employerEmail");
+                                final String agentState = document.getString("agentState");
+                                final String translatorState = document.getString("translatorState");
+                                final String employeeState = document.getString("employeeState");
+                                final String employerState = document.getString("employerState");
+
+                                getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
+                            }
+                        } else {
+                            tvNoRecord.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
                         }
-                    } else {
-                        bookingRequests.clear();
-                        adapter.notifyDataSetChanged();
-                        tvNoRecord.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
                     }
+                    // 通知適配器資料已更新
+                    adapter.notifyDataSetChanged();
                 });
     }
 
@@ -174,34 +178,42 @@ public class BookingRequestActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (value != null && !value.isEmpty()) {
-                        tvNoRecord.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
+                    if (value != null) {
+                        // 清除舊的資料，避免重複
                         bookingRequests.clear();
 
-                        for (QueryDocumentSnapshot document : value) {
-                            final String docId = document.getString("docId");
-                            final String employeeEmail = document.getString("employeeEmail");
-                            final String employerEmail = document.getString("employerEmail");
-                            final String agentState = document.getString("agentState");
-                            final String translatorState = document.getString("translatorState");
-                            final String employeeState = document.getString("employeeState");
-                            final String employerState = document.getString("employerState");
+                        if (!value.isEmpty()) {
+                            tvNoRecord.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
 
-                            getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
+                            for (QueryDocumentSnapshot document : value) {
+                                final String docId = document.getString("docId");
+                                final String employeeEmail = document.getString("employeeEmail");
+                                final String employerEmail = document.getString("employerEmail");
+                                final String agentState = document.getString("agentState");
+                                final String translatorState = document.getString("translatorState");
+                                final String employeeState = document.getString("employeeState");
+                                final String employerState = document.getString("employerState");
+
+                                getName(docId, employeeEmail, employerEmail, userType, agentState, translatorState, employeeState, employerState);
+                            }
+                        } else {
+                            tvNoRecord.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
                         }
-                    } else {
-                        bookingRequests.clear();
-                        adapter.notifyDataSetChanged();
-                        tvNoRecord.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
                     }
+                    // 通知適配器資料已更新
+                    adapter.notifyDataSetChanged();
                 });
     }
 
     private void getName(final String docId, final String employeeEmail, final String employerEmail, final String userType,
                          final String agentState, final String translatorState, final String employeeState, final String employerState) {
         final HashMap<String, String> requestData = new HashMap<>();
+
+        if (docId == null || docId.isEmpty()) {
+            return;
+        }
 
         db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
                 .addOnCompleteListener(task -> {
