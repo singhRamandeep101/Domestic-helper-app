@@ -131,9 +131,10 @@
             android:theme="@style/Theme.Material3.Light.NoActionBar" />
         <activity
             android:name=".activities.ResumeDetailActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".activities.employer.JobDetailActivity" -->
-        <!-- android:exported="false" /> -->
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.employer.JobDetailActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".activities.Login"
             android:exported="true"

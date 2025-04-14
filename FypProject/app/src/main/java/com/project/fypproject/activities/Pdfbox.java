@@ -27,12 +27,17 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -51,6 +56,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Pdfbox extends AppCompatActivity {
 
@@ -687,10 +693,8 @@ public class Pdfbox extends AppCompatActivity {
     }
 
     private void clearFormData() {
-        // Remove all child views from the form container
         formContainer.removeAllViews();
 
-        // Optionally, reset other related variables or UI elements
         currentFileUri = null;
         currentFileName = null;
 
@@ -705,24 +709,51 @@ public class Pdfbox extends AppCompatActivity {
                 dataMap.put("filename", currentFileName);
             }
 
-            dataMap.put("availability", "Available");
+            db.collection("users").whereEqualTo("userType", "Agent").get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            String agentEmail = getRandomEmail(queryDocumentSnapshots);
+                            dataMap.put("agentEmail", agentEmail);
 
-            Log.d("Firestore", "Data to save: " + dataMap.toString());
+                            db.collection("users").whereEqualTo("userType", "Translator").get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot translatorSnapshots) {
+                                            String translatorEmail = getRandomEmail(translatorSnapshots);
+                                            dataMap.put("translatorEmail", translatorEmail);
+                                            dataMap.put("availability", "Available");
 
-            db.collection("MaidInfo")
-                    .add(dataMap)
-                    .addOnSuccessListener(documentReference -> {
-                        Log.d("Firestore", "DocumentSnapshot added with ID: " + documentReference.getId());
-                        Toast.makeText(this, "Data saved to Firestore!", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Error adding document", e);
-                        Toast.makeText(this, "Failed to save to Firestore", Toast.LENGTH_SHORT).show();
+                                            db.collection("MaidInfo")
+                                                    .add(dataMap)
+                                                    .addOnSuccessListener(documentReference -> {
+                                                        Log.d("Firestore", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                        Toast.makeText(Pdfbox.this, "Data saved to Firestore!", Toast.LENGTH_SHORT).show();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.e("Firestore", "Error adding document", e);
+                                                        Toast.makeText(Pdfbox.this, "Failed to save to Firestore", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    });
+                        }
                     });
-        } catch (JSONException e) {
+
+    } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error converting data", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String getRandomEmail(Iterable<QueryDocumentSnapshot> snapshots) {
+        int count = 0;
+        String randomEmail = null;
+        for (QueryDocumentSnapshot snapshot : snapshots) {
+            if (new Random().nextInt(++count) == 0) {
+                randomEmail = snapshot.getString("email");
+            }
+        }
+        return randomEmail;
     }
 
     private Map<String, Object> jsonToMap(JSONObject jsonObject) throws JSONException {

@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -71,6 +72,12 @@ public class JobListActivity extends AppCompatActivity {
     private Button btnApplyFilter,btnFilter,btnClose;
     private boolean isApplyBookmark;
 
+    private TextView lastFilterHistory;
+
+    private List<View> filterLabels = new ArrayList<>();
+
+    private Button btnClearAll;
+
     Resources res;
     Drawable icon_BookMarked_Outline, icon_BookMarked_Filled;
 
@@ -80,6 +87,17 @@ public class JobListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_job_list);
+
+        btnClearAll = findViewById(R.id.btn_clear_all);
+
+        btnClearAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearAllFilters();
+            }
+        });
+
+        lastFilterHistory = findViewById(R.id.last_filter_history);
 
         imgBookmarkFilter = findViewById(R.id.btn_bookmark_filter);
 
@@ -130,6 +148,57 @@ public class JobListActivity extends AppCompatActivity {
         labelOverseasMacau = findViewById(R.id.labelOverseasMacau);
         labelOverseasOther = findViewById(R.id.labelOverseasOther);
         labelOverseasHomeCountry = findViewById(R.id.labelOverseasHomeCountry);
+
+        filterLabels.add(findViewById(R.id.label_nationality_filipino));
+        filterLabels.add(findViewById(R.id.label_nationality_thailand));
+        filterLabels.add(findViewById(R.id.label_nationality_indonesia));
+        filterLabels.add(findViewById(R.id.label_nationality_myanmar));
+        filterLabels.add(findViewById(R.id.label_nationality_sri_lanka));
+
+        filterLabels.add(findViewById(R.id.labelZodiacAries));
+        filterLabels.add(findViewById(R.id.labelZodiacTaurus));
+        filterLabels.add(findViewById(R.id.labelZodiacGemini));
+        filterLabels.add(findViewById(R.id.labelZodiacCancer));
+        filterLabels.add(findViewById(R.id.labelZodiacLeo));
+        filterLabels.add(findViewById(R.id.labelZodiacVirgo));
+        filterLabels.add(findViewById(R.id.labelZodiacLibra));
+        filterLabels.add(findViewById(R.id.labelZodiacScorpio));
+        filterLabels.add(findViewById(R.id.labelZodiacSagittarius));
+        filterLabels.add(findViewById(R.id.labelZodiacCapricorn));
+        filterLabels.add(findViewById(R.id.labelZodiacAquarius));
+        filterLabels.add(findViewById(R.id.labelZodiacPisces));
+
+        filterLabels.add(findViewById(R.id.labelGenderMale));
+        filterLabels.add(findViewById(R.id.labelGenderFemale));
+
+        filterLabels.add(findViewById(R.id.labelEducationJuniorHigh));
+        filterLabels.add(findViewById(R.id.labelEducationHighSchool));
+
+        filterLabels.add(findViewById(R.id.labelLanguageMandarin));
+        filterLabels.add(findViewById(R.id.labelLanguageCantonese));
+        filterLabels.add(findViewById(R.id.labelLanguageEnglish));
+
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfBabies));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfToddler));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfChildren));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfElderly));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfDisabled));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfBedridden));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCareOfPet));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceHouseholdWorks));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCarWashing));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceGardening));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceCooking));
+        filterLabels.add(findViewById(R.id.labelWorkingExperienceDriving));
+
+        filterLabels.add(findViewById(R.id.labelOverseasHongKong));
+        filterLabels.add(findViewById(R.id.labelOverseasMalaysia));
+        filterLabels.add(findViewById(R.id.labelOverseasMiddleEast));
+        filterLabels.add(findViewById(R.id.labelOverseasSingapore));
+        filterLabels.add(findViewById(R.id.labelOverseasTaiwan));
+        filterLabels.add(findViewById(R.id.labelOverseasMacau));
+        filterLabels.add(findViewById(R.id.labelOverseasOther));
+        filterLabels.add(findViewById(R.id.labelOverseasHomeCountry));
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -200,6 +269,7 @@ public class JobListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 applyFilters();
+                updateFilterHistory();
                 // 加入透明度動畫
                 ObjectAnimator fadeOut = ObjectAnimator.ofFloat(filterLayout, "alpha", 1f, 0f);
                 fadeOut.setDuration(300);
@@ -210,6 +280,7 @@ public class JobListActivity extends AppCompatActivity {
                     }
                 });
                 fadeOut.start();
+        
             }
         });
 
@@ -279,6 +350,36 @@ public class JobListActivity extends AppCompatActivity {
         });
     }
 
+    private void clearAllFilters() {
+        selectedFilters.clear(); // 清空所有已选筛选条件
+        resetLabelSelections();  // 重置所有筛选标签的选中状态
+
+        // 更新 RecyclerView 和历史记录显示
+        jobListAdapter.notifyDataSetChanged();
+        noResultText.setVisibility(View.GONE); // 隐藏无结果文本
+        lastFilterHistory.setText("Last applied filters: None"); // 恢复默认的历史记录文本
+    }
+
+    private void resetLabelSelections() {
+        for (View label : filterLabels) { // filterLabels 是所有篩選項 TextView 的集合
+            if (label instanceof TextView) {
+                label.setSelected(false);
+            }
+        }
+    }
+
+    private void updateFilterHistory() {
+        if (selectedFilters.isEmpty()) {
+            lastFilterHistory.setText("Last applied filters: None");
+        } else {
+            StringBuilder filterText = new StringBuilder("Last applied filters: ");
+            for (Map.Entry<String, List<String>> entry : selectedFilters.entrySet()) {
+                filterText.append(entry.getKey()).append(": ").append(entry.getValue()).append("; ");
+            }
+            lastFilterHistory.setText(filterText.toString());
+        }
+    }
+
     private void AllData() {
         firestore.collection("MaidInfo").whereEqualTo("availability","Available")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -328,64 +429,56 @@ public class JobListActivity extends AppCompatActivity {
 
     private void applyFilters() {
         if(isApplyBookmark){
-            Log.d("Dennis", "Book mark filter applied");
+            Log.d("Filter", "Applying bookmark filter");
             DocumentReference userRef = firestore.collection("users").document(user.getEmail());
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot userDocument = task.getResult();
-                        if (userDocument.exists()) {
-                            //Get the string array from firebase as an object
-                            ArrayList<String> MarkedRef = (ArrayList<String>)userDocument.get("bookMarks");
+            userRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot userDocument = task.getResult();
+                    if (userDocument != null && userDocument.exists()) {
+                        List<String> MarkedRef = (List<String>) userDocument.get("bookMarks");
 
-                            if(MarkedRef == null){
-                                noResultText.setVisibility(View.VISIBLE);
-                                recyclerView.setVisibility(View.GONE);
-                                return;
-                            } else {
-                                noResultText.setVisibility(View.GONE);
-                                recyclerView.setVisibility(View.VISIBLE);
+                        if(MarkedRef == null || MarkedRef.isEmpty()){
+                            noResultText.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                            return;
+                        }
 
-                                helperInfoList.clear();
-                                for (String MarkedId: MarkedRef) {
-                                    DocumentReference docRef = firestore.collection("MaidInfo").document(MarkedId);
-                                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                DocumentSnapshot document = task.getResult();
-                                                if (document.exists()) {
-                                                    Map<String, Object> data = document.getData();
+                        noResultText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        helperInfoList.clear();
 
-                                                    HelperInfo helperInfo = new HelperInfo(
-                                                            (String) data.get("name"),
-                                                            (String) data.get("nationality"),
-                                                            (String) data.get("zodiac"),
-                                                            (String) data.get("img_url"),
-                                                            (String) data.get("email"),
-                                                            (String) data.get("age"),
-                                                            (String) data.get("religion")
-                                                    );
-
-                                                    helperInfoList.add(helperInfo);
-                                                    Log.d("Dennis", helperInfoList.toString());
-                                                    jobListAdapter.notifyDataSetChanged();
-                                                }
+                        // 使用單個查詢獲取所有書籤數據
+                        firestore.collection("MaidInfo")
+                                .whereIn(FieldPath.documentId(), MarkedRef)
+                                .get()
+                                .addOnCompleteListener(queryTask -> {
+                                    if (queryTask.isSuccessful()) {
+                                        helperInfoList.clear();
+                                        for (DocumentSnapshot document : queryTask.getResult()) {
+                                            HelperInfo helperInfo = document.toObject(HelperInfo.class);
+                                            if (helperInfo != null) {
+                                                helperInfoList.add(helperInfo);
                                             }
                                         }
-                                    });
-                                }
+                                        jobListAdapter.notifyDataSetChanged();
 
-                            }
-                        }
+                                        if (helperInfoList.isEmpty()) {
+                                            noResultText.setVisibility(View.VISIBLE);
+                                            recyclerView.setVisibility(View.GONE);
+                                        }
+                                    } else {
+                                        Log.e("Firestore", "Error getting bookmarked documents", queryTask.getException());
+                                    }
+                                });
                     }
+                } else {
+                    Log.e("Firestore", "Error getting user document", task.getException());
                 }
             });
             return;
         }
-        Log.d("Dennis", "No apply book mark");
 
+        Log.d("Filter", "Applying regular filters");
         Query query = firestore.collection("MaidInfo");
 
         for (Map.Entry<String, List<String>> filter : selectedFilters.entrySet()) {
@@ -406,8 +499,8 @@ public class JobListActivity extends AppCompatActivity {
                     break;
 
                 case "overseas_experience":
-
-                    continue;
+                    // 處理將在下面進行
+                    break;
 
                 case "age":
                     for (String value : values) {
@@ -429,60 +522,57 @@ public class JobListActivity extends AppCompatActivity {
             }
         }
 
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                helperInfoList.clear();
+                List<DocumentSnapshot> documents = task.getResult().getDocuments();
 
-        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            helperInfoList.clear();
-            if (queryDocumentSnapshots.isEmpty()) {
-                noResultText.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-            } else {
-                noResultText.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                if (selectedFilters.containsKey("overseas_experience")) {
+                    List<String> overseasFilters = selectedFilters.get("overseas_experience");
 
-                for (DocumentSnapshot document : queryDocumentSnapshots) {
-                    Map<String, Object> data = document.getData();
+                    for (DocumentSnapshot document : documents) {
+                        Map<String, Object> data = document.getData();
+                        if (data != null) {
+                            Map<String, Object> overseasExperience = (Map<String, Object>) data.get("overseas_experience");
+                            boolean matchesAll = overseasExperience != null;
 
-
-                    if (selectedFilters.containsKey("overseas_experience")) {
-                        boolean matchesAll = true;
-                        List<String> overseasFilters = selectedFilters.get("overseas_experience");
-                        Map<String, Object> overseasExperience = (Map<String, Object>) data.get("overseas_experience");
-
-                        if (overseasExperience != null) {
-                            for (String filter : overseasFilters) {
-
-                                if (!overseasExperience.containsKey(filter) || overseasExperience.get(filter) == null) {
-                                    matchesAll = false;
-                                    noResultText.setVisibility(View.VISIBLE);
-                                    break;
+                            if (matchesAll) {
+                                for (String filter : overseasFilters) {
+                                    if (!overseasExperience.containsKey(filter) || overseasExperience.get(filter) == null) {
+                                        matchesAll = false;
+                                        break;
+                                    }
                                 }
                             }
-                        } else {
-                            matchesAll = false;
-                            noResultText.setVisibility(View.VISIBLE);
-                        }
 
-
-                        if (!matchesAll) {
-                            continue;
+                            if (matchesAll) {
+                                HelperInfo helperInfo = document.toObject(HelperInfo.class);
+                                if (helperInfo != null) {
+                                    helperInfoList.add(helperInfo);
+                                }
+                            }
                         }
                     }
-
-
-                    HelperInfo helperInfo = new HelperInfo(
-                            (String) data.get("name"),
-                            (String) data.get("nationality"),
-                            (String) data.get("zodiac"),
-                            (String) data.get("img_url"),
-                            (String) data.get("email"),
-                            (String) data.get("age"),
-                            (String) data.get("religion")
-                    );
-
-                    helperInfoList.add(helperInfo);
+                } else {
+                    for (DocumentSnapshot document : documents) {
+                        HelperInfo helperInfo = document.toObject(HelperInfo.class);
+                        if (helperInfo != null) {
+                            helperInfoList.add(helperInfo);
+                        }
+                    }
                 }
 
                 jobListAdapter.notifyDataSetChanged();
+
+                if (helperInfoList.isEmpty()) {
+                    noResultText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    noResultText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                Log.e("Firestore", "Error getting filtered documents", task.getException());
             }
         });
     }
