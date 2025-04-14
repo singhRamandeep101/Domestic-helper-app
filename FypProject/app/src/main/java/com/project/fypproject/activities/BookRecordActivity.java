@@ -136,6 +136,7 @@ public class BookRecordActivity extends AppCompatActivity {
                                                     }
                                                     records.add(record);
 
+<<<<<<< HEAD
                                                     if (records.size() == queryDocumentSnapshots.size()) {
                                                         updateUI();
                                                     }
@@ -150,6 +151,58 @@ public class BookRecordActivity extends AppCompatActivity {
                                 } else {
                                     record.put("employeeName", "Unknown");
                                     records.add(record);
+=======
+    private void fetchBookingsForUpcoming() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        Date sevenDaysFromNow = calendar.getTime();
+
+        fetchBookingsByDateRange(new Date(), sevenDaysFromNow);
+    }
+
+    private void fetchAllBookings() {
+        fetchBookingsByDateRange(null, null);
+    }
+
+    private void fetchBookingsForNextMonth() {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfNextMonth = calendar.getTime();
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        Date endOfNextMonth = calendar.getTime();
+
+        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth);
+    }
+
+    private void fetchBookingsByDateRange(Date startDate, Date endDate) {
+        if (emailField == null || userEmail == null) {
+            Log.e("Error", "emailField or userEmail is null. Skipping query.");
+            return;
+        }
+
+        db.collection("booking")
+                .whereEqualTo(emailField, userEmail)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("Firestore Error", "Error fetching bookings", e);
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        bookingList.clear();
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            try {
+                                String dateStr = document.getString("date");
+                                Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
+
+                                if ((startDate == null || !bookingDate.before(startDate)) &&
+                                        (endDate == null || !bookingDate.after(endDate))) {
+                                    bookingList.add(document);
+>>>>>>> parent of 8ec570f (save)
                                 }
                             }
                         } else {
