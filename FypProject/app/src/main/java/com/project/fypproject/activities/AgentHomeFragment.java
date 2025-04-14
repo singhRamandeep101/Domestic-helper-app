@@ -139,7 +139,17 @@ public class AgentHomeFragment extends Fragment {
         return view;
     }
 
+    public void changeActivity(Class<?> cls) {
+        Intent intent = new Intent(getActivity(), cls);
+        startActivity(intent);
+        requireActivity().finish();
+    }
 
+    public void changeActivityWithBookingId(Class<?> cls, String bookingId) {
+        Intent intent = new Intent(getActivity(), cls);
+        intent.putExtra("bookingID", bookingId);
+        startActivity(intent);
+    }
     private void fetchBookingAndStartMeeting() {
         List<String> fields = new ArrayList<>();
         fields.add("agentEmail");
