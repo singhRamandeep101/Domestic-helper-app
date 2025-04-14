@@ -241,21 +241,23 @@ public class HiringManagementActivity extends AppCompatActivity {
                                                                 }
                                                             });
 
-                                                    washingtonRef = db.collection("booking").document(bookingID);
-                                                    washingtonRef
-                                                            .update("meetingStatus", "Confirmed").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
 
+                                                    if (bookingID != null && !bookingID.trim().isEmpty()){
+                                                        washingtonRef = db.collection("booking").document(bookingID);
+                                                        washingtonRef
+                                                                .update("meetingStatus", "Confirmed").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                    }
                                                 }
                                             })
                                             .setNegativeButton("Cancel", null)
