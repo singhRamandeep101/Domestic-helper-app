@@ -22,6 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -82,6 +83,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
         imgBookmark = findViewById(R.id.img_book);
         //imgShare = findViewById(R.id.img_share);
         imgBookInt = findViewById(R.id.btnBookInterview);
+        ImageView userIcon = findViewById(R.id.userIcon);
 
         res = getResources();
         icon_BookMarked_Outline = ResourcesCompat.getDrawable(res, R.drawable.icon_bookmarks_write, null);
@@ -110,6 +112,17 @@ public class ResumeDetailActivity extends AppCompatActivity {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+
+                String imageUrl = doc.getString("image_url");
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    Glide.with(ResumeDetailActivity.this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.icon_domestic_helper)
+                            .error(R.drawable.icon_domestic_helper)
+                            .into(userIcon);
+                } else {
+                    userIcon.setImageResource(R.drawable.icon_domestic_helper);
+                }
 
                 //--Book Marks Function--
                 //To Check user's marked records
@@ -393,6 +406,8 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
                                 if (agentEmail != null && !agentEmail.isEmpty()) {
                                     // If agentEmail already exists, no further action needed
+
+
                                     db.collection("chatrooms")
                                                     .whereArrayContains("userEmails",agentEmail)
                                                             .get()
