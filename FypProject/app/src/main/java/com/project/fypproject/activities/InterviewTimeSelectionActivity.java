@@ -3,7 +3,6 @@ package com.project.fypproject.activities;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,10 +17,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 
 import java.text.SimpleDateFormat;
@@ -310,55 +307,60 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
 
         data.put("postTime", dateTimeFormat.format(Calendar.getInstance().getTime()));
 
-        db.collection("MaidInfo").whereEqualTo("email", employeeEmail).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("users").whereEqualTo("userType", "Agent").get()
+                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<com.google.firebase.firestore.QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot maidInfo = queryDocumentSnapshots.getDocuments().get(0);
-                            String agentEmail = maidInfo.getString("agentEmail");
-                            String translatorEmail = maidInfo.getString("translatorEmail");
+                    public void onSuccess(com.google.firebase.firestore.QuerySnapshot queryDocumentSnapshots) {
+                        String agentEmail = getRandomEmail(queryDocumentSnapshots);
+                        data.put("agentEmail", agentEmail);
 
-                            data.put("agentEmail", agentEmail);
-                            data.put("translatorEmail", translatorEmail);
+                        db.collection("users").whereEqualTo("userType", "Translator").get()
+                                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<com.google.firebase.firestore.QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(com.google.firebase.firestore.QuerySnapshot translatorSnapshots) {
+                                        String translatorEmail = getRandomEmail(translatorSnapshots);
+                                        data.put("translatorEmail", translatorEmail);
 
-                            db.collection("interview_request").add(data)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            documentReference.update("docId", documentReference.getId())
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-                                                            Intent intent = new Intent(InterviewTimeSelectionActivity.this, InterviewTimeInvitedActivity.class);
-                                                            startActivity(intent);
-                                                            finish();
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.e("error","Failed to update document ID!");
-                                                        }
-                                                    });
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.e("error","Failed to save interview request!");
-                                        }
-                                    });
-                        } else {
-                            Log.e("error","No MaidInfo found for this employeeEmail!");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("error","Failed to query MaidInfo!");
+                                        db.collection("interview_request").add(data)
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentReference documentReference) {
+                                                        documentReference.update("docId",documentReference.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                Intent intent = new Intent(InterviewTimeSelectionActivity.this, InterviewTimeInvitedActivity.class);
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                        })
+                                                                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(InterviewTimeSelectionActivity.this, "Failed to save!", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                    }
+                                                })
+                                                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(InterviewTimeSelectionActivity.this, "Failed to save!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                    }
+                                });
                     }
                 });
+    }
+
+    private String getRandomEmail(Iterable<QueryDocumentSnapshot> snapshots) {
+        int count = 0;
+        String randomEmail = null;
+        for (QueryDocumentSnapshot snapshot : snapshots) {
+            if (new Random().nextInt(++count) == 0) {
+                randomEmail = snapshot.getString("email");
+            }
+        }
+        return randomEmail;
     }
 }

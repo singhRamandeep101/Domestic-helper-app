@@ -120,14 +120,12 @@ public class HiringStatusActivity extends AppCompatActivity {
                                             statusImages[i].setImageDrawable(done);
                                         } else if (status == i + 2) {
                                             statusImages[i].setImageDrawable(current);
-                                            if(status <= 4){
-                                                statusDescription[i].setAlpha(0f); // 初始為透明
-                                                statusDescription[i].setVisibility(View.VISIBLE);
-                                                statusDescription[i].animate()
-                                                        .alpha(1f)
-                                                        .setDuration(600)
-                                                        .start();
-                                            }
+                                            statusDescription[i].setAlpha(0f); // 初始為透明
+                                            statusDescription[i].setVisibility(View.VISIBLE);
+                                            statusDescription[i].animate()
+                                                    .alpha(1f)
+                                                    .setDuration(600)
+                                                    .start();
                                         } else {
                                             statusImages[i].setImageDrawable(pending);
                                         }
