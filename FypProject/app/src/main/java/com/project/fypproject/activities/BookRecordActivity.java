@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.project.fypproject.R;
 import java.text.SimpleDateFormat;
@@ -160,8 +161,10 @@ public class BookRecordActivity extends AppCompatActivity {
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         Date endOfNextMonth = calendar.getTime();
 
-        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth, true); // true 表示要篩選 meetingStatus = "abc"
+        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth, true);
     }
+
+    private ListenerRegistration bookingListener;
 
     private void fetchBookingsByDateRange(Date startDate, Date endDate, boolean filterMeetingStatus) {
         if (emailField == null || userEmail == null) {
@@ -169,23 +172,26 @@ public class BookRecordActivity extends AppCompatActivity {
             return;
         }
 
-        // 構建基礎查詢
+        // 先移除之前的 Listener
+        if (bookingListener != null) {
+            bookingListener.remove();
+        }
+
         com.google.firebase.firestore.Query query = db.collection("booking")
                 .whereEqualTo(emailField, userEmail);
 
-        // 如果需要，加入 meetingStatus 條件
         if (filterMeetingStatus) {
             query = query.whereEqualTo("meetingStatus", "Waiting for interview");
         }
 
-        query.addSnapshotListener((querySnapshot, e) -> {
+        bookingListener = query.addSnapshotListener((querySnapshot, e) -> {
             if (e != null) {
                 Log.e("Firestore Error", "Error fetching bookings", e);
                 return;
             }
 
+            bookingList.clear();
             if (querySnapshot != null) {
-                bookingList.clear();
                 for (QueryDocumentSnapshot document : querySnapshot) {
                     try {
                         String dateStr = document.getString("date");
@@ -199,15 +205,15 @@ public class BookRecordActivity extends AppCompatActivity {
                         ex.printStackTrace();
                     }
                 }
+            }
 
-                if (bookingList.isEmpty()) {
-                    tvNoRecord.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    tvNoRecord.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    adapter.notifyDataSetChanged();
-                }
+            if (bookingList.isEmpty()) {
+                tvNoRecord.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                tvNoRecord.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                adapter.notifyDataSetChanged();
             }
         });
     }

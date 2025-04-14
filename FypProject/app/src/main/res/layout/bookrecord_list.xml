@@ -127,22 +127,22 @@
             android:gravity="end"
             android:layout_marginTop="40dp">
 
-            <TextView
-                android:id="@+id/booktatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Pending Confirmation"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#4B5563" />
-
             <ImageView
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:id="@+id/DetailIcon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_arrow_circle_right" />
+
+            <TextView
+                android:id="@+id/booktatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="Pending Confirmation"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#4B5563" />
 
         </LinearLayout>
 
@@ -157,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/infoSection"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="40dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -214,6 +214,47 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="CANCEL"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:elevation="4dp"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/btnHire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:backgroundTint="#0EA5E9"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="CONFIRM HIRE"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:elevation="4dp"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/btnNotHiring"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#E53935"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="NOT HIRING"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:elevation="4dp"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/btnConfirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:backgroundTint="#0EA5E9"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="CONFIRM"
                     android:textColor="@android:color/white"
                     android:textAllCaps="false"
                     android:elevation="4dp"
