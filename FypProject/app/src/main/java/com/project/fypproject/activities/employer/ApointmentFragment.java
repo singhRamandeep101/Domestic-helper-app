@@ -24,7 +24,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.BookRecordActivity;
-import com.project.fypproject.activities.BookRecordlAdapter;
+import com.project.fypproject.activities.BookRecordAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -345,8 +345,8 @@ public class ApointmentFragment extends Fragment {
             tvNoData.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
 
-            BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(getActivity(), records, userType,recyclerView,tvNoData);
-            recyclerView.setAdapter(bookRecordlAdapter);
+//            BookRecordAdapter bookRecordlAdapter = new BookRecordAdapter(getActivity(), records, userType,recyclerView,tvNoData);
+//            recyclerView.setAdapter(bookRecordlAdapter);
         }
     }
 }

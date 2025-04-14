@@ -45,7 +45,7 @@ import java.util.Random;
 
 public class ResumeDetailActivity extends AppCompatActivity {
 
-    ImageView imgBack, imgBookmark, imgShare,imgBookInt;
+    ImageView imgBack, imgBookmark, imgChat,imgBookInt;
     TextView tvName,tvAge,tvGender,tvMaritalStatus,tvNumOfKids,tvNationality,tvReligion,tvZodiac,tvRemark,tvNoExperience;
     Toolbar toolbar;
     LinearLayout layWorkExp,layWorkSkill;
@@ -81,7 +81,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
         imgBack = findViewById(R.id.img_back);
         imgBookmark = findViewById(R.id.img_book);
-        //imgShare = findViewById(R.id.img_share);
+        imgChat = findViewById(R.id.img_chat);
         imgBookInt = findViewById(R.id.btnBookInterview);
         ImageView userIcon = findViewById(R.id.userIcon);
 
@@ -97,7 +97,16 @@ public class ResumeDetailActivity extends AppCompatActivity {
         imgBookInt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               checkAgent();
+               Intent intent = new Intent(ResumeDetailActivity.this,InterviewTimeSelectionActivity.class);
+               intent.putExtra("employeeEmail",email);
+               startActivity(intent);
+            }
+        });
+
+        imgChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkAgent();
             }
         });
 
@@ -386,8 +395,6 @@ public class ResumeDetailActivity extends AppCompatActivity {
         });
     }
     private void checkAgent() {
-
-        // Step 1: Query MaidInfo to find the document with the given employeeEmail
         db.collection("MaidInfo")
                 .whereEqualTo("email", email) // Search for the email in the collection
                 .get()
@@ -433,8 +440,9 @@ public class ResumeDetailActivity extends AppCompatActivity {
                                                                             }
                                                                         }
                                                                     });
+                                    openChatRoom(agentEmail);
                                 } else {
-                                    assignAgent(db, maidInfoDoc.getId());
+                                    Log.e("message","no agent");
                                 }
                             } else {
                                 // If no document contains the employeeEmail, log it
@@ -446,56 +454,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    // Randomly selects a user with userType 'agent' and assigns their email to the specified MaidInfo document
-    private void assignAgent(FirebaseFirestore db, String maidInfoDocId) {
-        db.collection("users")
-                .whereEqualTo("userType", "Agent") // Query for users with userType = 'agent'
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            QuerySnapshot querySnapshot = task.getResult();
-
-                            if (!querySnapshot.isEmpty()) {
-                                // Randomly select one of the agents
-                                List<DocumentSnapshot> agents = querySnapshot.getDocuments();
-                                DocumentSnapshot randomAgent = agents.get(new Random().nextInt(agents.size()));
-
-                                // Get the agent's email
-                                String agentEmail = randomAgent.getString("email");
-
-                                if (agentEmail != null) {
-                                    // Step 2: Assign the agent's email to the specified MaidInfo document
-                                    db.collection("MaidInfo")
-                                            .document(maidInfoDocId)
-                                            .update("agentEmail", agentEmail)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    openChatRoom(agentEmail,"no");
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.e("Firestore", "Failed to assign agentEmail", e);
-                                                }
-                                            });
-                                } else {
-                                    Log.e("Firestore", "Selected agent does not have an email field");
-                                }
-                            } else {
-                                Log.e("Firestore", "No users with userType = 'agent' found");
-                            }
-                        } else {
-                            Log.e("Firestore", "Failed to query users collection", task.getException());
-                        }
-                    }
-                });
-    }
-    private void openChatRoom(String agentEmail,String type) {
+    private void openChatRoom(String agentEmail) {
         // Step 3: Query users collection for the agent's details using agentEmail
         db.collection("users")
                 .whereEqualTo("email", agentEmail) // Search for the agent by email

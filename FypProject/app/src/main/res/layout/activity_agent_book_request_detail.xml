@@ -280,7 +280,8 @@
             android:background="@android:color/white"
             android:padding="16dp"
             android:elevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -312,7 +313,8 @@
             android:background="@android:color/white"
             android:padding="16dp"
             android:elevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
 
         </LinearLayout>
         <Button

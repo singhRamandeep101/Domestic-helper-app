@@ -40,7 +40,7 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
     private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName,tvAgentName;
     private ImageButton chatAgent;
 
-    private String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
+    String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
     private String agentEmail;
     LinearLayout layoutEmployerSelectedTime,layoutConfirmedTime;
 
@@ -56,12 +56,10 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employer_book_request_detail);
 
-        // 初始化 Firestore
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        // 綁定視圖
         tvRequestID = findViewById(R.id.tvRequestID);
         tvRequestState = findViewById(R.id.tvRequestState);
         tvEmployerName = findViewById(R.id.tvEmployerName);
@@ -73,25 +71,19 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         btnCheckBook = findViewById(R.id.btnCheckBook);
         tvAgentName = findViewById(R.id.tvAgentName);
 
-        // 從上一個 Activity 獲取數據
         Intent intent = getIntent();
-//        requestID = intent.getStringExtra("requestID");
-        requestID = "DWOEUbcanW7HFwSO5zL4";
-//        requestState = intent.getStringExtra("requestState");
-        requestState = "Pending Confirmation";
+        requestID = intent.getStringExtra("requestID");
+        requestState = intent.getStringExtra("requestState");
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 
-        // 設置數據到 TextViews
         tvRequestID.setText("Request ID: " + requestID);
         tvRequestState.setText("Request State: " + requestState);
         tvEmployerName.setText("Employer Name: " + employerName);
         tvHelperName.setText("DomesticHelper Name: " + helperName);
 
-        // 獲取翻譯員資訊
         getInfo();
 
-        // 為聊天按鈕設置點擊事件
         chatAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,16 +103,16 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         if ("Pending Confirmation".equals(requestState)) {
             layoutEmployerSelectedTime.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "employerSelectedTime", layoutEmployerSelectedTime);
-        }else{
-            layoutEmployerSelectedTime.setVisibility(View.GONE);
+        }else if ("Final Time Confirmed".equals(requestState)){
             layoutConfirmedTime.setVisibility(View.VISIBLE);
             btnCheckBook.setVisibility(View.VISIBLE);
             getSelectedTime(requestID, "confirmedTime", layoutConfirmedTime);
+        }else{
+            layoutEmployerSelectedTime.setVisibility(View.GONE);
         }
     }
 
     private void getInfo() {
-        // 使用 requestID 從 interview_request 集合中獲取相關信息
         db.collection("interview_request")
                 .whereEqualTo("docId", requestID)
                 .get()
@@ -132,9 +124,8 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                             translatorEmail = querySnapshot.getDocuments().get(0).getString("translatorEmail");
                             employerEmail = querySnapshot.getDocuments().get(0).getString("employerEmail");
                             employeeEmail = querySnapshot.getDocuments().get(0).getString("employeeEmail");
-                            agentEmail = querySnapshot.getDocuments().get(0).getString("agentEmail"); // 获取 agentEmail
+                            agentEmail = querySnapshot.getDocuments().get(0).getString("agentEmail");
 
-                            // 获取翻译员的名字
                             if (translatorEmail != null && !translatorEmail.isEmpty()) {
                                 db.collection("users")
                                         .whereEqualTo("email", translatorEmail)
@@ -155,7 +146,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                                 Log.e("Translator", "Translator Email empty");
                             }
 
-                            // 获取代理人的名字
                             if (agentEmail != null && !agentEmail.isEmpty()) {
                                 db.collection("users")
                                         .whereEqualTo("email", agentEmail)
@@ -166,7 +156,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                                                 if (agentTask.isSuccessful() && !agentTask.getResult().isEmpty()) {
                                                     String firstName = agentTask.getResult().getDocuments().get(0).getString("firstName");
                                                     String lastName = agentTask.getResult().getDocuments().get(0).getString("lastName");
-                                                    // 在 UI 中显示代理人的名字
                                                     TextView tvAgentName = findViewById(R.id.tvAgentName);
                                                     tvAgentName.setText("Agent Name: " + lastName + " " + firstName);
                                                 } else {
@@ -191,9 +180,8 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
     }
 
     private void openChat(String email) {
-        // Step 3: Query users collection for the agent's details using agentEmail
         db.collection("users")
-                .whereEqualTo("email", email) // Search for the agent by email
+                .whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -202,16 +190,13 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                             QuerySnapshot Docs = task.getResult();
 
                             if (!Docs.isEmpty()) {
-                                // Get the agent document
                                 DocumentSnapshot Doc = Docs.getDocuments().get(0);
 
-                                // Retrieve agent's details
                                 String firstName = Doc.getString("firstName");
                                 String lastName = Doc.getString("lastName");
                                 String userType = Doc.getString("userType");
 
                                 if (firstName != null && lastName != null) {
-                                    // Step 4: Create and set ChatModel
                                     ChatModel chatModel = new ChatModel();
                                     chatModel.setEmail(email);
                                     chatModel.setFirstName(firstName);
@@ -219,16 +204,13 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                                     chatModel.setUserType(userType);
 
                                     Intent intent = new Intent(EmployerBookRequestDetailActivity.this, ChatActivity.class);
-                                    ChatUtil.passUserIntent(intent, chatModel); // Pass ChatModel via ChatUtil
-                                    startActivity(intent); // Start ChatActivity
-                                    finish();
+                                    ChatUtil.passUserIntent(intent, chatModel);
+                                    startActivity(intent);
 
-                                    // Log the information for verification
                                     Log.d("Firestore", "ChatModel set with agent details: " +
                                             "FirstName: " + firstName + ", LastName: " + lastName +
                                             ", AgentEmail: " + email);
 
-                                    // Optionally, you can save ChatModel to Firestore or proceed to the next action
                                 } else {
                                     Log.e("Firestore", "Agent details are incomplete for email: " + email);
                                 }
@@ -254,7 +236,9 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                             Map<String, Object> selectedTime = (Map<String, Object>) document.get(timeType);
 
                             if (selectedTime != null) {
-                                for (String date : selectedTime.keySet()) {
+                                List<String> sortedDates = new ArrayList<>(selectedTime.keySet());
+                                Collections.sort(sortedDates);
+                                for (String date : sortedDates) {
                                     Map<String, Boolean> timeSlots = (Map<String, Boolean>) selectedTime.get(date);
                                     addDateAndTimeSlotsToLayout(date, timeSlots, targetLayout);
                                 }
@@ -267,7 +251,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
     }
 
     private void addDateAndTimeSlotsToLayout(String date, Map<String, Boolean> timeSlots, LinearLayout parentLayout) {
-        // 添加日期 TextView
         TextView dateTextView = new TextView(this);
         dateTextView.setText(date);
         dateTextView.setTextSize(18);
@@ -276,13 +259,11 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         dateTextView.setTypeface(null, Typeface.BOLD);
         parentLayout.addView(dateTextView);
 
-        // 將時間段的鍵進行排序
         List<String> sortedTimeSlots = new ArrayList<>(timeSlots.keySet());
-        Collections.sort(sortedTimeSlots); // 按字母排序（時間格式如 "10:00 - 11:00" 會按順序排列）
+        Collections.sort(sortedTimeSlots);
 
-        // 添加排序後的時間段
         for (String timeSlot : sortedTimeSlots) {
-            if (timeSlots.get(timeSlot)) { // 只顯示值為 true 的時間段
+            if (timeSlots.get(timeSlot)) {
                 TextView timeSlotTextView = new TextView(this);
                 timeSlotTextView.setText(timeSlot);
                 timeSlotTextView.setTextSize(16);

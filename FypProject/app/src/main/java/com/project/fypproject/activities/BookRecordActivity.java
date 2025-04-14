@@ -1,343 +1,207 @@
 package com.project.fypproject.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.project.fypproject.R;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class BookRecordActivity extends AppCompatActivity {
-    List<Map<String, Object>> records;
-    FirebaseFirestore db;
-    RecyclerView recyclerView;
-    FirebaseAuth auth;
-    FirebaseUser user;
-    String userType;
+
+    private RecyclerView recyclerView;
+    private BookRecordAdapter adapter;
+    private List<QueryDocumentSnapshot> bookingList = new ArrayList<>();
+    private FirebaseFirestore db;
+    private String userType, emailField, userEmail;
+    private View tvNoRecord;
+
+    ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_book_record);
-
-        String employerEmail = getIntent().getStringExtra("employerEmail");
 
         recyclerView = findViewById(R.id.rv_bookRecord);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tvNoRecord = findViewById(R.id.tv_no_data);
+        btnBack = findViewById(R.id.btnBack);
+        tvNoRecord = findViewById(R.id.tv_no_data);
 
         db = FirebaseFirestore.getInstance();
-        records = new ArrayList<>();
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+        userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-        db.collection("users")
-                .whereEqualTo("email", user.getEmail())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                          @Override
-                                          public void onSuccess(QuerySnapshot maidSnapshots) {
-                                              if (!maidSnapshots.isEmpty()) {
-                                                  DocumentSnapshot userDocument = maidSnapshots.getDocuments().get(0);
-                                                  userType = userDocument.getString("userType");
-                                                  upcoming();
-                                              }
-                                          }
-                                          ;
-                                      });
+        fetchUserType();
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                String tabText = tab.getText().toString();
+                if (emailField == null || userEmail == null) {
+                    Log.e("Error", "emailField or userEmail is null. Skipping tab action.");
+                    return;
+                }
 
-                if (tabText.equalsIgnoreCase("UPCOMING")) {
-                    upcoming();
-                } else if (tabText.equalsIgnoreCase("NEXT MONTH")) {
-                    nextMonth();
-                } else{
-                    allData();
+                switch (tab.getPosition()) {
+                    case 0:
+                        fetchBookingsForUpcoming();
+                        break;
+                    case 1:
+                        fetchAllBookings();
+                        break;
+                    case 2:
+                        fetchBookingsForNextMonth();
+                        break;
                 }
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
     }
 
-    private void allData() {
-        records.clear();
-        String emailField = "";
-
-        if ("Employer".equals(userType)) {
-            emailField = "employerEmail";
-        } else if ("Agent".equals(userType)) {
-            emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
-            emailField = "employeeEmail";
-        }
-
-        db.collection("bookings")
-                .whereEqualTo(emailField, user.getEmail())
-                .orderBy("date", Query.Direction.DESCENDING)
+    private void fetchUserType() {
+        db.collection("users")
+                .whereEqualTo("email", userEmail)
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                                Map<String, Object> record = document.getData();
-                                record.put("documentId", document.getId());
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        userType = task.getResult().getDocuments().get(0).getString("userType");
+                        setEmailField();
 
-                                String employeeEmail = (String) record.get("employeeEmail");
+                        adapter = new BookRecordAdapter(bookingList, userType);
+                        recyclerView.setAdapter(adapter);
 
-                                if (employeeEmail != null) {
-                                    db.collection("MaidInfo")
-                                            .whereEqualTo("email", employeeEmail)
-                                            .get()
-                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onSuccess(QuerySnapshot maidSnapshots) {
-                                                    if (!maidSnapshots.isEmpty()) {
-                                                        DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
-                                                        String employeeName = (String) maidDocument.get("name");
-
-                                                        record.put("employeeName", employeeName);
-                                                    } else {
-                                                        record.put("employeeName", "Unknown");
-                                                    }
-                                                    records.add(record);
-
-                                                    if (records.size() == queryDocumentSnapshots.size()) {
-                                                        updateUI();
-                                                    }
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.e("Firestore", "Error fetching MaidInfo", e);
-                                                }
-                                            });
-                                } else {
-                                    record.put("employeeName", "Unknown");
-                                    records.add(record);
-                                }
-                            }
-                        } else {
-                            updateUI();
-                            Log.d("Firestore", "No booking found.");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Error fetching MaidInfo", e);
+                        fetchBookingsForUpcoming();
+                    } else {
+                        Log.e("Firestore Error", "Failed to fetch user type");
                     }
                 });
     }
 
-    private void upcoming() {
-        records.clear();
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd", Locale.getDefault());
-        String today = dateFormat.format(calendar.getTime());
-
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
-        String sevenDaysLater = dateFormat.format(calendar.getTime());
-
-        String emailField = "";
-
-        if ("Employer".equals(userType)) {
-            emailField = "employerEmail";
-        } else if ("Agent".equals(userType)) {
-            emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
-            emailField = "employeeEmail";
+    private void setEmailField() {
+        switch (userType) {
+            case "Employer":
+                emailField = "employerEmail";
+                break;
+            case "Agent":
+                emailField = "agentEmail";
+                break;
+            case "DomesticHelper":
+                emailField = "employeeEmail";
+                break;
+            default:
+                emailField = "translatorEmail";
+                break;
         }
-
-        db.collection("bookings")
-                .whereEqualTo(emailField, user.getEmail())
-                .whereGreaterThanOrEqualTo("date", today)
-                .whereLessThanOrEqualTo("date", sevenDaysLater)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                                Map<String, Object> record = document.getData();
-                                record.put("documentId", document.getId());
-
-                                String employeeEmail = (String) record.get("employeeEmail");
-
-                                if (employeeEmail != null) {
-                                    db.collection("MaidInfo")
-                                            .whereEqualTo("email", employeeEmail)
-                                            .get()
-                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onSuccess(QuerySnapshot maidSnapshots) {
-                                                    if (!maidSnapshots.isEmpty()) {
-                                                        DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
-                                                        String employeeName = (String) maidDocument.get("name");
-
-                                                        record.put("employeeName", employeeName);
-                                                    } else {
-                                                        record.put("employeeName", "Unknown");
-                                                    }
-
-                                                    records.add(record);
-
-                                                    if (records.size() == queryDocumentSnapshots.size()) {
-                                                        updateUI();
-                                                    }
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.e("Firestore", "Error fetching MaidInfo", e);
-                                                }
-                                            });
-                                } else {
-                                    record.put("employeeName", "Unknown");
-                                    records.add(record);
-                                }
-                            }
-                        } else {
-                            updateUI();
-                            Log.d("Firestore", "No upcoming bookings found.");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Error fetching bookings", e);
-                    }
-                });
     }
-    private void nextMonth() {
-        records.clear();
 
+    private void fetchBookingsForUpcoming() {
+        Calendar calendarStart = Calendar.getInstance();
+        calendarStart.set(Calendar.HOUR_OF_DAY, 0);
+        calendarStart.set(Calendar.MINUTE, 0);
+        calendarStart.set(Calendar.SECOND, 0);
+        calendarStart.set(Calendar.MILLISECOND, 0);
+        Date todayStart = calendarStart.getTime();
+
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.set(Calendar.HOUR_OF_DAY, 23);
+        calendarEnd.set(Calendar.MINUTE, 59);
+        calendarEnd.set(Calendar.SECOND, 59);
+        calendarEnd.set(Calendar.MILLISECOND, 999);
+        calendarEnd.add(Calendar.DAY_OF_YEAR, 7);
+        Date sevenDaysLaterEnd = calendarEnd.getTime();
+
+        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd);
+    }
+
+    private void fetchAllBookings() {
+        fetchBookingsByDateRange(null, null);
+    }
+
+    private void fetchBookingsForNextMonth() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-dd", Locale.getDefault());
-        String today = dateFormat.format(calendar.getTime());
 
         calendar.add(Calendar.MONTH, 1);
-        String oneMonthLater = dateFormat.format(calendar.getTime());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfNextMonth = calendar.getTime();
 
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        Date endOfNextMonth = calendar.getTime();
 
-        String emailField = "";
+        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth);
+    }
 
-        if ("Employer".equals(userType)) {
-            emailField = "employerEmail";
-        } else if ("Agent".equals(userType)) {
-            emailField = "agentEmail";
-        } else if ("Employee".equals(userType)){
-            emailField = "employeeEmail";
+    private void fetchBookingsByDateRange(Date startDate, Date endDate) {
+        if (emailField == null || userEmail == null) {
+            Log.e("Error", "emailField or userEmail is null. Skipping query.");
+            return;
         }
 
-        db.collection("bookings")
-                .whereEqualTo(emailField, user.getEmail())
-                .whereGreaterThanOrEqualTo("date", today)
-                .whereLessThanOrEqualTo("date", oneMonthLater)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-                                Map<String, Object> record = document.getData();
-                                record.put("documentId", document.getId());
+        db.collection("booking")
+                .whereEqualTo(emailField, userEmail)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("Firestore Error", "Error fetching bookings", e);
+                        return;
+                    }
 
-                                String employeeEmail = (String) record.get("employeeEmail");
-                                db.collection("MaidInfo")
-                                        .whereEqualTo("email", employeeEmail)
-                                        .get()
-                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onSuccess(QuerySnapshot maidSnapshots) {
-                                                if (!maidSnapshots.isEmpty()) {
-                                                    DocumentSnapshot maidDocument = maidSnapshots.getDocuments().get(0);
-                                                    String employeeName = (String) maidDocument.get("name");
+                    if (querySnapshot != null) {
+                        bookingList.clear();
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            try {
+                                String dateStr = document.getString("date");
+                                Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
 
-                                                    record.put("employeeName", employeeName);
-                                                } else {
-                                                    record.put("employeeName", "Unknown");
-                                                }
-
-                                                records.add(record);
-
-                                                if (records.size() == queryDocumentSnapshots.size()) {
-                                                    updateUI();
-                                                }
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.e("Firestore", "Error fetching MaidInfo", e);
-                                            }
-                                        });
+                                if ((startDate == null || !bookingDate.before(startDate)) &&
+                                        (endDate == null || !bookingDate.after(endDate))) {
+                                    bookingList.add(document);
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
                             }
+                        }
+
+                        if (bookingList.isEmpty()) {
+                            tvNoRecord.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
                         } else {
-                            updateUI();
-                            Log.d("Firestore", "No bookings found for the next month.");
+                            tvNoRecord.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Error fetching bookings", e);
-                    }
                 });
-    }
-    private void updateUI() {
-        TextView tvNoData = findViewById(R.id.tv_no_data);
-        recyclerView = findViewById(R.id.rv_bookRecord);
-
-        if (records.isEmpty()) {
-            tvNoData.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            tvNoData.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-
-            BookRecordlAdapter bookRecordlAdapter = new BookRecordlAdapter(BookRecordActivity.this, records, userType,recyclerView,tvNoData);
-            recyclerView.setAdapter(bookRecordlAdapter);
-        }
     }
 }

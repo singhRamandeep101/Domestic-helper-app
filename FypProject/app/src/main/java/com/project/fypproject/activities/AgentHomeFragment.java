@@ -25,7 +25,7 @@ import com.project.fypproject.activities.employer.JobListActivity;
 
 public class AgentHomeFragment extends Fragment {
 
-    LinearLayout llAdd_dh, llJobList, llPublicholiday,llChatRoom,llAddAgent;
+    LinearLayout llAdd_dh, llJobList, llPublicholiday, llHiring, llAddAgent;
     FirebaseAuth auth;
     FirebaseUser user;
 
@@ -39,7 +39,7 @@ public class AgentHomeFragment extends Fragment {
         llAdd_dh = view.findViewById(R.id.btn_add_dh);
         llJobList = view.findViewById(R.id.btn_Find);
         llPublicholiday = view.findViewById(R.id.btn_meeting);
-        llChatRoom = view.findViewById(R.id.btn_JobPost);
+        llHiring = view.findViewById(R.id.btn_Hiring);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
 
         auth = FirebaseAuth.getInstance();
@@ -53,10 +53,10 @@ public class AgentHomeFragment extends Fragment {
             }
         });
 
-        llChatRoom.setOnClickListener(new View.OnClickListener() {
+        llHiring.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChatMainActivity.class);
+                Intent intent = new Intent(getActivity(), HandlingHelperActivity.class);
                 startActivity(intent);
             }
         });
@@ -123,7 +123,7 @@ public class AgentHomeFragment extends Fragment {
         llPublicholiday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeetingActivity.class);
+                Intent intent = new Intent(getActivity(), BookingRequestActivity.class);
                 startActivity(intent);
             }
         });
