@@ -73,7 +73,7 @@ public class HiringManagementActivity extends AppCompatActivity {
     Spinner statusSpinner;
     FirebaseAuth auth;
     FirebaseUser user;
-    String docId;
+    String docId, bookingID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +104,8 @@ public class HiringManagementActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String helperEmail = getIntent().getStringExtra("email");
-
         String employerEmail = getIntent().getStringExtra("employerEmail");
+        bookingID = getIntent().getStringExtra("bookID");
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -155,9 +155,17 @@ public class HiringManagementActivity extends AppCompatActivity {
 
                                 DH_Email.setText(helperEmail);
                                 DH_Email.setEnabled(false);
+                                Employer_Email.setTextColor(555555);
 
                                 Agent_Email.setText(user.getEmail());
                                 Agent_Email.setEnabled(false);
+                                Employer_Email.setTextColor(555555);
+
+                                if (employerEmail != null && !employerEmail.trim().isEmpty()){
+                                    Employer_Email.setText(employerEmail);
+                                    Employer_Email.setEnabled(false);
+                                    Employer_Email.setTextColor(555555);
+                                }
 
                                 btn_register.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -233,6 +241,23 @@ public class HiringManagementActivity extends AppCompatActivity {
                                                                 }
                                                             });
 
+
+                                                    if (bookingID != null && !bookingID.trim().isEmpty()){
+                                                        washingtonRef = db.collection("booking").document(bookingID);
+                                                        washingtonRef
+                                                                .update("meetingStatus", "Confirmed").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                    }
                                                 }
                                             })
                                             .setNegativeButton("Cancel", null)
