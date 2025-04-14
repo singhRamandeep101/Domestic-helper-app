@@ -57,12 +57,6 @@ public class EmployerHomeFragment extends Fragment {
         return Math.round(dp * density);
     }
 
-    public void changeActivityWithBookingId(Class<?> cls, String bookingId) {
-        Intent intent = new Intent(getActivity(), cls);
-        intent.putExtra("bookingID", bookingId);
-        startActivity(intent);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,56 +195,6 @@ public class EmployerHomeFragment extends Fragment {
                 }
             }
         });
-
-
-
         return view;
-    }
-
-    private void fetchBookingAndStartMeeting() {
-        List<String> fields = new ArrayList<>();
-        fields.add("agentEmail");
-        fields.add("translatorEmail");
-        fields.add("employeeEmail");
-        fields.add("employerEmail");
-
-
-        List<String> bookingIds = new ArrayList<>();
-        fetchBookingsForField(fields, 0, bookingIds);
-    }
-
-    private void fetchBookingsForField(List<String> fields, int index, List<String> bookingIds) {
-        if (index >= fields.size()) {
-            if (bookingIds.isEmpty()) {
-                Toast.makeText(getActivity(), "No bookings found for this user.", Toast.LENGTH_LONG).show();
-                Log.e(TAG, "No bookings found for email: " + userEmail);
-                return;
-            }
-
-            String bookingId = bookingIds.get(0);
-            Log.d(TAG, "Found booking with ID: " + bookingId + " for email: " + userEmail);
-            changeActivityWithBookingId(MeetingActivity.class, bookingId);
-            return;
-        }
-
-        String field = fields.get(index);
-        Log.d(TAG, "Querying bookings where " + field + " = " + userEmail);
-        db.collection("booking")
-                .whereEqualTo(field, userEmail)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String bookingId = document.getId();
-                        if (!bookingIds.contains(bookingId)) {
-                            bookingIds.add(bookingId);
-                        }
-                    }
-                    fetchBookingsForField(fields, index + 1, bookingIds);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to fetch bookings for " + field, e);
-                    Toast.makeText(getActivity(), "Failed to fetch bookings.", Toast.LENGTH_LONG).show();
-                    fetchBookingsForField(fields, index + 1, bookingIds);
-                });
     }
 }
