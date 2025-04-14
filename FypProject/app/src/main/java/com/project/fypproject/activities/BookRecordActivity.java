@@ -142,11 +142,11 @@ public class BookRecordActivity extends AppCompatActivity {
         calendarEnd.add(Calendar.DAY_OF_YEAR, 7);
         Date sevenDaysLaterEnd = calendarEnd.getTime();
 
-        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd);
+        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd, true); // true 表示要篩選 meetingStatus = "abc"
     }
 
     private void fetchAllBookings() {
-        fetchBookingsByDateRange(null, null);
+        fetchBookingsByDateRange(null, null, false); // false 表示不篩選 meetingStatus
     }
 
     private void fetchBookingsForNextMonth() {
@@ -160,48 +160,55 @@ public class BookRecordActivity extends AppCompatActivity {
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         Date endOfNextMonth = calendar.getTime();
 
-        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth);
+        fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth, true); // true 表示要篩選 meetingStatus = "abc"
     }
 
-    private void fetchBookingsByDateRange(Date startDate, Date endDate) {
+    private void fetchBookingsByDateRange(Date startDate, Date endDate, boolean filterMeetingStatus) {
         if (emailField == null || userEmail == null) {
             Log.e("Error", "emailField or userEmail is null. Skipping query.");
             return;
         }
 
-        db.collection("booking")
-                .whereEqualTo(emailField, userEmail)
-                .addSnapshotListener((querySnapshot, e) -> {
-                    if (e != null) {
-                        Log.e("Firestore Error", "Error fetching bookings", e);
-                        return;
-                    }
+        // 構建基礎查詢
+        com.google.firebase.firestore.Query query = db.collection("booking")
+                .whereEqualTo(emailField, userEmail);
 
-                    if (querySnapshot != null) {
-                        bookingList.clear();
-                        for (QueryDocumentSnapshot document : querySnapshot) {
-                            try {
-                                String dateStr = document.getString("date");
-                                Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
+        // 如果需要，加入 meetingStatus 條件
+        if (filterMeetingStatus) {
+            query = query.whereEqualTo("meetingStatus", "abc");
+        }
 
-                                if ((startDate == null || !bookingDate.before(startDate)) &&
-                                        (endDate == null || !bookingDate.after(endDate))) {
-                                    bookingList.add(document);
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
+        query.addSnapshotListener((querySnapshot, e) -> {
+            if (e != null) {
+                Log.e("Firestore Error", "Error fetching bookings", e);
+                return;
+            }
+
+            if (querySnapshot != null) {
+                bookingList.clear();
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    try {
+                        String dateStr = document.getString("date");
+                        Date bookingDate = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH).parse(dateStr);
+
+                        if ((startDate == null || !bookingDate.before(startDate)) &&
+                                (endDate == null || !bookingDate.after(endDate))) {
+                            bookingList.add(document);
                         }
-
-                        if (bookingList.isEmpty()) {
-                            tvNoRecord.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
-                        } else {
-                            tvNoRecord.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                            adapter.notifyDataSetChanged();
-                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                });
+                }
+
+                if (bookingList.isEmpty()) {
+                    tvNoRecord.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    tvNoRecord.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 }
