@@ -48,10 +48,11 @@ public class AgentHomeFragment extends Fragment {
         llPublicholiday = view.findViewById(R.id.btn_meeting);
         llHiring = view.findViewById(R.id.btn_Hiring);
         llAddAgent = view.findViewById(R.id.btn_add_agent);
-        userEmail = user.getEmail();
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        userEmail = user.getEmail();
 
         llJobList.setOnClickListener(new View.OnClickListener() {
             @Override
