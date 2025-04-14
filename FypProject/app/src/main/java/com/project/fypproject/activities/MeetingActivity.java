@@ -655,7 +655,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 Log.d(TAG, "joinMeeting: Updating meeting status to Started Interview in Firestore");
                 db.collection("booking")
                         .document(bookingDocId)
-                        .update("meetingStatus", "Started Interview")
+                        .update("meetingStatus", "Started interview")
                         .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Started Interview"))
                         .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status to Started Interview", e));
             } else {
@@ -896,7 +896,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                     Log.d(TAG, "cleanupJitsiView: Updating meeting status to Ended Interview in Firestore");
                     db.collection("booking")
                             .document(bookingDocId)
-                            .update("meetingStatus", "Waiting for Employer Response...")
+                            .update("meetingStatus", "Waiting for Employer Response")
                             .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Ended Interview"))
                             .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
                 } else {

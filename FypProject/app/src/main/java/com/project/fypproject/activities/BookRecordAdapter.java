@@ -159,17 +159,13 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
         });
 
         holder.btnConfirm.setOnClickListener(v -> {
-            document.getReference().update("meetingStatus", "Confirmed")
-                    .addOnSuccessListener(aVoid -> {
+
                         android.content.Context context = holder.itemView.getContext();
                         android.content.Intent intent = new android.content.Intent(context, HiringManagementActivity.class);
                         intent.putExtra("email", document.getString("employeeEmail"));
                         intent.putExtra("employerEmail", document.getString("employerEmail"));
+                        intent.putExtra("bookID", document.getString("bookingID"));
                         context.startActivity(intent);
-                    })
-                    .addOnFailureListener(e -> {
-                        android.widget.Toast.makeText(holder.itemView.getContext(), "Failed to Not Hire", android.widget.Toast.LENGTH_SHORT).show();
-                    });
         });
 
         holder.btnJoin.setOnClickListener(v -> {
@@ -195,7 +191,7 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
                 intent.putExtra("translatorName", document.getString("translatorName"));
                 intent.putExtra("agentEmail", document.getString("agentEmail"));
                 intent.putExtra("employerEmail", document.getString("employerEmail"));
-                intent.putExtra("employeeEmail", document.getString("employeeName"));
+                intent.putExtra("employeeEmail", document.getString("employeeEmail"));
                 intent.putExtra("translatorEmail", document.getString("translatorEmail"));
                 intent.putExtra("userType", userType);
                 context.startActivity(intent);
