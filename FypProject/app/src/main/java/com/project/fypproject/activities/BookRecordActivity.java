@@ -127,11 +127,22 @@ public class BookRecordActivity extends AppCompatActivity {
     }
 
     private void fetchBookingsForUpcoming() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
-        Date sevenDaysFromNow = calendar.getTime();
+        Calendar calendarStart = Calendar.getInstance();
+        calendarStart.set(Calendar.HOUR_OF_DAY, 0);
+        calendarStart.set(Calendar.MINUTE, 0);
+        calendarStart.set(Calendar.SECOND, 0);
+        calendarStart.set(Calendar.MILLISECOND, 0);
+        Date todayStart = calendarStart.getTime();
 
-        fetchBookingsByDateRange(new Date(), sevenDaysFromNow);
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.set(Calendar.HOUR_OF_DAY, 23);
+        calendarEnd.set(Calendar.MINUTE, 59);
+        calendarEnd.set(Calendar.SECOND, 59);
+        calendarEnd.set(Calendar.MILLISECOND, 999);
+        calendarEnd.add(Calendar.DAY_OF_YEAR, 7);
+        Date sevenDaysLaterEnd = calendarEnd.getTime();
+
+        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd);
     }
 
     private void fetchAllBookings() {
