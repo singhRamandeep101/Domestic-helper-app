@@ -84,6 +84,10 @@ public class ReceiptActivity extends AppCompatActivity {
         receiptText.setText(receiptContent);
 
         Button doneButton = findViewById(R.id.doneButton);
+
+        if (status == "confirmed"){
+            doneButton.setVisibility(View.GONE);
+        }
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +108,20 @@ public class ReceiptActivity extends AppCompatActivity {
                                     "toDate", receipt.getToDate()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    if ("DomesticHelper".equals(userType)){
+                                        db.collection("receipt").document(documentId)
+                                                .update("status", "confirmed").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                     @Override
+                                                     public void onSuccess(Void aVoid) {
+
+                                                     }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                    }
+                                                });
+                                    }
                                     Log.d("Dennis", "Update Successful");
                                 }
                             })

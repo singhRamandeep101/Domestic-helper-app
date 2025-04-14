@@ -91,6 +91,9 @@
     <string name="no_translation_history">No translation history yet</string>
     <string name="error_init_meeting_server">Error initializing meeting server</string>
     <string name="booking_request">Meeting Request</string>
+    <string name="domestic_helper_email">Domestic Helper Email</string>
+    <string name="agent_email">Agent Email</string>
+    <string name="employer_email">Employer Email</string>
 
     <string-array name="language_skill_levels">
         <item>Poor</item>

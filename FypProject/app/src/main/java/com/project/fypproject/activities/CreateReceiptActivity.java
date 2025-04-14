@@ -2,6 +2,7 @@ package com.project.fypproject.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -78,6 +79,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
                                 " " +
                                 document.getString("lastName"));
                         employerName.setEnabled(false);
+                        employerName.setTypeface(null, Typeface.BOLD);
                     }
                 }
             }
@@ -95,6 +97,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
                                 " " +
                                 document.getString("lastName"));
                         employeeName.setEnabled(false);
+                        employeeName.setTypeface(null, Typeface.BOLD);
                     }
                 }
             }
@@ -117,6 +120,14 @@ public class CreateReceiptActivity extends AppCompatActivity {
                             toDate.setText(document.getString("toDate"));
                             status = document.getString("status");
                             documentId = document.getId();
+
+                            if (userType.equals("DomesticHelper")){
+                                holidays.setEnabled(false);
+                                salary.setEnabled(false);
+                                bonus.setEnabled(false);
+                                fromDate.setEnabled(false);
+                                toDate.setEnabled(false);
+                            }
                         }
                     } else {
                         // 處理錯誤
@@ -183,6 +194,14 @@ public class CreateReceiptActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(CreateReceiptActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        Button btn_Back = findViewById(R.id.btnViewOldButton);
+        btn_Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }

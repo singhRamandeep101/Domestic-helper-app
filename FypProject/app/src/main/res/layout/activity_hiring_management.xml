@@ -53,11 +53,17 @@
             android:textSize="30sp"
             android:textStyle="bold"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/domestic_helper_email"
+            android:layout_marginTop="20dp"/>
+
         <EditText
             android:id="@+id/DH_Email"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:hint="Domestic Helper Email"
+            android:hint="@string/domestic_helper_email"
             android:background="@drawable/background_input"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -68,11 +74,16 @@
             android:textColor="@color/primary_text"
             android:textSize="16sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/agent_email"
+            android:layout_marginTop="20dp"/>
         <EditText
             android:id="@+id/Agent_Email"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:hint="Agent Email"
+            android:hint="@string/agent_email"
             android:background="@drawable/background_input"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -82,11 +93,17 @@
             android:paddingEnd="16sp"
             android:textColor="@color/primary_text"
             android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/employer_email"
+            android:layout_marginTop="20dp"/>
         <EditText
             android:id="@+id/Employer_Email"
             android:layout_width="match_parent"
             android:layout_height="60sp"
-            android:hint="Employer Email"
+            android:hint="@string/employer_email"
             android:background="@drawable/background_input"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -118,34 +135,6 @@
         android:paddingHorizontal="24sp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/btn_dismiss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="10dp">
-
-            <ImageView
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:src="@drawable/icon_dismiss"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dismisss"
-                android:textStyle="bold"
-                android:textColor="#C00000"/>
-        </LinearLayout>
-
-
-        <View
-            android:id="@+id/divider9"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/listDivider" />
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -216,6 +205,36 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="8sp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="20dp">
+        <LinearLayout
+            android:id="@+id/btn_dismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/card"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:elevation="4dp">
+
+            <ImageView
+                android:layout_width="40sp"
+                android:layout_height="40sp"
+                android:src="@drawable/icon_dismiss"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dismisss"
+                android:textStyle="bold"
+                android:textColor="#C00000"/>
+        </LinearLayout>
 
     </LinearLayout>
 

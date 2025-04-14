@@ -31,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
+import com.project.fypproject.activities.employer.EmployerMainActivity;
 import com.project.fypproject.activities.employer.JobDetailAdapter;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
-    ImageView btnLastYear, btnNextyear;
+    ImageView btnLastYear, btnNextyear, btnBack;
     LinearLayout[] llMonthButtons = new LinearLayout[12];
     ImageView[] imgStatus = new ImageView[12];
     TextView txtYear;
@@ -104,6 +105,7 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
 
         btnLastYear = findViewById(R.id.btnLastYear);
         btnNextyear = findViewById(R.id.btnNextYear);
+        btnBack = findViewById(R.id.btnBack);
         txtYear = findViewById(R.id.year);
         numberStr = txtYear.getText().toString().trim();
         try {
@@ -128,6 +130,14 @@ public class SalaryRecordSelectorActivity extends AppCompatActivity {
                 year -= 1;
                 numberStr = Integer.toString(year);
                 txtYear.setText(numberStr);
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EmployerMainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
