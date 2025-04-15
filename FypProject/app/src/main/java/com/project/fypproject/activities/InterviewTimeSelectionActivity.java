@@ -338,7 +338,7 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
                 iterator.remove();
             }
         }
-        
+
         HashMap<String, Object> data = new HashMap<>();
         data.put("employerEmail", user.getEmail());
         data.put("employeeEmail", employeeEmail);
