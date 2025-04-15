@@ -1,24 +1,25 @@
 package com.project.fypproject.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.project.fypproject.R;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,8 +33,9 @@ public class BookRecordActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String userType, emailField, userEmail;
     private View tvNoRecord;
-
-    ImageView btnBack;
+    private ImageView btnBack;
+    private ListenerRegistration bookingListener;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,58 +46,14 @@ public class BookRecordActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         tvNoRecord = findViewById(R.id.tv_no_data);
         btnBack = findViewById(R.id.btnBack);
-        tvNoRecord = findViewById(R.id.tv_no_data);
+        tabLayout = findViewById(R.id.tabLayout);
 
         db = FirebaseFirestore.getInstance();
-
         userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
+        btnBack.setOnClickListener(v -> finish());
+
         fetchUserType();
-
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (emailField == null || userEmail == null) {
-                    Log.e("Error", "emailField or userEmail is null. Skipping tab action.");
-                    return;
-                }
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        fetchBookingsForUpcoming();
-                        break;
-                    case 1:
-                        fetchAllBookings();
-                        break;
-                    case 2:
-                        fetchBookingsForNextMonth();
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-        String selectedTab = getIntent().getStringExtra("selectedTab");
-        if ("ALL".equals(selectedTab)) {
-            TabLayout.Tab tab = tabLayout.getTabAt(1);
-            if (tab != null) {
-                tab.select();
-            }
-        }
     }
 
     private void fetchUserType() {
@@ -110,7 +68,8 @@ public class BookRecordActivity extends AppCompatActivity {
                         adapter = new BookRecordAdapter(bookingList, userType);
                         recyclerView.setAdapter(adapter);
 
-                        fetchBookingsForUpcoming();
+                        setupTabLayout();
+
                     } else {
                         Log.e("Firestore Error", "Failed to fetch user type");
                     }
@@ -134,6 +93,43 @@ public class BookRecordActivity extends AppCompatActivity {
         }
     }
 
+    private void setupTabLayout() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        fetchBookingsForUpcoming();
+                        break;
+                    case 1:
+                        fetchAllBookings();
+                        break;
+                    case 2:
+                        fetchBookingsForNextMonth();
+                        break;
+                }
+            }
+
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        String selectedTab = getIntent().getStringExtra("selectedTab");
+        if ("ALL".equals(selectedTab)) {
+            TabLayout.Tab tab = tabLayout.getTabAt(1);
+            if (tab != null) {
+                tab.select();
+                fetchAllBookings();
+            }
+        } else {
+            TabLayout.Tab tab = tabLayout.getTabAt(0);
+            if (tab != null) {
+                tab.select();
+                fetchBookingsForUpcoming();
+            }
+        }
+    }
+
     private void fetchBookingsForUpcoming() {
         Calendar calendarStart = Calendar.getInstance();
         calendarStart.set(Calendar.HOUR_OF_DAY, 0);
@@ -150,11 +146,11 @@ public class BookRecordActivity extends AppCompatActivity {
         calendarEnd.add(Calendar.DAY_OF_YEAR, 7);
         Date sevenDaysLaterEnd = calendarEnd.getTime();
 
-        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd, true); // true 表示要篩選 meetingStatus = "abc"
+        fetchBookingsByDateRange(todayStart, sevenDaysLaterEnd, true);
     }
 
     private void fetchAllBookings() {
-        fetchBookingsByDateRange(null, null, false); // false 表示不篩選 meetingStatus
+        fetchBookingsByDateRange(null, null, false);
     }
 
     private void fetchBookingsForNextMonth() {
@@ -171,15 +167,12 @@ public class BookRecordActivity extends AppCompatActivity {
         fetchBookingsByDateRange(startOfNextMonth, endOfNextMonth, true);
     }
 
-    private ListenerRegistration bookingListener;
-
     private void fetchBookingsByDateRange(Date startDate, Date endDate, boolean filterMeetingStatus) {
         if (emailField == null || userEmail == null) {
             Log.e("Error", "emailField or userEmail is null. Skipping query.");
             return;
         }
 
-        // 先移除之前的 Listener
         if (bookingListener != null) {
             bookingListener.remove();
         }
@@ -188,7 +181,7 @@ public class BookRecordActivity extends AppCompatActivity {
                 .whereEqualTo(emailField, userEmail);
 
         if (filterMeetingStatus) {
-            query = query.whereEqualTo("meetingStatus", "Waiting for interview");
+            query = query.whereIn("meetingStatus", Arrays.asList("Waiting for interview", "Started interview"));
         }
 
         bookingListener = query.addSnapshotListener((querySnapshot, e) -> {
@@ -223,5 +216,13 @@ public class BookRecordActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bookingListener != null) {
+            bookingListener.remove();
+        }
     }
 }

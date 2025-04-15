@@ -898,7 +898,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                                 Log.d(TAG, "Meeting status updated successfully");
 
                                 Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                                intent.putExtra("selectedTab", "all");
+                                intent.putExtra("selectedTab", "ALL");
                                 startActivity(intent);
                                 finish();
                             })
@@ -906,7 +906,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 } else {
                     Log.d(TAG, "User is not an Agent, skipping status update");
                     Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                    intent.putExtra("selectedTab", "all");
+                    intent.putExtra("selectedTab", "ALL");
                     startActivity(intent);
                     finish();
                 }
