@@ -58,40 +58,6 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/tvRequestID"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Request ID: abc@gmail.com"
-                    android:textSize="16sp"
-                    android:textColor="#555555" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/tvRequestState"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Request State: abc@gmail.com"
-                    android:textSize="16sp"
-                    android:textColor="#555555" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp">
-
-                <TextView
                     android:id="@+id/tvAgentName"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -138,7 +104,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="DomesticHelper Name: jkw"
+                    android:text="Domestic Helper Name: jkw"
                     android:textSize="16sp"
                     android:textColor="#555555" />
 
@@ -176,6 +142,65 @@
                     android:contentDescription="chat to Translator" />
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Suggested Times -->
+        <LinearLayout
+            android:id="@+id/layoutMatchingTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Matching Time"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="#333333"
+                android:paddingBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tvNoMatchTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No matching Time"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:textColor="#333333"
+                android:paddingBottom="12dp" />
+        </LinearLayout>
+
+        <!-- Confirmed Times -->
+        <LinearLayout
+            android:id="@+id/layoutConfirmTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Book Time"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_500"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:visibility="gone"/>
 
         <!-- Employer Selected Time -->
         <LinearLayout
@@ -240,7 +265,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Helper Selected Time"
+                android:text="Domestic Helper Selected Time"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -254,7 +279,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
+            android:background="@drawable/card_background"
             android:padding="16dp"
             android:elevation="4dp"
             android:layout_marginBottom="16dp"
@@ -271,69 +296,11 @@
                 android:paddingBottom="12dp" />
         </LinearLayout>
 
-        <!-- Suggested Times -->
-        <LinearLayout
-            android:id="@+id/layoutMatchingTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:elevation="4dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Matching Time"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:textColor="#333333"
-                android:paddingBottom="12dp" />
-
-            <TextView
-                android:id="@+id/tvNoMatchTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="No matching Time"
-                android:textSize="15sp"
-                android:gravity="center"
-                android:textColor="#333333"
-                android:paddingBottom="12dp" />
-        </LinearLayout>
-
-        <!-- Confirmed Times -->
-        <LinearLayout
-            android:id="@+id/layoutConfirmTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:elevation="4dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone">
-
-        </LinearLayout>
         <Button
             android:id="@+id/btnSendDecline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send Declined"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/purple_500"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:padding="12dp"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/btnBook"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Book Time"
+            android:text="Decline Meeting"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_500"
             android:textStyle="bold"
@@ -345,7 +312,7 @@
             android:id="@+id/btnCheckBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check Book"
+            android:text="Check Booking"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_500"
             android:textStyle="bold"

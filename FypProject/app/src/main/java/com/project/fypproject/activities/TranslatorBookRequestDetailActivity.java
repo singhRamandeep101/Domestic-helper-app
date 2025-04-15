@@ -36,7 +36,7 @@ public class TranslatorBookRequestDetailActivity extends AppCompatActivity {
     LinearLayout layoutEmployerSelectedTime, layoutConfirmTime,layoutSelectedTime,layoutConfirmedTime;
     private Button btnSendDecline, btnSetBook,btnCheckBook;
 
-    private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName,tvAgentName;
+    private TextView tvEmployerName, tvHelperName, tvTranName,tvAgentName;
 
     private ImageButton chatAgent;
 
@@ -58,8 +58,6 @@ public class TranslatorBookRequestDetailActivity extends AppCompatActivity {
         layoutConfirmTime = findViewById(R.id.layoutConfirmTime);
         btnSendDecline = findViewById(R.id.btnSendDecline);
         btnSetBook = findViewById(R.id.btnSetBook);
-        tvRequestID = findViewById(R.id.tvRequestID);
-        tvRequestState = findViewById(R.id.tvRequestState);
         tvAgentName = findViewById(R.id.tvAgentName);
         tvEmployerName = findViewById(R.id.tvEmployerName);
         tvHelperName = findViewById(R.id.tvHelperName);
@@ -75,8 +73,6 @@ public class TranslatorBookRequestDetailActivity extends AppCompatActivity {
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 
-        tvRequestID.setText("Request ID: " + requestID);
-        tvRequestState.setText("Request State: " + requestState);
         tvEmployerName.setText("Employer Name: " + employerName);
         tvHelperName.setText("DomesticHelper Name: " + helperName);
 
@@ -287,7 +283,7 @@ public class TranslatorBookRequestDetailActivity extends AppCompatActivity {
 
             if(parentLayout.equals(layoutEmployerSelectedTime)){
                 ImageView yesIcon = new ImageView(this);
-                yesIcon.setImageResource(R.drawable.icon_confirm);
+                yesIcon.setImageResource(R.drawable.icon_add);
 
                 if (confirmedTimes.containsKey(date) && confirmedTimes.get(date).contains(timeSlot)) {
                     yesIcon.setVisibility(View.GONE);
@@ -367,7 +363,7 @@ public class TranslatorBookRequestDetailActivity extends AppCompatActivity {
                     timeTextView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     ImageView noIcon = new ImageView(this);
-                    noIcon.setImageResource(R.drawable.ic_rej);
+                    noIcon.setImageResource(R.drawable.icon_del);
 
                     noIcon.setOnClickListener(v -> {
                         removeConfirmedTime(date, time);

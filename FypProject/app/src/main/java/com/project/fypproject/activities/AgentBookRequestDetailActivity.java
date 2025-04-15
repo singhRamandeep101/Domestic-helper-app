@@ -1,6 +1,7 @@
 package com.project.fypproject.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +38,7 @@ import java.util.Map;
 
 public class AgentBookRequestDetailActivity extends AppCompatActivity {
 
-    private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName, tvNoMatchTime,tvAgentName;
+    private TextView tvEmployerName, tvHelperName, tvTranName, tvNoMatchTime,tvAgentName;
     private ImageButton chatEmployer, chatHelper, chatTranslator;
 
     private String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
@@ -62,8 +63,6 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        tvRequestID = findViewById(R.id.tvRequestID);
-        tvRequestState = findViewById(R.id.tvRequestState);
         tvEmployerName = findViewById(R.id.tvEmployerName);
         tvHelperName = findViewById(R.id.tvHelperName);
         tvTranName = findViewById(R.id.tvTranName);
@@ -88,8 +87,6 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 
-        tvRequestID.setText("Request ID: " + requestID);
-        tvRequestState.setText("Request State: " + requestState);
         tvEmployerName.setText("Employer Name: " + employerName);
         tvHelperName.setText("DomesticHelper Name: " + helperName);
 
@@ -489,7 +486,6 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         TextView titleTextView = new TextView(this);
         titleTextView.setText("Matching Time");
         titleTextView.setTextSize(20);
-        titleTextView.setTextColor(getResources().getColor(R.color.black));
         titleTextView.setTypeface(null, Typeface.BOLD);
         titleTextView.setGravity(Gravity.CENTER);
         titleTextView.setPadding(0, 16, 0, 8);
@@ -497,10 +493,12 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
         layoutMatchingTime.addView(tvNoMatchTime);
 
         if (matchingTimes.isEmpty()) {
+            titleTextView.setTextColor(Color.parseColor("#F44336"));
             tvNoMatchTime.setVisibility(View.VISIBLE);
             btnSendDecline.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
         } else {
+            titleTextView.setTextColor(Color.parseColor("#4CAF50"));
             tvNoMatchTime.setVisibility(View.GONE);
             btnSendDecline.setVisibility(View.VISIBLE);
             layoutMatchingTime.setVisibility(View.VISIBLE);
@@ -532,7 +530,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                     timeTextView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     ImageView yesIcon = new ImageView(this);
-                    yesIcon.setImageResource(R.drawable.icon_confirm);
+                    yesIcon.setImageResource(R.drawable.icon_add);
 
                     if (isTimeConfirmed) {
                         yesIcon.setVisibility(View.GONE);
@@ -615,7 +613,7 @@ public class AgentBookRequestDetailActivity extends AppCompatActivity {
                     timeTextView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     ImageView noIcon = new ImageView(this);
-                    noIcon.setImageResource(R.drawable.ic_rej);
+                    noIcon.setImageResource(R.drawable.icon_del);
 
                     noIcon.setOnClickListener(v -> {
                         removeConfirmedTime(date, time);
