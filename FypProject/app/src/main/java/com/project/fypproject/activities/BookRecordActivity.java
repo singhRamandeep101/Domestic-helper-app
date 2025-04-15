@@ -89,6 +89,13 @@ public class BookRecordActivity extends AppCompatActivity {
                 finish();
             }
         });
+        String selectedTab = getIntent().getStringExtra("selectedTab");
+        if ("ALL".equals(selectedTab)) {
+            TabLayout.Tab tab = tabLayout.getTabAt(1);
+            if (tab != null) {
+                tab.select();
+            }
+        }
     }
 
     private void fetchUserType() {

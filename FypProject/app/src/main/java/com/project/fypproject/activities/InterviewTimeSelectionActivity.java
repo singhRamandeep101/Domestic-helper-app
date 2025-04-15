@@ -26,6 +26,7 @@ import com.project.fypproject.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
@@ -149,20 +150,29 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
         db.collection("booking")
                 .whereEqualTo("employeeEmail", employeeEmail)
                 .get()
-                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<com.google.firebase.firestore.QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(com.google.firebase.firestore.QuerySnapshot queryDocumentSnapshots) {
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            String bookedDate = document.getString("date");
-                            String bookedTimeSlot = document.getString("TimeSlot");
+                            String meetingStatus = document.getString("meetingStatus");
+                            if (meetingStatus != null && !meetingStatus.equals("Cancel interview")) {
+                                String bookedDate = document.getString("date");
+                                String bookedTimeSlot = document.getString("timeSlot");
 
-                            if (bookedDate != null && bookedTimeSlot != null) {
-                                HashMap<String, Boolean> timeSlots = bookedTime.getOrDefault(bookedDate, new HashMap<>());
-                                timeSlots.put(bookedTimeSlot, true);
-                                bookedTime.put(bookedDate, timeSlots);
+                                if (bookedDate != null && bookedTimeSlot != null) {
+                                    HashMap<String, Boolean> timeSlots = bookedTime.getOrDefault(bookedDate, new HashMap<>());
+                                    timeSlots.put(bookedTimeSlot, true);
+                                    bookedTime.put(bookedDate, timeSlots);
+                                }
                             }
                         }
-                        updateSelectedDate(); // Update the UI after loading booked slots
+                        updateSelectedDate();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore Error", "Error fetching bookings", e);
                     }
                 });
     }
@@ -226,9 +236,10 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
         HashMap<String, Boolean> timeSlots = selectedTime.getOrDefault(currentSelectedDate, new HashMap<>());
 
         for (int id : timeSlotIds) {
-            Button timeSlotButton = findViewById(id);
+            final Button timeSlotButton = findViewById(id);
             String timeSlot = timeSlotButton.getText().toString();
-            if (!isBooked(timeSlot)) {
+
+            if (timeSlotButton.isEnabled() && !isBooked(timeSlot)) {
                 timeSlots.put(timeSlot, true);
                 timeSlotButton.setBackgroundResource(R.drawable.button_outlined_selected);
                 timeSlotButton.setTextColor(getResources().getColor(android.R.color.white));
@@ -264,11 +275,29 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
                 R.id.btn1600TO1700, R.id.btn1700TO1800
         };
 
+        SimpleDateFormat fullDateTimeFormat = new SimpleDateFormat("dd MMM, yyyy (EEE) HH:mm", Locale.ENGLISH);
+        Calendar now = Calendar.getInstance();
+
         for (int id : timeSlotIds) {
-            Button timeSlotButton = findViewById(id);
+            final Button timeSlotButton = findViewById(id);
             String timeSlot = timeSlotButton.getText().toString();
 
+            String startTime = timeSlot.split(" - ")[0];
+            boolean isPastTime = false;
+            try {
+                Date slotTime = fullDateTimeFormat.parse(currentSelectedDate + " " + startTime);
+                Calendar slotCalendar = Calendar.getInstance();
+                slotCalendar.setTime(slotTime);
+                isPastTime = slotCalendar.before(now);
+            } catch (Exception e) {
+                Log.e("Date Parse Error", "Error parsing date/time", e);
+            }
+
             if (bookedSlots.containsKey(timeSlot) && bookedSlots.get(timeSlot)) {
+                timeSlotButton.setEnabled(false);
+                timeSlotButton.setBackgroundResource(R.drawable.button_outlined_disabled);
+                timeSlotButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            } else if (isPastTime) {
                 timeSlotButton.setEnabled(false);
                 timeSlotButton.setBackgroundResource(R.drawable.button_outlined_disabled);
                 timeSlotButton.setTextColor(getResources().getColor(android.R.color.darker_gray));

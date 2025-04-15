@@ -888,20 +888,34 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             stopVoiceTranslation();
             Log.d(TAG, "cleanupJitsiView: Jitsi view cleaned up successfully");
 
-            if (bookingDocId == null || bookingDocId.isEmpty()) {
-                Log.e(TAG, "Booking document ID is null or empty, skipping Firestore updates in cleanup");
-                showToast("Booking document ID not provided. Status update skipped.");
-            } else {
+            if (bookingDocId != null && !bookingDocId.isEmpty()) {
                 if ("Agent".equals(userType)) {
-                    Log.d(TAG, "cleanupJitsiView: Updating meeting status to Ended Interview in Firestore");
+                    Log.d(TAG, "cleanupJitsiView: Updating meeting status to Waiting for Employer Response in Firestore");
                     db.collection("booking")
                             .document(bookingDocId)
                             .update("meetingStatus", "Waiting for Employer Response")
-                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Ended Interview"))
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Meeting status updated successfully");
+
+                                Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                                intent.putExtra("selectedTab", "all");
+                                startActivity(intent);
+                                finish();
+                            })
                             .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
                 } else {
-                    Log.d(TAG, "User is not an Agent, skipping status update in cleanup");
+                    Log.d(TAG, "User is not an Agent, skipping status update");
+                    Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                    intent.putExtra("selectedTab", "all");
+                    startActivity(intent);
+                    finish();
                 }
+            } else {
+                Log.e(TAG, "Booking document ID is null or empty");
+                Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                intent.putExtra("selectedTab", "ALL");
+                startActivity(intent);
+                finish();
             }
         }
     }
