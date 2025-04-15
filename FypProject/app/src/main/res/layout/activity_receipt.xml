@@ -4,12 +4,220 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/receiptText"
+    <RelativeLayout
+        android:id="@+id/rlReceiptVoucher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:background="@drawable/amp_button_bg"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Salary Receipt Voucher"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/light_primary"
+            android:layout_centerHorizontal="true"/>
+
+        <View
+            android:id="@+id/divider9"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/purple_700"
+            android:layout_below="@+id/txtTitle"/>
+
+        <TextView
+            android:id="@+id/txtFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:text="Received from: "
+            android:layout_below="@+id/divider9"/>
+
+        <TextView
+            android:id="@+id/employer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[Employer Name]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/divider9"/>
+
+        <TextView
+            android:id="@+id/txtBy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:text="Received by:"
+            android:layout_below="@+id/txtFrom"/>
+
+        <TextView
+            android:id="@+id/domesticHelper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[Helper Name]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/txtFrom"/>
+
+        <TextView
+            android:id="@+id/txtSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:text="Salary:"
+            android:layout_below="@+id/txtBy"/>
+
+        <TextView
+            android:id="@+id/Salary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[Salary]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/txtBy"/>
+
+        <TextView
+            android:id="@+id/txtExtra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:text="Extra:"
+            android:layout_below="@+id/txtSalary"/>
+
+        <TextView
+            android:id="@+id/Extra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[Extra]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/txtSalary"/>
+
+        <TextView
+            android:id="@+id/txtTotleAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:text="TotleAmount:"
+            android:layout_below="@+id/txtExtra"/>
+
+        <TextView
+            android:id="@+id/TotleAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[TotleAmount]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/txtExtra"/>
+
+        <TextView
+            android:id="@+id/txtSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:text="Payment Detail"
+            android:layout_below="@+id/txtTotleAmount"/>
+
+        <TextView
+            android:id="@+id/txtMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:text=" 。 Salary for the period of "
+            android:layout_below="@+id/txtSubtitle"/>
+
+        <TextView
+            android:id="@+id/period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[From date] to [To date]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/txtMonth"/>
+
+        <TextView
+            android:id="@+id/txtHolidayTaken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:text=" 。 Holiday Taken: "
+            android:layout_below="@+id/period"/>
+
+        <TextView
+            android:id="@+id/holidayTaken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="[Holiday Taken]"
+            android:layout_toEndOf="@+id/txtFrom"
+            android:layout_below="@+id/period"/>
+
+        <TextView
+            android:id="@+id/txtSignDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:text="Signed Date:"
+            android:layout_toStartOf="@+id/SignDate"
+            android:layout_below="@+id/holidayTaken"/>
+
+        <TextView
+            android:id="@+id/SignDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:text="[Signed Date]"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/holidayTaken"/>
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/doneButton"

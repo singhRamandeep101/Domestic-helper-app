@@ -9,6 +9,7 @@ import android.print.pdf.PrintedPdfDocument;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,19 +27,34 @@ import com.project.fypproject.models.Receipt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
 
 public class ReceiptActivity extends AppCompatActivity {
     private DocumentReference databaseReference;
+
+    TextView txtEmployer, txtDomesticHelper, txtSalary, txtExtra, txtTotleAmount, txtPeriod, txtHolidayTaken, txtSignDate;
+    RelativeLayout rlReceiptVoucher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt);
 
+
+        txtEmployer = findViewById(R.id.employer);
+        txtDomesticHelper = findViewById(R.id.domesticHelper);
+        txtSalary = findViewById(R.id.Salary);
+        txtExtra = findViewById(R.id.Extra);
+        txtTotleAmount = findViewById(R.id.TotleAmount);
+        txtPeriod = findViewById(R.id.period);
+        txtHolidayTaken = findViewById(R.id.holidayTaken);
+        txtSignDate = findViewById(R.id.SignDate);
+
+        rlReceiptVoucher = findViewById(R.id.rlReceiptVoucher);
+
         // Initialize Firebase
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        //<editor-fold Get Parameter>
         Intent intent = getIntent();
         String employer = intent.getStringExtra("EMPLOYER_NAME");
         String employee = intent.getStringExtra("EMPLOYEE_NAME");
@@ -57,7 +73,7 @@ public class ReceiptActivity extends AppCompatActivity {
         String userType = intent.getStringExtra("userType");
         String status = intent.getStringExtra("status");
         String documentId = intent.getStringExtra("documentId");
-
+        //</editor-fold>
 
 
         Receipt receipt = new Receipt(employerEmail,
@@ -71,17 +87,14 @@ public class ReceiptActivity extends AppCompatActivity {
                 month,
                 "pending");
 
-        String receiptContent = "I, " + employee + " received the following salary in cash from " + employer +
-                " for the period from (" + fromDate + " to " + toDate + ").\n\n" +
-                "Salary amount = " + salary + "\n" +
-                "BONUS = " + bonus + "\n" +
-                "TOTAL = " + total + "\n\n" +
-                "HOLIDAYS TAKEN = " + holidays + "\n\n" +
-                "SIGNED BY " + signedBy + "\n" +
-                "DATE SIGNED = " + toDate;
-
-        TextView receiptText = findViewById(R.id.receiptText);
-        receiptText.setText(receiptContent);
+        txtEmployer.setText(employer);
+        txtDomesticHelper.setText(employee);
+        txtSalary.setText(salary);
+        txtExtra.setText(bonus);
+        txtTotleAmount.setText(total);
+        txtPeriod.setText(fromDate + " to " + toDate);
+        txtHolidayTaken.setText(holidays);
+        txtSignDate.setText(toDate);
 
         Button doneButton = findViewById(R.id.doneButton);
 

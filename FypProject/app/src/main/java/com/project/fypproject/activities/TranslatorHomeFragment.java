@@ -98,7 +98,7 @@ public class TranslatorHomeFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        txtName.setText(document.getString("firstName"));
+                        txtName.setText(document.getString("firstName   q"));
                     }
                 }
             }
