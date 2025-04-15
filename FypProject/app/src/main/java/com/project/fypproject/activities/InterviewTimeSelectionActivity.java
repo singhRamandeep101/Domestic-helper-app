@@ -28,7 +28,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 public class InterviewTimeSelectionActivity extends AppCompatActivity {
@@ -328,6 +330,15 @@ public class InterviewTimeSelectionActivity extends AppCompatActivity {
     }
 
     private void save() {
+
+        Iterator<HashMap.Entry<String, HashMap<String, Boolean>>> iterator = selectedTime.entrySet().iterator();
+        while(iterator.hasNext()) {
+            HashMap.Entry<String, HashMap<String, Boolean>> entry = iterator.next();
+            if(entry.getValue().isEmpty()) {
+                iterator.remove();
+            }
+        }
+        
         HashMap<String, Object> data = new HashMap<>();
         data.put("employerEmail", user.getEmail());
         data.put("employeeEmail", employeeEmail);
