@@ -3,38 +3,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".CreateReceiptActivity">
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/employerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Employer Name" />
+        android:hint="Employer Name"
+        android:textColor="@color/BLACK"/>
 
     <EditText
         android:id="@+id/employeeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Employee Name" />
+        android:hint="Employee Name"
+        android:textColor="@color/BLACK"/>
 
     <EditText
         android:id="@+id/holidays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Number of Holidays" />
+        android:hint="Number of Holidays"
+        android:textColor="@color/BLACK"/>
 
     <EditText
         android:id="@+id/salary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Salary" />
+        android:hint="Salary"
+        android:textColor="@color/BLACK"/>
 
     <EditText
         android:id="@+id/bonus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Bonus" />
+        android:hint="Extra"
+        android:textColor="@color/BLACK"/>
 
     <TextView
         android:id="@+id/totalSalary"
@@ -72,7 +76,7 @@
         android:id="@+id/btnViewOldButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Old Reciept"
+        android:text="View Old Receipt"
         android:layout_marginTop="16dp" />
 
     <Button

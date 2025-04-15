@@ -46,14 +46,14 @@ public class CreateReceiptActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        EditText employerName = findViewById(R.id.employerName);
-         EditText employeeName = findViewById(R.id.employeeName);
-         EditText holidays = findViewById(R.id.holidays);
-         EditText salary = findViewById(R.id.salary);
-         EditText bonus = findViewById(R.id.bonus);
-         EditText fromDate = findViewById(R.id.fromDate);
-         EditText toDate = findViewById(R.id.toDate);
-         TextView totalSalary = findViewById(R.id.totalSalary);
+         EditText employerName  =    findViewById(R.id.employerName);
+         EditText employeeName  =    findViewById(R.id.employeeName);
+         EditText holidays      =    findViewById(R.id.holidays);
+         EditText salary        =    findViewById(R.id.salary);
+         EditText bonus         =    findViewById(R.id.bonus);
+         EditText fromDate      =    findViewById(R.id.fromDate);
+         EditText toDate        =    findViewById(R.id.toDate);
+         TextView totalSalary   =    findViewById(R.id.totalSalary);
 
         Bundle b = getIntent().getExtras();
         if(b != null){
@@ -121,7 +121,7 @@ public class CreateReceiptActivity extends AppCompatActivity {
                             status = document.getString("status");
                             documentId = document.getId();
 
-                            if (userType.equals("DomesticHelper")){
+                            if (userType.equals("DomesticHelper") || status.equals("confirmed")){
                                 holidays.setEnabled(false);
                                 salary.setEnabled(false);
                                 bonus.setEnabled(false);
