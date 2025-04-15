@@ -35,10 +35,10 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QueryDocumentSnapshot document = bookingList.get(position);
 
-        holder.tvHelperName.setText(document.getString("employeeName"));
-        holder.tvEmployerName.setText(document.getString("employerName"));
-        holder.tvAgentName.setText(document.getString("agentName"));
-        holder.tvTranName.setText(document.getString("translatorName"));
+        holder.tvHelperName.setText(document.getString("employeeName")+" (Domestic Helper)");
+        holder.tvEmployerName.setText(document.getString("employerName")+" (Employer)");
+        holder.tvAgentName.setText(document.getString("agentName")+" (Agent)");
+        holder.tvTranName.setText(document.getString("translatorName")+" (Translator)");
         holder.tvDate.setText(document.getString("date"));
         holder.tvTime.setText(document.getString("timeSlot"));
         holder.bookRecordID.setText("Booking ID: " + document.getString("bookingID"));

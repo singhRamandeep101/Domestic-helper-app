@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class EmployerBookRequestDetailActivity extends AppCompatActivity {
 
-    private TextView tvRequestID, tvRequestState, tvEmployerName, tvHelperName, tvTranName,tvAgentName;
+    private TextView tvEmployerName, tvHelperName, tvTranName,tvAgentName;
     private ImageButton chatAgent;
 
     String requestID, requestState, employerName, helperName, translatorEmail, employerEmail, employeeEmail;
@@ -60,8 +60,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        tvRequestID = findViewById(R.id.tvRequestID);
-        tvRequestState = findViewById(R.id.tvRequestState);
         tvEmployerName = findViewById(R.id.tvEmployerName);
         tvHelperName = findViewById(R.id.tvHelperName);
         tvTranName = findViewById(R.id.tvTranName);
@@ -77,8 +75,6 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
         employerName = intent.getStringExtra("employerName");
         helperName = intent.getStringExtra("helperName");
 
-        tvRequestID.setText("Request ID: " + requestID);
-        tvRequestState.setText("Request State: " + requestState);
         tvEmployerName.setText("Employer Name: " + employerName);
         tvHelperName.setText("DomesticHelper Name: " + helperName);
 
@@ -268,7 +264,7 @@ public class EmployerBookRequestDetailActivity extends AppCompatActivity {
                 timeSlotTextView.setText(timeSlot);
                 timeSlotTextView.setTextSize(16);
                 timeSlotTextView.setTextColor(getResources().getColor(R.color.black));
-                timeSlotTextView.setPadding(0, 4, 0, 4);
+                timeSlotTextView.setPadding(0, 30, 0, 4);
                 parentLayout.addView(timeSlotTextView);
             }
         }

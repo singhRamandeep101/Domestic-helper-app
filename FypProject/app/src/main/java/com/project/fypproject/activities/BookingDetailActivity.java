@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class BookingDetailActivity extends AppCompatActivity {
 
-    TextView tvBookingID,tvDate,tvTime,tvMeetingState,tvAgentName,tvEmployerName,tvHelperName,tvTranslatorName;
+    TextView tvDate,tvTime,tvAgentName,tvEmployerName,tvHelperName,tvTranslatorName;
 
     String  bookingID,date,time,meetingState,agentName,employerName,helperName,translatorName,agentEmail,employerEmail,employeeEmail,translatorEmail,userType;
 
@@ -56,10 +56,8 @@ public class BookingDetailActivity extends AppCompatActivity {
         user = auth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        tvBookingID = findViewById(R.id.tvBookingID);
         tvDate = findViewById(R.id.tvDate);
         tvTime =  findViewById(R.id.tvTime);
-        tvMeetingState = findViewById(R.id.tvMeetingState);
         tvAgentName = findViewById(R.id.tvAgentName);
         tvEmployerName = findViewById(R.id.tvEmployerName);
         tvHelperName = findViewById(R.id.tvHelperName);
@@ -86,10 +84,8 @@ public class BookingDetailActivity extends AppCompatActivity {
         userType = intent.getStringExtra("userType");
 
 
-        tvBookingID.setText("Booking ID: " + bookingID);
         tvDate.setText("Date: " + date);
         tvTime.setText("Time: " + time);
-        tvMeetingState.setText("Meeting State: " + meetingState);
         tvAgentName.setText("Agent Name: " + agentName);
         tvEmployerName.setText("Employer Name: " + employerName);
         tvHelperName.setText("DomesticHelper Name: " + helperName);

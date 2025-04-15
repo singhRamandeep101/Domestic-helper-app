@@ -58,40 +58,6 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/tvRequestID"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Request ID: abc@gmail.com"
-                    android:textSize="16sp"
-                    android:textColor="#555555" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/tvRequestState"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Request State: abc@gmail.com"
-                    android:textSize="16sp"
-                    android:textColor="#555555" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp">
-
-                <TextView
                     android:id="@+id/tvAgentName"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -138,7 +104,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="DomesticHelper Name: jkw"
+                    android:text="Domestic Helper Name: jkw"
                     android:textSize="16sp"
                     android:textColor="#555555" />
             </LinearLayout>
@@ -213,7 +179,7 @@
             android:id="@+id/btnCheckBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check Book"
+            android:text="Check Booking"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_500"
             android:textStyle="bold"
