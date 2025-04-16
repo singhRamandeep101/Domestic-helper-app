@@ -1,5 +1,7 @@
 package com.project.fypproject.activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.project.fypproject.R;
 import com.project.fypproject.activities.employer.HiringStatusActivity;
 
@@ -105,12 +109,36 @@ public class DhHomeFragment extends Fragment {
                             newLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(getActivity(), HiringStatusActivity.class);
-                                    Bundle b = new Bundle();
-                                    b.putString("employerEmail", employer);
-                                    b.putString("employeeEmail", user.getEmail());
-                                    intent.putExtras(b);
-                                    startActivity(intent);
+                                    db.collection("HiringStatus")
+                                            .whereEqualTo("domestic_helper", user.getEmail())
+                                            .whereEqualTo("employer", employer)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                                            Boolean boolReady = document.getBoolean("ready");
+
+                                                            Intent intent;
+                                                            Bundle b = new Bundle();
+                                                            b.putString("employerEmail", employer);
+                                                            b.putString("employeeEmail", user.getEmail());
+
+                                                            if(boolReady) {
+                                                                intent = new Intent(getActivity(), SalaryRecordSelectorActivity.class);
+                                                            }else {
+                                                                intent = new Intent(getActivity(), HiringStatusActivity.class);
+                                                            }
+                                                            intent.putExtras(b);
+                                                            startActivity(intent);
+                                                        }
+                                                    } else {
+                                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                                    }
+                                                }
+                                            });
                                 }
                             });
 
