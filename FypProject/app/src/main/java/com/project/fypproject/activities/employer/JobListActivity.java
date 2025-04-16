@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -46,6 +47,9 @@ import java.util.Map;
 import com.project.fypproject.R;
 import com.project.fypproject.models.HelperInfo;
 
+import com.google.android.flexbox.FlexboxLayout;
+import android.view.LayoutInflater;
+
 public class JobListActivity extends AppCompatActivity {
     FirebaseFirestore firestore;
     RecyclerView recyclerView;
@@ -78,6 +82,9 @@ public class JobListActivity extends AppCompatActivity {
 
     private Button btnClearAll;
 
+    private FlexboxLayout filterTagsContainer;
+    private LinearLayout lastFilterContainer;
+
     Resources res;
     Drawable icon_BookMarked_Outline, icon_BookMarked_Filled;
 
@@ -97,7 +104,8 @@ public class JobListActivity extends AppCompatActivity {
             }
         });
 
-        lastFilterHistory = findViewById(R.id.last_filter_history);
+        lastFilterContainer = findViewById(R.id.last_filter_container);
+        filterTagsContainer = findViewById(R.id.filter_tags_container);
 
         imgBookmarkFilter = findViewById(R.id.btn_bookmark_filter);
 
@@ -351,13 +359,19 @@ public class JobListActivity extends AppCompatActivity {
     }
 
     private void clearAllFilters() {
-        selectedFilters.clear(); // 清空所有已选筛选条件
-        resetLabelSelections();  // 重置所有筛选标签的选中状态
+        selectedFilters.clear(); // 清空所有已選篩選條件
 
-        // 更新 RecyclerView 和历史记录显示
-        jobListAdapter.notifyDataSetChanged();
-        noResultText.setVisibility(View.GONE); // 隐藏无结果文本
-        lastFilterHistory.setText("Last applied filters: None"); // 恢复默认的历史记录文本
+        // 重置所有篩選標籤的選中狀態
+        for (View label : filterLabels) {
+            if (label instanceof TextView) {
+                label.setSelected(false);
+            }
+        }
+
+        // 更新 RecyclerView 和過濾歷史顯示
+        AllData(); // 重新加載所有數據
+        updateFilterHistory(); // 更新過濾歷史顯示
+        noResultText.setVisibility(View.GONE); // 隱藏無結果文本
     }
 
     private void resetLabelSelections() {
@@ -369,14 +383,22 @@ public class JobListActivity extends AppCompatActivity {
     }
 
     private void updateFilterHistory() {
+        filterTagsContainer.removeAllViews();
+
         if (selectedFilters.isEmpty()) {
-            lastFilterHistory.setText("Last applied filters: None");
+            lastFilterContainer.setVisibility(View.GONE);
         } else {
-            StringBuilder filterText = new StringBuilder("Last applied filters: ");
+            lastFilterContainer.setVisibility(View.VISIBLE);
+
             for (Map.Entry<String, List<String>> entry : selectedFilters.entrySet()) {
-                filterText.append(entry.getKey()).append(": ").append(entry.getValue()).append("; ");
+                String category = entry.getKey();
+                for (String value : entry.getValue()) {
+                    TextView filterTag = (TextView) LayoutInflater.from(this)
+                            .inflate(R.layout.filter_tag_item, filterTagsContainer, false);
+                    filterTag.setText(category + ": " + value);
+                    filterTagsContainer.addView(filterTag);
+                }
             }
-            lastFilterHistory.setText(filterText.toString());
         }
     }
 

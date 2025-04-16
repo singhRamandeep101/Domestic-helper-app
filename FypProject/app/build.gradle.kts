@@ -76,7 +76,10 @@ dependencies {
     implementation(libs.libausbc)
     implementation(libs.cardview)
     implementation(libs.core)
+    implementation(libs.flexbox)
     annotationProcessor(libs.glide.compiler)
+
+
 
     implementation("org.jitsi.react:jitsi-meet-sdk:11.1.0") {
         isTransitive = true
