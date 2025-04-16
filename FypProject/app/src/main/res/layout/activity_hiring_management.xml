@@ -206,37 +206,38 @@
             android:textStyle="bold"
             app:cornerRadius="8sp"/>
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="20dp">
         <LinearLayout
-            android:id="@+id/btn_dismiss"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/card"
-            android:padding="10dp"
-            android:layout_margin="10dp"
-            android:elevation="4dp">
-
-            <ImageView
-                android:layout_width="40sp"
-                android:layout_height="40sp"
-                android:src="@drawable/icon_dismiss"/>
-            <TextView
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="20dp">
+            <LinearLayout
+                android:id="@+id/btn_dismiss"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dismisss"
-                android:textStyle="bold"
-                android:textColor="#C00000"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card"
+                android:padding="10dp"
+                android:layout_margin="10dp"
+                android:elevation="4dp">
 
+                <ImageView
+                    android:layout_width="40sp"
+                    android:layout_height="40sp"
+                    android:src="@drawable/icon_dismiss"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dismisss"
+                    android:textStyle="bold"
+                    android:textColor="#C00000"/>
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
+
 
 
 </LinearLayout>
