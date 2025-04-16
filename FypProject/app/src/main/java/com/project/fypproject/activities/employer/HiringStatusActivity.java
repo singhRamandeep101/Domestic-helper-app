@@ -94,45 +94,37 @@ public class HiringStatusActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 boolReady = document.getBoolean("ready");
-                                if(boolReady){
-                                    Intent intent = new Intent(getApplicationContext(), SalaryRecordSelectorActivity.class);
-                                    Bundle b = new Bundle();
-                                    b.putString("employeeEmail", employeeEmail);
-                                    b.putString("employerEmail", employerEmail);
-                                    intent.putExtras(b);
-                                    startActivity(intent);
-                                    finish();
-                                }else {
-                                    boolBodyCheck = document.getBoolean("body_check");
-                                    boolInsurance = document.getBoolean("insurance");
-                                    status = document.getLong("status").intValue();
 
-                                    if (boolBodyCheck) {
-                                        ImgBodyCheck.setImageDrawable(done);
-                                    }
+                                boolBodyCheck = document.getBoolean("body_check");
+                                boolInsurance = document.getBoolean("insurance");
+                                status = document.getLong("status").intValue();
 
-                                    if (boolInsurance) {
-                                        ImgInsurance.setImageDrawable(done);
-                                    }
+                                if (boolBodyCheck) {
+                                    ImgBodyCheck.setImageDrawable(done);
+                                }
 
-                                    for (int i = 0; i < statusImages.length; i++) {
-                                        if (status > i + 2) {
-                                            statusImages[i].setImageDrawable(done);
-                                        } else if (status == i + 2) {
-                                            statusImages[i].setImageDrawable(current);
-                                            if(status <= 4){
-                                                statusDescription[i].setAlpha(0f); // 初始為透明
-                                                statusDescription[i].setVisibility(View.VISIBLE);
-                                                statusDescription[i].animate()
-                                                        .alpha(1f)
-                                                        .setDuration(600)
-                                                        .start();
-                                            }
-                                        } else {
-                                            statusImages[i].setImageDrawable(pending);
+                                if (boolInsurance) {
+                                    ImgInsurance.setImageDrawable(done);
+                                }
+
+                                for (int i = 0; i < statusImages.length; i++) {
+                                    if (status > i + 2) {
+                                        statusImages[i].setImageDrawable(done);
+                                    } else if (status == i + 2) {
+                                        statusImages[i].setImageDrawable(current);
+                                        if(status <= 4){
+                                            statusDescription[i].setAlpha(0f); // 初始為透明
+                                            statusDescription[i].setVisibility(View.VISIBLE);
+                                            statusDescription[i].animate()
+                                                    .alpha(1f)
+                                                    .setDuration(600)
+                                                    .start();
                                         }
+                                    } else {
+                                        statusImages[i].setImageDrawable(pending);
                                     }
                                 }
+
 
                             }
                         } else {
