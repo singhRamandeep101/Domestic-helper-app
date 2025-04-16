@@ -269,7 +269,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         meetingContainer = findViewById(R.id.meetingContainer);
         questionsButton = findViewById(R.id.questionsButton);
         translateButton = findViewById(R.id.translateButton);
-        leaveButton = findViewById(R.id.leaveButton);
         translationOutput = findViewById(R.id.translationOutput);
         chatInputContainer = findViewById(R.id.chat_input_container);
         chatInputBox = findViewById(R.id.chatInputBox);
@@ -396,7 +395,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         });
     }
 
-    private AudioFocusRequest audioFocusRequest;
+    private AudioFocusRequest audioFocusRequest; // Store the AudioFocusRequest for abandoning focus
 
     private void toggleVoiceTranslation() {
         if (!isTranslationEnabled) {
@@ -413,50 +412,46 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         }
 
         if (!isVoiceTranslating) {
-            // Prompt the user to mute other participants in Jitsi Meet
-            new AlertDialog.Builder(this)
-                    .setTitle("Mute Other Participants")
-                    .setMessage("To enable accurate speech-to-text translation, please mute other participants in the Jitsi meeting. Tap the participant list (top-right corner), select each participant, mute their audio, and then press OK to proceed.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        // Request audio focus after the user confirms muting
-                        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                        audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-                                .setOnAudioFocusChangeListener(focusChange -> {
-                                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                                        stopVoiceTranslation();
-                                    }
-                                })
-                                .build();
-                        int result = audioManager.requestAudioFocus(audioFocusRequest);
-
-                        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                            showToast("Failed to acquire audio focus for speech recognition");
-                            return;
+            // Request exclusive audio focus to pause Jitsi Meet audio
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setOnAudioFocusChangeListener(focusChange -> {
+                        if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                            stopVoiceTranslation();
                         }
+                    })
+                    .build();
+            int result = audioManager.requestAudioFocus(audioFocusRequest);
 
-                        new AlertDialog.Builder(this)
-                                .setTitle(R.string.select_source_language)
-                                .setItems(LANGUAGES, (dialog2, which2) -> {
-                                    sourceLanguage = LANGUAGE_CODES[which2];
-                                    showToast(R.string.source_language_set_to, LANGUAGES[which2]);
-                                    recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sourceLanguage.equals("yue") ? "zh-HK" : sourceLanguage);
-                                    isVoiceTranslating = true;
-                                    voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red));
-                                    voiceTranslateButton.setText(getString(R.string.stop));
-                                    try {
-                                        speechRecognizer.startListening(recognizerIntent);
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Speech recognition failed", e);
-                                        showToast(R.string.speech_recognition_failed);
-                                        stopVoiceTranslation();
-                                    }
-                                })
-                                .setNegativeButton(R.string.cancel, null)
-                                .show();
+            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                showToast("Failed to acquire audio focus for speech recognition");
+                return;
+            }
+
+            // Mute Jitsi Meet audio playback (other participants' audio)
+            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+
+            // Show pop-up to inform user of access shift
+            showToast("Microphone access is now with translation...");
+
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.select_source_language)
+                    .setItems(LANGUAGES, (dialog, which) -> {
+                        sourceLanguage = LANGUAGE_CODES[which];
+                        showToast(R.string.source_language_set_to, LANGUAGES[which]);
+                        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sourceLanguage.equals("yue") ? "zh-HK" : sourceLanguage);
+                        isVoiceTranslating = true;
+                        voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red));
+                        voiceTranslateButton.setText(getString(R.string.stop));
+                        try {
+                            speechRecognizer.startListening(recognizerIntent);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Speech recognition failed", e);
+                            showToast(R.string.speech_recognition_failed);
+                            stopVoiceTranslation();
+                        }
                     })
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         } else {
             stopVoiceTranslation();
@@ -470,15 +465,20 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.green));
             voiceTranslateButton.setText(getString(R.string.voice));
 
-            // Abandon audio focus after stopping speech recognition
+            // Abandon audio focus to restore Jitsi Meet audio
             if (audioFocusRequest != null) {
                 AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audioManager.abandonAudioFocusRequest(audioFocusRequest);
                 audioFocusRequest = null;
+
+                // Unmute Jitsi Meet audio playback
+                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+
+                // Show pop-up to inform user of access restoration
+                showToast("Microphone access returned to the meeting");
             }
         }
     }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network activeNetwork = cm.getActiveNetwork();

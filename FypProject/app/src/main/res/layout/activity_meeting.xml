@@ -261,21 +261,4 @@
         app:layout_constraintTop_toBottomOf="@id/questionsButton"
         app:rippleColor="#F57C00" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/leaveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="332dp"
-        android:layout_marginBottom="124dp"
-        android:contentDescription="@string/leave_button_description"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="@android:color/white"
-        android:visibility="gone"
-        app:backgroundTint="#F44336"
-        app:elevation="6dp"
-        app:fabSize="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#D32F2F" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
