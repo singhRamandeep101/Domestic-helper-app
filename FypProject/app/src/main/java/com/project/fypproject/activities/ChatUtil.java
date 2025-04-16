@@ -50,7 +50,6 @@ public class ChatUtil {
         return getChatroomReference(chatroomId).collection("chats");
     }
     public static String getChatroomId(String userEmail1, String userEmail2) {
-        String baseId;
         if (userEmail1.hashCode() < userEmail2.hashCode()) {
             return userEmail1 + "_" + userEmail2;
         } else {
