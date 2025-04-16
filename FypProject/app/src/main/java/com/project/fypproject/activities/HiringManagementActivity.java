@@ -271,23 +271,41 @@ public class HiringManagementActivity extends AppCompatActivity {
                                     int status = statusSpinner.getSelectedItemPosition() + 2;
                                     boolean ready = body_check && insurance && status > 4;
 
-                                    DocumentReference washingtonRef = db.collection("HiringStatus").document(docId);
+                                    db.collection("HiringStatus")
+                                            .whereEqualTo("domestic_helper", helperEmail)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            docId = document.getId();
 
-                                    washingtonRef
-                                            .update("body_check", body_check, "insurance", insurance, "status", status, "ready", ready)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
-                                                    finish();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                            DocumentReference washingtonRef = db.collection("HiringStatus").document(docId);
+
+                                                            washingtonRef
+                                                                    .update("body_check", body_check, "insurance", insurance, "status", status, "ready", ready)
+                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        @Override
+                                                                        public void onSuccess(Void aVoid) {
+                                                                            Toast.makeText(HiringManagementActivity.this, "DocumentSnapshot successfully updated!", Toast.LENGTH_SHORT).show();
+                                                                            finish();
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Toast.makeText(HiringManagementActivity.this, "Error updating document", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+                                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                                        }
+                                                    } else {
+                                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                                    }
                                                 }
                                             });
+
                                 }
                             });
 
