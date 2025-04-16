@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.project.fypproject"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.project.fypproject"
