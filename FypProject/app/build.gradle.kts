@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.project.fypproject"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.project.fypproject"
@@ -75,7 +75,6 @@ dependencies {
     implementation (libs.pdfbox.android)
     implementation(libs.libausbc)
     implementation(libs.cardview)
-    implementation(libs.core)
     implementation(libs.flexbox)
     annotationProcessor(libs.glide.compiler)
 
