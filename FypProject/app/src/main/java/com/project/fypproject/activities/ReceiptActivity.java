@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,20 +28,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.project.fypproject.R;
 import com.project.fypproject.models.Receipt;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ReceiptActivity extends AppCompatActivity {
-    private DocumentReference databaseReference;
+    private StorageReference storageReference;
 
     TextView txtEmployer, txtDomesticHelper, txtSalary, txtExtra, txtTotleAmount, txtPeriod, txtHolidayTaken, txtSignDate;
     RelativeLayout rlReceiptVoucher;
@@ -50,10 +55,13 @@ public class ReceiptActivity extends AppCompatActivity {
     String month, year;
     private static final int STORAGE_PERMISSION_CODE = 101;
     private Bitmap importedBitmap;
+    private Uri importedImageUri;
+
     private final ActivityResultLauncher<String> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
                 if (uri != null) {
+                    importedImageUri = uri;
                     try {
                         importedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         importedPhoto.setImageBitmap(importedBitmap);
@@ -68,6 +76,9 @@ public class ReceiptActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt);
+
+        // Initialize Firebase Storage
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         txtEmployer = findViewById(R.id.employer);
         txtDomesticHelper = findViewById(R.id.domesticHelper);
@@ -103,6 +114,10 @@ public class ReceiptActivity extends AppCompatActivity {
         String status = intent.getStringExtra("status");
         String documentId = intent.getStringExtra("documentId");
 
+        if (documentId != null) {
+            loadProofImage(documentId);
+        }
+
         Receipt receipt = new Receipt(employerEmail,
                 employeeEmail,
                 holidays,
@@ -137,30 +152,26 @@ public class ReceiptActivity extends AppCompatActivity {
         doneButton.setOnClickListener(v -> {
             Log.d("Dennis", receipt.getYear() + " " + receipt.getMonth());
 
-            if (status == null) {
-                db.collection("receipt").document().set(receipt);
-            } else if (status.equals("pending")) {
-                db.collection("receipt").document(documentId)
-                        .update("numOfHoliday", receipt.getNumOfHoliday(),
-                                "salary", receipt.getSalary(),
-                                "bonus", receipt.getBonus(),
-                                "fromDate", receipt.getFromDate(),
-                                "toDate", receipt.getToDate())
-                        .addOnSuccessListener(aVoid -> {
-                            if ("DomesticHelper".equals(userType)) {
-                                db.collection("receipt").document(documentId)
-                                        .update("status", "confirmed")
-                                        .addOnSuccessListener(aVoid1 -> {})
-                                        .addOnFailureListener(e -> {});
-                            }
-                            Log.d("Dennis", "Update Successful");
-                        })
-                        .addOnFailureListener(e -> {});
-            }
+            // Upload image first if exists
+            if (importedImageUri != null) {
+                uploadImageToFirebase(importedImageUri, new ImageUploadCallback() {
+                    @Override
+                    public void onSuccess(String imageUrl) {
+                        // Update receipt with image URL
+                        updateReceipt(db, receipt, userType, status, documentId, imageUrl);
+                    }
 
-            Intent backIntent = new Intent(ReceiptActivity.this, SalaryRecordSelectorActivity.class);
-            backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(backIntent);
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(ReceiptActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                        // Update receipt without image URL
+                        updateReceipt(db, receipt, userType, status, documentId, null);
+                    }
+                });
+            } else {
+                // Update receipt without image URL
+                updateReceipt(db, receipt, userType, status, documentId, null);
+            }
         });
 
         payButton.setOnClickListener(v -> exportReceiptAsPDF());
@@ -172,6 +183,64 @@ public class ReceiptActivity extends AppCompatActivity {
                 requestStoragePermission();
             }
         });
+    }
+
+    private void updateReceipt(FirebaseFirestore db, Receipt receipt, String userType, String status, String documentId, String imageUrl) {
+        if (status == null) {
+            DocumentReference docRef = db.collection("receipt").document();
+            if (imageUrl != null) {
+                receipt.setProofImageUrl(imageUrl);
+            }
+            docRef.set(receipt);
+        } else if (status.equals("pending")) {
+            DocumentReference docRef = db.collection("receipt").document(documentId);
+            docRef.update(
+                    "numOfHoliday", receipt.getNumOfHoliday(),
+                    "salary", receipt.getSalary(),
+                    "bonus", receipt.getBonus(),
+                    "fromDate", receipt.getFromDate(),
+                    "toDate", receipt.getToDate()
+            ).addOnSuccessListener(aVoid -> {
+                if ("DomesticHelper".equals(userType)) {
+                    // For domestic helper, also update status to confirmed
+                    docRef.update("status", "confirmed");
+                }
+                if (imageUrl != null) {
+                    docRef.update("proofImageUrl", imageUrl);
+                }
+                Log.d("Dennis", "Update Successful");
+            }).addOnFailureListener(e -> {
+                Log.e("Dennis", "Update Failed", e);
+            });
+        }
+
+        Intent backIntent = new Intent(ReceiptActivity.this, SalaryRecordSelectorActivity.class);
+        backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(backIntent);
+    }
+
+    private void loadProofImage(String documentId) {
+        FirebaseFirestore.getInstance().collection("receipt")
+                .document(documentId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String imageUrl = documentSnapshot.getString("proofImageUrl");
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            loadImageFromUrl(imageUrl);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ReceiptActivity", "Error loading proof image", e);
+                });
+    }
+
+    private void loadImageFromUrl(String imageUrl) {
+        Glide.with(this)
+                .load(imageUrl)
+                .into(importedPhoto);
+        importedPhoto.setVisibility(View.VISIBLE);
     }
 
     private boolean checkStoragePermission() {
@@ -198,6 +267,35 @@ public class ReceiptActivity extends AppCompatActivity {
                 pickImageLauncher.launch("image/*");
             } else {
                 Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void uploadImageToFirebase(Uri imageUri, ImageUploadCallback callback) {
+        if (imageUri != null) {
+            String filename = "receipt_proofs/" + UUID.randomUUID().toString() + ".jpg";
+            StorageReference fileRef = storageReference.child(filename);
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                byte[] imageData = baos.toByteArray();
+
+                UploadTask uploadTask = fileRef.putBytes(imageData);
+                uploadTask.addOnSuccessListener(taskSnapshot -> {
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String imageUrl = uri.toString();
+                        Toast.makeText(ReceiptActivity.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+                        callback.onSuccess(imageUrl);
+                    }).addOnFailureListener(e -> {
+                        callback.onFailure(e);
+                    });
+                }).addOnFailureListener(e -> {
+                    callback.onFailure(e);
+                });
+            } catch (IOException e) {
+                callback.onFailure(e);
             }
         }
     }
@@ -247,5 +345,10 @@ public class ReceiptActivity extends AppCompatActivity {
         } finally {
             document.close();
         }
+    }
+
+    interface ImageUploadCallback {
+        void onSuccess(String imageUrl);
+        void onFailure(Exception e);
     }
 }

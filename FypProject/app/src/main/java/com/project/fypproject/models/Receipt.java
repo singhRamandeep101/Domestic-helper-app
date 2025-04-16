@@ -76,6 +76,7 @@ public class Receipt {
     public String getStatus() {
         return status;
     }
+    private String proofImageUrl;
 
     public void setStatus(String status) {
         this.status = status;
@@ -107,5 +108,13 @@ public class Receipt {
         this.month = month;
         this.status = status;
 
+    }
+
+    public String getProofImageUrl() {
+        return proofImageUrl;
+    }
+
+    public void setProofImageUrl(String proofImageUrl) {
+        this.proofImageUrl = proofImageUrl;
     }
 }
