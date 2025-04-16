@@ -56,6 +56,21 @@ android {
     }
 }
 
+chaquopy {
+    productFlavors {
+        getByName("py310") { version = "3.8" }
+
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        pip {
+            install("pdfplumber==0.5.28")
+        }
+    }
+}
+
 
 dependencies {
 
