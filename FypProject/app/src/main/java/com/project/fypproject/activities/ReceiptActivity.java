@@ -100,7 +100,7 @@ public class ReceiptActivity extends AppCompatActivity {
         txtExtra.setText(bonus);
         txtTotleAmount.setText(total);
         txtPeriod.setText(fromDate + " to " + toDate);
-        txtHolidayTaken.setText(holidays);
+        txtHolidayTaken.setText(holidays + " days");
         txtSignDate.setText(toDate);
 
         Button doneButton = findViewById(R.id.doneButton);
