@@ -1,6 +1,8 @@
 package com.project.fypproject.activities;
 
 import android.Manifest;
+import android.media.AudioManager;
+import android.media.AudioFocusRequest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -394,6 +396,8 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         });
     }
 
+    private AudioFocusRequest audioFocusRequest;
+
     private void toggleVoiceTranslation() {
         if (!isTranslationEnabled) {
             showToast(R.string.enable_translation_first);
@@ -409,24 +413,50 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         }
 
         if (!isVoiceTranslating) {
+            // Prompt the user to mute other participants in Jitsi Meet
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.select_source_language)
-                    .setItems(LANGUAGES, (dialog, which) -> {
-                        sourceLanguage = LANGUAGE_CODES[which];
-                        showToast(R.string.source_language_set_to, LANGUAGES[which]);
-                        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sourceLanguage.equals("yue") ? "zh-HK" : sourceLanguage);
-                        isVoiceTranslating = true;
-                        voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red));
-                        voiceTranslateButton.setText(getString(R.string.stop));
-                        try {
-                            speechRecognizer.startListening(recognizerIntent);
-                        } catch (Exception e) {
-                            Log.e(TAG, "Speech recognition failed", e);
-                            showToast(R.string.speech_recognition_failed);
-                            stopVoiceTranslation();
+                    .setTitle("Mute Other Participants")
+                    .setMessage("To enable accurate speech-to-text translation, please mute other participants in the Jitsi meeting. Tap the participant list (top-right corner), select each participant, mute their audio, and then press OK to proceed.")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        // Request audio focus after the user confirms muting
+                        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                        audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                                .setOnAudioFocusChangeListener(focusChange -> {
+                                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                                        stopVoiceTranslation();
+                                    }
+                                })
+                                .build();
+                        int result = audioManager.requestAudioFocus(audioFocusRequest);
+
+                        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                            showToast("Failed to acquire audio focus for speech recognition");
+                            return;
                         }
+
+                        new AlertDialog.Builder(this)
+                                .setTitle(R.string.select_source_language)
+                                .setItems(LANGUAGES, (dialog2, which2) -> {
+                                    sourceLanguage = LANGUAGE_CODES[which2];
+                                    showToast(R.string.source_language_set_to, LANGUAGES[which2]);
+                                    recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sourceLanguage.equals("yue") ? "zh-HK" : sourceLanguage);
+                                    isVoiceTranslating = true;
+                                    voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red));
+                                    voiceTranslateButton.setText(getString(R.string.stop));
+                                    try {
+                                        speechRecognizer.startListening(recognizerIntent);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Speech recognition failed", e);
+                                        showToast(R.string.speech_recognition_failed);
+                                        stopVoiceTranslation();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null)
+                                .show();
                     })
-                    .setNegativeButton(R.string.cancel, null)
+                    .setNegativeButton("Cancel", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
                     .show();
         } else {
             stopVoiceTranslation();
@@ -439,6 +469,13 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             isVoiceTranslating = false;
             voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.green));
             voiceTranslateButton.setText(getString(R.string.voice));
+
+            // Abandon audio focus after stopping speech recognition
+            if (audioFocusRequest != null) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                audioManager.abandonAudioFocusRequest(audioFocusRequest);
+                audioFocusRequest = null;
+            }
         }
     }
 
@@ -763,7 +800,9 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                     switch (action) {
                         case "org.jitsi.meet.CONFERENCE_TERMINATED":
                             Log.d(TAG, "Conference terminated via receiver");
-                            cleanupJitsiView();
+                            if (isMeetingActive) {
+                                cleanupJitsiView();
+                            }
                             break;
                         case "org.jitsi.meet.RECEIVE_CHAT_MESSAGE":
                             String message = intent.getStringExtra("message");
@@ -878,19 +917,73 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
     private void cleanupJitsiView() {
         if (jitsiMeetView != null) {
-            Log.d(TAG, "cleanupJitsiView: Disposing Jitsi view");
-            jitsiMeetView.dispose();
-            meetingContainer.removeView(jitsiMeetView);
-            jitsiMeetView = null;
-            meetingContainer.removeAllViews();
+            Log.d(TAG, "cleanupJitsiView: Starting Jitsi view cleanup");
+
+            // Call dispose on the UI thread
+            handler.post(() -> {
+                try {
+                    jitsiMeetView.dispose();
+                    Log.d(TAG, "cleanupJitsiView: Jitsi view disposed successfully");
+                } catch (Exception e) {
+                    Log.e(TAG, "Error disposing JitsiMeetView", e);
+                }
+
+                // Clean up the view and container
+                meetingContainer.removeView(jitsiMeetView);
+                jitsiMeetView = null;
+                meetingContainer.removeAllViews();
+
+                // Update UI and state after a slight delay to ensure conference termination
+                handler.postDelayed(() -> {
+                    toggleUiVisibility(true);
+                    stopMeetingTimer();
+                    isMeetingActive = false;
+                    leaveButton.setVisibility(View.GONE);
+                    if (!isTranslationEnabled) setTranslationVisibility(View.GONE);
+                    stopVoiceTranslation();
+                    Log.d(TAG, "cleanupJitsiView: UI and state updated after disposal");
+
+                    // Proceed with Firestore updates and navigation
+                    if (TextUtils.isEmpty(bookingDocId)) {
+                        Log.e(TAG, "Booking document ID is null or empty");
+                        Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                        intent.putExtra("selectedTab", "ALL");
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        if ("Agent".equals(userType)) {
+                            Log.d(TAG, "cleanupJitsiView: Updating meeting status to Waiting for Employer Response in Firestore");
+                            db.collection("booking")
+                                    .document(bookingDocId)
+                                    .update("meetingStatus", "Waiting for Employer Response")
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d(TAG, "Meeting status updated successfully");
+                                        Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                                        intent.putExtra("selectedTab", "ALL");
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
+                        } else {
+                            Log.d(TAG, "User is not an Agent, skipping status update");
+                            Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
+                            intent.putExtra("selectedTab", "ALL");
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                }, 500); // Delay to allow SDK to fully terminate the conference
+            });
+        } else {
+            Log.d(TAG, "cleanupJitsiView: Jitsi view already null, proceeding with UI cleanup");
             toggleUiVisibility(true);
             stopMeetingTimer();
             isMeetingActive = false;
             leaveButton.setVisibility(View.GONE);
             if (!isTranslationEnabled) setTranslationVisibility(View.GONE);
             stopVoiceTranslation();
-            Log.d(TAG, "cleanupJitsiView: Jitsi view cleaned up successfully");
 
+            // Proceed with Firestore updates and navigation
             if (TextUtils.isEmpty(bookingDocId)) {
                 Log.e(TAG, "Booking document ID is null or empty");
                 Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
