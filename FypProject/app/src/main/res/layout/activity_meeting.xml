@@ -222,11 +222,13 @@
         app:layout_constraintTop_toTopOf="@id/meetingContainer" />
 
     <!-- Questions Button -->
+
+    <!-- Translate Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/questionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="320dp"
         android:contentDescription="@string/questions_button_description"
         android:src="@android:drawable/ic_menu_info_details"
         android:tint="@android:color/white"
@@ -234,19 +236,19 @@
         app:backgroundTint="#0288D1"
         app:elevation="6dp"
         app:fabSize="normal"
-        app:rippleColor="#0277BD"
         app:layout_constraintBottom_toTopOf="@id/translateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/meetingContainer"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        app:rippleColor="#0277BD" />
 
-    <!-- Translate Button -->
+    <!-- Leave Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/translateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="320dp"
         android:contentDescription="@string/translate_button_description"
         android:src="@android:drawable/ic_menu_add"
         android:tint="@android:color/white"
@@ -254,18 +256,17 @@
         app:backgroundTint="#FF9800"
         app:elevation="6dp"
         app:fabSize="normal"
-        app:rippleColor="#F57C00"
         app:layout_constraintBottom_toBottomOf="@id/meetingContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/questionsButton" />
+        app:layout_constraintTop_toBottomOf="@id/questionsButton"
+        app:rippleColor="#F57C00" />
 
-    <!-- Leave Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/leaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="332dp"
+        android:layout_marginBottom="124dp"
         android:contentDescription="@string/leave_button_description"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:tint="@android:color/white"
@@ -273,8 +274,8 @@
         app:backgroundTint="#F44336"
         app:elevation="6dp"
         app:fabSize="normal"
-        app:rippleColor="#D32F2F"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#D32F2F" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
