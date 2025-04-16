@@ -172,10 +172,6 @@ public class EmployerMainActivity extends AppCompatActivity implements Navigatio
             ChangeHomeActivity();
         } else if (id == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new ProfileFragment()).commit();
-        } else if (id == R.id.nav_language) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new LanguageFragment()).commit();
-        } else if (id == R.id.nav_notification) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new NotificationFragment()).commit();
         } else if (id == R.id.nav_appointment) {
             Intent intent = new Intent(this, BookRecordActivity.class);
             startActivity(intent);

@@ -31,6 +31,7 @@ import com.project.fypproject.activities.MeetingActivity;
 public class EmployerHomeFragment extends Fragment {
 
     LinearLayout llMeetingRequest, llJobList, llJobPost;
+    TextView txtName;
     FirebaseAuth auth;
     FirebaseUser user;
     String MyDomesticHelper;
@@ -62,6 +63,8 @@ public class EmployerHomeFragment extends Fragment {
         llMeetingRequest = view.findViewById(R.id.btn_request);
         llJobList = view.findViewById(R.id.btn_Find);
         llJobPost = view.findViewById(R.id.btn_JobPost);
+
+        txtName = view.findViewById(R.id.txtName);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -101,6 +104,7 @@ public class EmployerHomeFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        txtName.setText(document.getString("firstName"));
                         MyDomesticHelper = document.getString("domesticHelper");
                         Log.d("Dennis", "My domestic helper email is " + MyDomesticHelper);
                         LinearLayout mainContainer = view.findViewById(R.id.MyDomesticHelper_Container);

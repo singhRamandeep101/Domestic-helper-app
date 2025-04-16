@@ -30,6 +30,7 @@ public class DhHomeFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     LinearLayout llMeetingRequest, llInterviewInvitation;
+    TextView txtName;
     FirebaseAuth auth;
     FirebaseUser user;
     String employer;
@@ -48,6 +49,8 @@ public class DhHomeFragment extends Fragment {
 
         llInterviewInvitation = view.findViewById(R.id.btn_InterviewInvitation);
         llMeetingRequest = view.findViewById(R.id.btn_request);
+
+        txtName = view.findViewById(R.id.txtName);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -80,8 +83,10 @@ public class DhHomeFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        String name = document.getString("firstName");
+                        txtName.setText(name);
+                        Log.d("Dennis", "My name is " + name);
                         employer = document.getString("employer");
-                        Log.d("Dennis", "My employer email is " + employer);
                         LinearLayout mainContainer = view.findViewById(R.id.MySalary_Container);
                         if(employer != null && !employer.trim().isEmpty()){
                             // 2. 建立新的 LinearLayout
