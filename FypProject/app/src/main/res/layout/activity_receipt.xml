@@ -218,6 +218,21 @@
 
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/importedPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/importPhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="Import Photo" />
 
     <Button
         android:id="@+id/doneButton"
@@ -233,4 +248,5 @@
         android:text="Export Receipt as PDF"
         android:layout_marginTop="16dp"
         android:visibility="gone"/>
+
 </LinearLayout>
