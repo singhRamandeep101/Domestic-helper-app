@@ -12,7 +12,11 @@ import com.project.fypproject.R;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.project.fypproject.activities.employer.HiringStatusActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.ViewHolder> {
 
@@ -43,6 +47,23 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
         holder.tvTime.setText(document.getString("timeSlot"));
         holder.bookRecordID.setText("Booking ID: " + document.getString("bookingID"));
         holder.bookStatus.setText(document.getString("meetingStatus"));
+
+        String dateStr = document.getString("date");
+        String timeSlotStr = document.getString("timeSlot");
+        String startTime = timeSlotStr.split("-")[0].trim();
+        String dateTimeStr = dateStr.replaceAll("\\(.*\\)", "").trim() + " " + startTime;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy HH:mm", Locale.ENGLISH);
+        boolean isMeetingTime = false;
+        try {
+            Date meetingStart = sdf.parse(dateTimeStr);
+            Date now = new Date();
+            if (now.after(meetingStart) || now.equals(meetingStart)) {
+                isMeetingTime = true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         String meetingStatus = document.getString("meetingStatus");
         String bookingID = document.getString("bookingID");
@@ -78,13 +99,18 @@ public class BookRecordAdapter extends RecyclerView.Adapter<BookRecordAdapter.Vi
             holder.bookStatus.setTextColor(android.graphics.Color.parseColor("#F44336"));
         }
 
-        if ("Waiting for interview".equals(meetingStatus)&& userType.equals("Agent")){
+        if ("Waiting for interview".equals(meetingStatus) && userType.equals("Agent") && isMeetingTime) {
             holder.btnJoin.setVisibility(View.VISIBLE);
             holder.btnCancel.setVisibility(View.VISIBLE);
             holder.btnHire.setVisibility(View.GONE);
             holder.btnNotHiring.setVisibility(View.GONE);
             holder.btnConfirm.setVisibility(View.GONE);
-
+        } else if ("Waiting for interview".equals(meetingStatus) && userType.equals("Agent")) {
+            holder.btnJoin.setVisibility(View.GONE);
+            holder.btnCancel.setVisibility(View.VISIBLE);
+            holder.btnHire.setVisibility(View.GONE);
+            holder.btnNotHiring.setVisibility(View.GONE);
+            holder.btnConfirm.setVisibility(View.GONE);
         } else if ("Started interview".equals(meetingStatus)) {
             holder.btnJoin.setVisibility(View.VISIBLE);
             holder.btnCancel.setVisibility(View.GONE);
