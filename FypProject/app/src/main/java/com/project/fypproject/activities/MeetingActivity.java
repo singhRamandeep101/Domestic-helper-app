@@ -1,8 +1,6 @@
 package com.project.fypproject.activities;
 
 import android.Manifest;
-import android.media.AudioManager;
-import android.media.AudioFocusRequest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +15,6 @@ import android.os.Vibrator;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -80,7 +77,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     private EditText inputBox, chatInputBox;
     private Button joinCreateButton, shareButton, sendChatButton, translationHistoryButton, voiceTranslateButton, copyTranslationButton, backButton;
     private FrameLayout meetingContainer;
-    private FloatingActionButton questionsButton, translateButton, leaveButton;
+    private FloatingActionButton questionsButton, translateButton;
     private TextView translationOutput, meetingTimer;
     private LinearLayout chatInputContainer;
     private JitsiMeetView jitsiMeetView;
@@ -100,10 +97,11 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     private long meetingStartTime;
     private Runnable timerRunnable;
 
+    // Firebase variables
     private FirebaseFirestore db;
     private String email;
     private String meetingID;
-    private String bookingDocId;
+    private String bookingDocId; // Store the Firestore document ID
     private String userType;
 
     @Override
@@ -111,32 +109,43 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
 
+        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
+        // Initialize Firebase Auth and get the current user
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
 
+        // Check if user is signed in
         if (user == null) {
             Log.e(TAG, "No user is signed in, redirecting to LoginActivity");
-            showToast("Please sign in to continue.");
+            Toast.makeText(this, "Please sign in to continue.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Login.class); // Replace with your login activity
+            startActivity(intent);
             finish();
             return;
         }
 
+        // Get the email from Firebase Auth
         email = user.getEmail();
-        if (TextUtils.isEmpty(email)) {
+        if (email == null || email.isEmpty()) {
             Log.e(TAG, "User email is null or empty, redirecting to LoginActivity");
-            showToast("User email not found. Please sign in again.");
+            Toast.makeText(this, "User email not found. Please sign in again.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
             finish();
             return;
         }
 
-        bookingDocId = getIntent().getStringExtra("bookingID");
+        // Get bookingID and meetingCode from Intent
+        bookingDocId = getIntent().getStringExtra("bookingID"); // Expecting the Firestore document ID
         String meetingCode = getIntent().getStringExtra("meetingCode");
 
-        this.email = email.toLowerCase();
-        this.meetingID = null;
+        // Assign to class variables
+        this.email = email.toLowerCase(); // Normalize email to lowercase
+        this.meetingID = null; // Will be fetched from Firestore
 
+        // Reset state to ensure initial UI is shown
         isMeetingActive = false;
         isTranslationEnabled = false;
         isVoiceTranslating = false;
@@ -145,9 +154,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
         executorService = Executors.newCachedThreadPool();
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator == null) {
-            Log.w(TAG, "Vibrator service not available on this device");
-        }
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -160,106 +166,108 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         setupButtonListeners();
         setupBackPressedHandler();
 
+        // Explicitly ensure initial UI is visible
         Log.d(TAG, "onCreate: Forcing initial UI visibility");
         toggleUiVisibility(true);
         setInitialVisibility();
 
+        // Fetch userType and meetingID from Firestore
         fetchFirestoreData(meetingCode);
     }
 
     private void fetchFirestoreData(String meetingCode) {
+        // Fetch userType from Firestore
         db.collection("users")
                 .whereEqualTo("email", email)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
+                        userType = userDoc.getString("userType");
+                        Log.d(TAG, "Retrieved userType: " + userType);
+
+                        // Check if bookingID was provided via Intent
+                        if (bookingDocId == null || bookingDocId.isEmpty()) {
+                            Log.e(TAG, "bookingID not provided via Intent");
+                            showToast("Booking ID not provided.");
+                            finish();
+                            return;
+                        }
+
+                        // Fetch the booking document using the bookingID
+                        Log.d(TAG, "Fetching booking document with bookingID: " + bookingDocId);
+                        db.collection("booking")
+                                .document(bookingDocId)
+                                .get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        // Verify the user's email matches one of the participants
+                                        String agentEmail = documentSnapshot.getString("agentEmail");
+                                        String translatorEmail = documentSnapshot.getString("translatorEmail");
+                                        String employeeEmail = documentSnapshot.getString("employeeEmail");
+                                        String employerEmail = documentSnapshot.getString("employerEmail");
+
+                                        if (!(email.equalsIgnoreCase(agentEmail) ||
+                                                email.equalsIgnoreCase(translatorEmail) ||
+                                                email.equalsIgnoreCase(employeeEmail) ||
+                                                email.equalsIgnoreCase(employerEmail))) {
+                                            Log.e(TAG, "User email does not match any participant in the booking: " + email);
+                                            showToast("You are not authorized to join this meeting.");
+                                            finish();
+                                            return;
+                                        }
+
+                                        meetingID = documentSnapshot.getString("meetingID");
+                                        String meetingStatus = documentSnapshot.getString("meetingStatus");
+                                        Log.d(TAG, "Retrieved meetingID from Firestore: " + meetingID);
+                                        Log.d(TAG, "Booking document ID: " + bookingDocId);
+                                        Log.d(TAG, "Meeting status: " + meetingStatus);
+
+                                        // Check if the meeting has already ended
+                                        if ("Ended Interview".equals(meetingStatus)) {
+                                            Log.w(TAG, "Meeting has already ended: " + meetingID);
+                                            showToast("This meeting has already ended.");
+                                            finish();
+                                            return;
+                                        }
+
+                                        // Auto-populate inputBox and join meeting if meetingCode is not provided
+                                        if (meetingCode == null || meetingCode.isEmpty()) {
+                                            if (meetingID != null && !meetingID.isEmpty()) {
+                                                Log.d(TAG, "Auto-populating inputBox with meetingID: " + meetingID);
+                                                inputBox.setText(meetingID);
+                                                handleJoinCreateClick();
+                                            } else {
+                                                Log.e(TAG, "MeetingID is null or empty in booking document");
+                                                showToast("Failed to retrieve meeting ID.");
+                                                finish();
+                                            }
+                                        } else {
+                                            inputBox.setText(meetingCode);
+                                            handleJoinCreateClick();
+                                        }
+                                    } else {
+                                        Log.e(TAG, "Booking document not found for bookingID: " + bookingDocId);
+                                        showToast("Booking not found.");
+                                        finish();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to fetch booking document: ", e);
+                                    showToast("Failed to retrieve booking information.");
+                                    finish();
+                                });
+                    } else {
                         Log.e(TAG, "User not found in Firebase");
                         showToast("User not found");
-                        handleFetchFailure();
-                        return;
+                        finish();
                     }
-
-                    DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
-                    userType = userDoc.getString("userType");
-                    Log.d(TAG, "Retrieved userType: " + userType);
-
-                    if (TextUtils.isEmpty(bookingDocId)) {
-                        Log.e(TAG, "bookingID not provided via Intent");
-                        showToast("Booking ID not provided.");
-                        handleFetchFailure();
-                        return;
-                    }
-
-                    Log.d(TAG, "Fetching booking document with bookingID: " + bookingDocId);
-                    db.collection("booking")
-                            .document(bookingDocId)
-                            .get()
-                            .addOnSuccessListener(documentSnapshot -> {
-                                if (!documentSnapshot.exists()) {
-                                    Log.e(TAG, "Booking document not found for bookingID: " + bookingDocId);
-                                    showToast("Booking not found.");
-                                    handleFetchFailure();
-                                    return;
-                                }
-
-                                String agentEmail = documentSnapshot.getString("agentEmail");
-                                String translatorEmail = documentSnapshot.getString("translatorEmail");
-                                String employeeEmail = documentSnapshot.getString("employeeEmail");
-                                String employerEmail = documentSnapshot.getString("employerEmail");
-
-                                if (!(email.equalsIgnoreCase(agentEmail) ||
-                                        email.equalsIgnoreCase(translatorEmail) ||
-                                        email.equalsIgnoreCase(employeeEmail) ||
-                                        email.equalsIgnoreCase(employerEmail))) {
-                                    Log.e(TAG, "User email does not match any participant in the booking: " + email);
-                                    showToast("You are not authorized to join this meeting.");
-                                    handleFetchFailure();
-                                    return;
-                                }
-
-                                meetingID = documentSnapshot.getString("meetingID");
-                                String meetingStatus = documentSnapshot.getString("meetingStatus");
-                                Log.d(TAG, "Retrieved meetingID from Firestore: " + meetingID);
-                                Log.d(TAG, "Booking document ID: " + bookingDocId);
-                                Log.d(TAG, "Meeting status: " + meetingStatus);
-
-                                if ("Ended Interview".equals(meetingStatus)) {
-                                    Log.w(TAG, "Meeting has already ended: " + meetingID);
-                                    showToast("This meeting has already ended.");
-                                    handleFetchFailure();
-                                    return;
-                                }
-
-                                if (TextUtils.isEmpty(meetingCode)) {
-                                    if (!TextUtils.isEmpty(meetingID)) {
-                                        Log.d(TAG, "Auto-populating inputBox with meetingID: " + meetingID);
-                                        inputBox.setText(meetingID);
-                                        handleJoinCreateClick();
-                                    } else {
-                                        Log.e(TAG, "MeetingID is null or empty in booking document");
-                                        showToast("Failed to retrieve meeting ID.");
-                                        handleFetchFailure();
-                                    }
-                                } else {
-                                    inputBox.setText(meetingCode);
-                                    handleJoinCreateClick();
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to fetch booking document: ", e);
-                                showToast("Failed to retrieve booking information.");
-                                handleFetchFailure();
-                            });
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Failed to fetch user data", e);
                     showToast("Failed to fetch user data");
-                    handleFetchFailure();
+                    finish();
                 });
-    }
-
-    private void handleFetchFailure() {
-        finish();
     }
 
     private void initializeViews() {
@@ -293,7 +301,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         meetingContainer.setVisibility(View.GONE);
         questionsButton.setVisibility(View.GONE);
         translateButton.setVisibility(View.GONE);
-        leaveButton.setVisibility(View.GONE);
         translationOutput.setVisibility(View.GONE);
         chatInputContainer.setVisibility(View.GONE);
         translationHistoryButton.setVisibility(View.GONE);
@@ -329,7 +336,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         shareButton.setOnClickListener(v -> shareMeetingCode(inputBox.getText().toString().trim()));
         questionsButton.setOnClickListener(v -> showPresetSelectionDialog());
         translateButton.setOnClickListener(v -> toggleTranslation());
-        leaveButton.setOnClickListener(v -> confirmLeaveMeeting());
         sendChatButton.setOnClickListener(v -> sendChatMessage());
         translationHistoryButton.setOnClickListener(v -> showTranslationHistory());
         voiceTranslateButton.setOnLongClickListener(v -> {
@@ -345,22 +351,15 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     private void setupSpeechListener() {
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
-            public void onReadyForSpeech(Bundle params) {
-                showToast(R.string.listening);
-            }
-
+            public void onReadyForSpeech(Bundle params) { showToast(R.string.listening); }
             @Override
             public void onBeginningOfSpeech() {}
-
             @Override
             public void onRmsChanged(float rmsdB) {}
-
             @Override
             public void onBufferReceived(byte[] buffer) {}
-
             @Override
             public void onEndOfSpeech() {}
-
             @Override
             public void onError(int error) {
                 int errorMsgId = R.string.voice_error_generic;
@@ -371,7 +370,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 showToast(errorMsgId);
                 stopVoiceTranslation();
             }
-
             @Override
             public void onResults(Bundle results) {
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
@@ -381,21 +379,15 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 }
                 stopVoiceTranslation();
             }
-
             @Override
             public void onPartialResults(Bundle partialResults) {
                 ArrayList<String> matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null && !matches.isEmpty()) updateTranslationUI("[Partial] " + matches.get(0));
             }
-
             @Override
-            public void onEvent(int eventType, Bundle params) {
-                // Empty implementation as this method is not used
-            }
+            public void onEvent(int eventType, Bundle params) {}
         });
     }
-
-    private AudioFocusRequest audioFocusRequest; // Store the AudioFocusRequest for abandoning focus
 
     private void toggleVoiceTranslation() {
         if (!isTranslationEnabled) {
@@ -412,33 +404,11 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         }
 
         if (!isVoiceTranslating) {
-            // Request exclusive audio focus to pause Jitsi Meet audio
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                    .setOnAudioFocusChangeListener(focusChange -> {
-                        if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                            stopVoiceTranslation();
-                        }
-                    })
-                    .build();
-            int result = audioManager.requestAudioFocus(audioFocusRequest);
-
-            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                showToast("Failed to acquire audio focus for speech recognition");
-                return;
-            }
-
-            // Mute Jitsi Meet audio playback (other participants' audio)
-            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-
-            // Show pop-up to inform user of access shift
-            showToast("Microphone access is now with translation...");
-
             new AlertDialog.Builder(this)
                     .setTitle(R.string.select_source_language)
                     .setItems(LANGUAGES, (dialog, which) -> {
                         sourceLanguage = LANGUAGE_CODES[which];
-                        showToast(R.string.source_language_set_to, LANGUAGES[which]);
+                        showToast(getString(R.string.source_language_set_to, LANGUAGES[which]));
                         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sourceLanguage.equals("yue") ? "zh-HK" : sourceLanguage);
                         isVoiceTranslating = true;
                         voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red));
@@ -464,26 +434,13 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             isVoiceTranslating = false;
             voiceTranslateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.green));
             voiceTranslateButton.setText(getString(R.string.voice));
-
-            // Abandon audio focus to restore Jitsi Meet audio
-            if (audioFocusRequest != null) {
-                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                audioManager.abandonAudioFocusRequest(audioFocusRequest);
-                audioFocusRequest = null;
-
-                // Unmute Jitsi Meet audio playback
-                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-
-                // Show pop-up to inform user of access restoration
-                showToast("Microphone access returned to the meeting");
-            }
         }
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network activeNetwork = cm.getActiveNetwork();
-        if (activeNetwork == null) return false;
-        return cm.getNetworkCapabilities(activeNetwork) != null;
+        return activeNetwork != null;
     }
 
     private void showPresetSelectionDialog() {
@@ -504,7 +461,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
     private void handleJoinCreateClick() {
         String meetingCode = inputBox.getText().toString().trim();
-        if (TextUtils.isEmpty(meetingCode)) {
+        if (meetingCode.isEmpty()) {
             showToast(R.string.enter_meeting_code_prompt);
             return;
         }
@@ -528,7 +485,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                     .setTitle(R.string.select_source_language)
                     .setItems(LANGUAGES, (dialog, which) -> {
                         sourceLanguage = LANGUAGE_CODES[which];
-                        showToast(R.string.source_language_set_to, LANGUAGES[which]);
+                        showToast(getString(R.string.source_language_set_to, LANGUAGES[which]));
                         new AlertDialog.Builder(this)
                                 .setTitle(R.string.select_target_language)
                                 .setItems(LANGUAGES, (dialog2, which2) -> {
@@ -537,7 +494,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                                         showToast(R.string.languages_cannot_be_same);
                                         return;
                                     }
-                                    showToast(R.string.translation_set_to, LANGUAGES[which2]);
+                                    showToast(getString(R.string.translation_set_to, LANGUAGES[which2]));
                                     translateAndSendMessage("Test message");
                                 })
                                 .setNegativeButton(R.string.cancel, null)
@@ -558,7 +515,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
     private void sendChatMessage() {
         String message = chatInputBox.getText().toString().trim();
-        if (TextUtils.isEmpty(message)) {
+        if (message.isEmpty()) {
             showToast(R.string.enter_message);
             return;
         }
@@ -622,19 +579,19 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     }
 
     private void copyTranslatedText() {
-        CharSequence fullText = translationOutput.getText();
-        if (TextUtils.isEmpty(fullText)) {
+        String fullText = translationOutput.getText().toString().trim();
+        if (fullText.isEmpty()) {
             showToast(R.string.no_text_to_copy);
             return;
         }
-        String[] lines = fullText.toString().split("\n");
+        String[] lines = fullText.split("\n");
         String recentText = lines[lines.length - 1].trim();
         String translatedText = recentText.contains("] ") ? recentText.substring(recentText.indexOf("] ") + 2).trim() : recentText;
 
         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         android.content.ClipData clip = android.content.ClipData.newPlainText("Translated Text", translatedText);
         clipboard.setPrimaryClip(clip);
-        showToast(R.string.copied_text, translatedText);
+        showToast(getString(R.string.copied_text, translatedText));
     }
 
     private void showTranslationHistory() {
@@ -656,7 +613,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     }
 
     private void copyMeetingCode(String code) {
-        if (!TextUtils.isEmpty(code)) {
+        if (!code.isEmpty()) {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText("Meeting Code", code);
             clipboard.setPrimaryClip(clip);
@@ -681,13 +638,13 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
             return;
         }
 
-        if (TextUtils.isEmpty(email)) {
+        if (email == null || email.isEmpty()) {
             Log.e(TAG, "Email is null or empty, cannot join meeting");
             showToast("User email not found. Please sign in again.");
             return;
         }
 
-        if (TextUtils.isEmpty(bookingDocId)) {
+        if (bookingDocId == null || bookingDocId.isEmpty()) {
             Log.e(TAG, "Booking document ID is null or empty, skipping Firestore updates");
             showToast("Booking document ID not provided. Status update skipped.");
         } else {
@@ -695,7 +652,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                 Log.d(TAG, "joinMeeting: Updating meeting status to Started Interview in Firestore");
                 db.collection("booking")
                         .document(bookingDocId)
-                        .update("meetingStatus", "Started interview")
+                        .update("meetingStatus", "Started Interview")
                         .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Started Interview"))
                         .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status to Started Interview", e));
             } else {
@@ -745,7 +702,6 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                     }
                     toggleUiVisibility(false);
                     isMeetingActive = true;
-                    leaveButton.setVisibility(View.VISIBLE);
                     startMeetingTimer();
                     if (isTranslationEnabled) setTranslationVisibility(View.VISIBLE);
                     showToast(R.string.joined_meeting_success);
@@ -800,9 +756,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
                     switch (action) {
                         case "org.jitsi.meet.CONFERENCE_TERMINATED":
                             Log.d(TAG, "Conference terminated via receiver");
-                            if (isMeetingActive) {
-                                cleanupJitsiView();
-                            }
+                            cleanupJitsiView();
                             break;
                         case "org.jitsi.meet.RECEIVE_CHAT_MESSAGE":
                             String message = intent.getStringExtra("message");
@@ -821,8 +775,8 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     }
 
     private void updateTranslationUI(String text) {
-        CharSequence currentText = translationOutput.getText();
-        translationOutput.setText(TextUtils.isEmpty(currentText) ? text : currentText + "\n" + text);
+        String currentText = translationOutput.getText().toString();
+        translationOutput.setText(currentText.isEmpty() ? text : currentText + "\n" + text);
         setTranslationVisibility(View.VISIBLE);
     }
 
@@ -835,7 +789,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
     }
 
     private void shareMeetingCode(String meetingCode) {
-        if (TextUtils.isEmpty(meetingCode)) {
+        if (meetingCode.isEmpty()) {
             showToast(R.string.no_meeting_code_to_share);
             return;
         }
@@ -874,7 +828,7 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length >= REQUIRED_PERMISSIONS.length &&
                 Arrays.stream(grantResults).allMatch(result -> result == PackageManager.PERMISSION_GRANTED)) {
             String meetingCode = inputBox.getText().toString().trim();
-            if (!TextUtils.isEmpty(meetingCode)) joinMeeting(meetingCode);
+            if (!meetingCode.isEmpty()) joinMeeting(meetingCode);
         } else {
             showToast(R.string.permissions_required);
         }
@@ -917,99 +871,31 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
 
     private void cleanupJitsiView() {
         if (jitsiMeetView != null) {
-            Log.d(TAG, "cleanupJitsiView: Starting Jitsi view cleanup");
-
-            // Call dispose on the UI thread
-            handler.post(() -> {
-                try {
-                    jitsiMeetView.dispose();
-                    Log.d(TAG, "cleanupJitsiView: Jitsi view disposed successfully");
-                } catch (Exception e) {
-                    Log.e(TAG, "Error disposing JitsiMeetView", e);
-                }
-
-                // Clean up the view and container
-                meetingContainer.removeView(jitsiMeetView);
-                jitsiMeetView = null;
-                meetingContainer.removeAllViews();
-
-                // Update UI and state after a slight delay to ensure conference termination
-                handler.postDelayed(() -> {
-                    toggleUiVisibility(true);
-                    stopMeetingTimer();
-                    isMeetingActive = false;
-                    leaveButton.setVisibility(View.GONE);
-                    if (!isTranslationEnabled) setTranslationVisibility(View.GONE);
-                    stopVoiceTranslation();
-                    Log.d(TAG, "cleanupJitsiView: UI and state updated after disposal");
-
-                    // Proceed with Firestore updates and navigation
-                    if (TextUtils.isEmpty(bookingDocId)) {
-                        Log.e(TAG, "Booking document ID is null or empty");
-                        Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                        intent.putExtra("selectedTab", "ALL");
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        if ("Agent".equals(userType)) {
-                            Log.d(TAG, "cleanupJitsiView: Updating meeting status to Waiting for Employer Response in Firestore");
-                            db.collection("booking")
-                                    .document(bookingDocId)
-                                    .update("meetingStatus", "Waiting for Employer Response")
-                                    .addOnSuccessListener(aVoid -> {
-                                        Log.d(TAG, "Meeting status updated successfully");
-                                        Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                                        intent.putExtra("selectedTab", "ALL");
-                                        startActivity(intent);
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
-                        } else {
-                            Log.d(TAG, "User is not an Agent, skipping status update");
-                            Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                            intent.putExtra("selectedTab", "ALL");
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                }, 500); // Delay to allow SDK to fully terminate the conference
-            });
-        } else {
-            Log.d(TAG, "cleanupJitsiView: Jitsi view already null, proceeding with UI cleanup");
+            Log.d(TAG, "cleanupJitsiView: Disposing Jitsi view");
+            jitsiMeetView.dispose();
+            meetingContainer.removeView(jitsiMeetView);
+            jitsiMeetView = null;
+            meetingContainer.removeAllViews();
             toggleUiVisibility(true);
             stopMeetingTimer();
             isMeetingActive = false;
-            leaveButton.setVisibility(View.GONE);
             if (!isTranslationEnabled) setTranslationVisibility(View.GONE);
             stopVoiceTranslation();
+            Log.d(TAG, "cleanupJitsiView: Jitsi view cleaned up successfully");
 
-            // Proceed with Firestore updates and navigation
-            if (TextUtils.isEmpty(bookingDocId)) {
-                Log.e(TAG, "Booking document ID is null or empty");
-                Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                intent.putExtra("selectedTab", "ALL");
-                startActivity(intent);
-                finish();
+            if (bookingDocId == null || bookingDocId.isEmpty()) {
+                Log.e(TAG, "Booking document ID is null or empty, skipping Firestore updates in cleanup");
+                showToast("Booking document ID not provided. Status update skipped.");
             } else {
                 if ("Agent".equals(userType)) {
-                    Log.d(TAG, "cleanupJitsiView: Updating meeting status to Waiting for Employer Response in Firestore");
+                    Log.d(TAG, "cleanupJitsiView: Updating meeting status to Ended Interview in Firestore");
                     db.collection("booking")
                             .document(bookingDocId)
-                            .update("meetingStatus", "Waiting for Employer Response")
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "Meeting status updated successfully");
-                                Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                                intent.putExtra("selectedTab", "ALL");
-                                startActivity(intent);
-                                finish();
-                            })
+                            .update("meetingStatus", "Waiting for Employer Response...")
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Meeting status updated to Ended Interview"))
                             .addOnFailureListener(e -> Log.e(TAG, "Failed to update meeting status", e));
                 } else {
-                    Log.d(TAG, "User is not an Agent, skipping status update");
-                    Intent intent = new Intent(MeetingActivity.this, BookRecordActivity.class);
-                    intent.putExtra("selectedTab", "ALL");
-                    startActivity(intent);
-                    finish();
+                    Log.d(TAG, "User is not an Agent, skipping status update in cleanup");
                 }
             }
         }
@@ -1028,14 +914,23 @@ public class MeetingActivity extends AppCompatActivity implements JitsiMeetActiv
         meetingContainer.setVisibility(meetingVisibility);
         questionsButton.setVisibility(meetingVisibility);
         translateButton.setVisibility(meetingVisibility);
+
+        Log.d(TAG, "toggleUiVisibility: backButton visibility=" + backButton.getVisibility());
+        Log.d(TAG, "toggleUiVisibility: inputBox visibility=" + inputBox.getVisibility());
+        Log.d(TAG, "toggleUiVisibility: joinCreateButton visibility=" + joinCreateButton.getVisibility());
+        Log.d(TAG, "toggleUiVisibility: shareButton visibility=" + shareButton.getVisibility());
+        Log.d(TAG, "toggleUiVisibility: meetingContainer visibility=" + meetingContainer.getVisibility());
     }
 
-    private void showToast(Object message, Object... args) {
-        handler.post(() -> {
-            String text = message instanceof Integer
-                    ? (args.length > 0 ? getString((Integer) message, args) : getString((Integer) message))
-                    : message.toString();
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-        });
+    private void showToast(int resId) {
+        handler.post(() -> Toast.makeText(this, getString(resId), Toast.LENGTH_SHORT).show());
+    }
+
+    private void showToast(String message) {
+        handler.post(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
+    }
+
+    private void showToast(int resId, String arg) {
+        handler.post(() -> Toast.makeText(this, getString(resId, arg), Toast.LENGTH_SHORT).show());
     }
 }
