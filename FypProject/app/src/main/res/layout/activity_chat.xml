@@ -57,7 +57,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:text="AGent"
+        android:text="Agent"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
