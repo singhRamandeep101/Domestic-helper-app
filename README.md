@@ -57,11 +57,6 @@ matching, real-time translation, and integrated video interviewing.
 
 ---
 
-## 📸 Screenshots
-
-> _Add screenshots here — home screen, matching screen, chat, video call, admin panel_
-
----
 
 ## 🚀 Getting Started
 
