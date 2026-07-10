@@ -23,7 +23,7 @@ Finding and hiring a domestic helper in Hong Kong involves significant manual ef
 
 ## Features
 
-- **AI candidate matching** — Hybrid rule-based + scikit-learn engine parses PDF CVs, extracts skills/languages, and ranks employer–helper compatibility
+- **Candidate matching** — Employer criteria, language/skills fields, and ranking surfaced in-app; FYP report included scikit-learn + PDF parsing pipeline ([architecture notes](docs/ARCHITECTURE.md))
 - **Real-time chat** — Firebase instant messaging between employers and helpers
 - **Multilingual support** — Live translation across English, Cantonese, Filipino, and Indonesian (MyMemory API)
 - **Video interviews** — Jitsi Meet SDK embedded in-app
@@ -38,30 +38,30 @@ Finding and hiring a domestic helper in Hong Kong involves significant manual ef
 | Language | Kotlin (Coroutines) |
 | IDE | Android Studio |
 | Backend & auth | Firebase (Auth, Realtime Database, Cloud Messaging) |
-| ML & matching | scikit-learn, Chaquopy |
-| Resume parsing | pdfplumber |
+| ML & matching | Rule-based ranking in-app; FYP report: scikit-learn, pdfplumber ([details](docs/ARCHITECTURE.md)) |
 | Translation | MyMemory API |
 | Video calls | Jitsi Meet SDK |
 
 ## Architecture
 
+See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for what this repo implements vs. the FYP report ML pipeline.
+
 ```
-Android app (Kotlin)
+Android app (Kotlin/Java)
     ├── Firebase Auth / Realtime DB / FCM
     ├── MyMemory API (chat translation)
     ├── Jitsi Meet SDK (video interviews)
-    └── ML pipeline (Chaquopy)
-            ├── pdfplumber → CV text extraction
-            └── scikit-learn → candidate ranking
+    └── Employer/helper matching (criteria, rankings, search & filter)
 ```
 
 ## How matching works
 
-1. Helper uploads a CV (PDF)
-2. `pdfplumber` extracts raw text
-3. Skills, languages, and experience are structured
-4. Hybrid rules + `scikit-learn` score fit against employer requirements
-5. Ranked matches surface to the employer in real time
+1. Employers set job criteria and ranking preferences (languages, experience, etc.)
+2. Helper profiles and CV uploads are stored in Firebase
+3. The app surfaces ranked/helper listings against employer requirements
+4. FYP user testing showed a **35% efficiency gain** over manual hiring
+
+For the academic ML pipeline (PDF parsing, scikit-learn), see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Getting started
 
