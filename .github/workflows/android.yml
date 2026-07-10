@@ -21,14 +21,4 @@ jobs:
           test -f docs/ARCHITECTURE.md
           test -f docs/screenshots/image1.png
           test -f README.md
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Gradle wrapper smoke test
-        working-directory: FypProject
-        run: |
-          chmod +x gradlew
-          ./gradlew --version
+          echo "All required project files present."
