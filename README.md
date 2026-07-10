@@ -3,6 +3,7 @@
 [![Android](https://img.shields.io/badge/Android-API%2026%2B-green)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-coroutines-7F52FF)](https://kotlinlang.org)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20RTDB%20%7C%20FCM-FFCA28)](https://firebase.google.com)
+[![Repository checks](https://github.com/singhRamandeep101/Domestic-helper-app/actions/workflows/android.yml/badge.svg)](https://github.com/singhRamandeep101/Domestic-helper-app/actions/workflows/android.yml)
 [![License](https://img.shields.io/badge/License-Academic%20use%20only-lightgrey)](#license)
 
 An Android application that streamlines domestic helper hiring in Hong Kong — built as a **Final Year Project** at Hong Kong Metropolitan University (2024–2025). Led a 4-person team; delivered a **35% efficiency gain** over traditional manual hiring workflows in user testing.

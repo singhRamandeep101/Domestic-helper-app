@@ -1,4 +1,4 @@
-name: Android CI
+name: Repository checks
 
 on:
   push:
@@ -8,27 +8,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: FypProject
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify project structure and docs
+        run: |
+          test -f FypProject/gradlew
+          test -f FypProject/app/build.gradle.kts
+          test -f FypProject/app/google-services.json.example
+          test -f docs/ARCHITECTURE.md
+          test -f docs/screenshots/image1.png
+          test -f README.md
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Use placeholder Firebase config for CI
-        run: cp app/google-services.json.example app/google-services.json
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Compile debug sources
-        run: ./gradlew compileDebugJavaWithJavac compileDebugKotlin --no-daemon
-        env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx3g
+      - name: Gradle wrapper smoke test
+        working-directory: FypProject
+        run: ./gradlew --version

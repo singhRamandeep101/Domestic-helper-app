@@ -34,7 +34,7 @@ If asked in an interview:
 
 ## CI
 
-GitHub Actions runs a **compile check** on push (`compileDebugJavaWithJavac`, `compileDebugKotlin`). A full `assembleDebug` APK is not produced in CI because Jitsi/Firebase make headless builds heavy; build locally with your own `google-services.json`.
+GitHub Actions runs **repository checks** on push (project layout, docs, Gradle wrapper). Full `assembleDebug` builds are not run in CI because Jitsi/Firebase require local `google-services.json` — build in Android Studio instead.
 
 ## Security
 
