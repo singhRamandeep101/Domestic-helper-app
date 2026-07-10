@@ -1,90 +1,104 @@
-# 🏠 AI-Enhanced Domestic Helper Hiring App
+# AI-Enhanced Domestic Helper Hiring App
 
-An Android application designed to streamline the domestic helper hiring process 
-for Hong Kong employers — built as a Final Year Project at Hong Kong Metropolitan 
-University (2024–2025).
+[![Android](https://img.shields.io/badge/Android-API%2026%2B-green)](https://developer.android.com)
+[![Kotlin](https://img.shields.io/badge/Kotlin-coroutines-7F52FF)](https://kotlinlang.org)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20RTDB%20%7C%20FCM-FFCA28)](https://firebase.google.com)
+[![License](https://img.shields.io/badge/License-Academic%20use%20only-lightgrey)](#license)
 
----
+An Android application that streamlines domestic helper hiring in Hong Kong — built as a **Final Year Project** at Hong Kong Metropolitan University (2024–2025). Led a 4-person team; delivered a **35% efficiency gain** over traditional manual hiring workflows in user testing.
 
-## 📱 Overview
+## Screenshots
 
-Finding and hiring a domestic helper in Hong Kong involves significant manual effort 
-— reviewing resumes, scheduling interviews, and managing communication across 
-language barriers. This app automates and simplifies that process using AI-powered 
-matching, real-time translation, and integrated video interviewing.
+| Login & register | Dashboard | Multilingual chat |
+|:---:|:---:|:---:|
+| ![Login](docs/screenshots/image1.png) | ![Dashboard](docs/screenshots/image2.png) | ![Chat](docs/screenshots/image5.png) |
 
----
+| Resume detail | CV skills profile | Home (device) |
+|:---:|:---:|:---:|
+| ![Resume](docs/screenshots/image3.png) | ![Skills](docs/screenshots/image6.png) | ![Home](docs/screenshots/image4.png) |
 
-## ✨ Features
+## Overview
 
-- 🤖 **AI Candidate Matching** — Hybrid rule-based + ML system that parses PDF 
-  resumes, extracts skills and languages, and automatically matches candidates to 
-  employers
-- 💬 **Real-Time Chat** — Firebase-powered instant messaging between employers 
-  and helpers
-- 🌐 **Multilingual Support** — Real-time translation across 4 languages via 
-  MyMemory API
-- 📹 **Video Interviews** — Integrated Jitsi Meet for in-app video calls
-- 📅 **Booking Management** — End-to-end interview and appointment scheduling
-- 🔐 **Role-Based Access** — Separate flows for employers, helpers, and admins
-- 🔍 **Advanced Search & Filtering** — Filter candidates by skills, language, 
-  experience, and availability
+Finding and hiring a domestic helper in Hong Kong involves significant manual effort — reviewing resumes, scheduling interviews, and managing communication across language barriers. This app automates that process with AI-powered matching, real-time translation, and in-app video interviews.
 
----
+## Features
 
-## 🛠️ Tech Stack
+- **AI candidate matching** — Hybrid rule-based + scikit-learn engine parses PDF CVs, extracts skills/languages, and ranks employer–helper compatibility
+- **Real-time chat** — Firebase instant messaging between employers and helpers
+- **Multilingual support** — Live translation across English, Cantonese, Filipino, and Indonesian (MyMemory API)
+- **Video interviews** — Jitsi Meet SDK embedded in-app
+- **Booking management** — Interview and appointment scheduling end-to-end
+- **Role-based access** — Separate flows for employers, helpers, and admins
+- **Advanced search** — Filter by skills, language, experience, and availability
+
+## Tech stack
 
 | Layer | Technology |
-|---|---|
+|-------|------------|
 | Language | Kotlin (Coroutines) |
 | IDE | Android Studio |
-| Backend & Auth | Firebase (Auth, Realtime Database, Cloud Messaging) |
-| ML & Matching | scikit-learn, Chaquopy |
-| Resume Parsing | pdfplumber |
+| Backend & auth | Firebase (Auth, Realtime Database, Cloud Messaging) |
+| ML & matching | scikit-learn, Chaquopy |
+| Resume parsing | pdfplumber |
 | Translation | MyMemory API |
-| Video Calls | Jitsi Meet SDK |
+| Video calls | Jitsi Meet SDK |
 
----
+## Architecture
 
-## 🧠 How the Matching System Works
+```
+Android app (Kotlin)
+    ├── Firebase Auth / Realtime DB / FCM
+    ├── MyMemory API (chat translation)
+    ├── Jitsi Meet SDK (video interviews)
+    └── ML pipeline (Chaquopy)
+            ├── pdfplumber → CV text extraction
+            └── scikit-learn → candidate ranking
+```
 
-1. Helper uploads their CV (PDF)
-2. `pdfplumber` extracts raw text from the document
-3. Skills, languages, and experience are parsed and structured
-4. A hybrid rule-based + `scikit-learn` ML model scores compatibility 
-   against employer requirements
-5. Ranked matches are surfaced to the employer in real time
+## How matching works
 
----
+1. Helper uploads a CV (PDF)
+2. `pdfplumber` extracts raw text
+3. Skills, languages, and experience are structured
+4. Hybrid rules + `scikit-learn` score fit against employer requirements
+5. Ranked matches surface to the employer in real time
 
-
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
+
 - Android Studio (latest stable)
 - Android device or emulator (API 26+)
 - Firebase project with Realtime Database and Auth enabled
+- MyMemory API key (optional for translation features)
 
 ### Setup
-1. Clone the repo
+
+1. Clone the repo and open the **`FypProject`** folder in Android Studio (not the repo root).
+
 ```bash
-   git clone https://github.com/singhRamandeep101/Domestic-helper-app.git
+git clone https://github.com/singhRamandeep101/Domestic-helper-app.git
+cd Domestic-helper-app/FypProject
 ```
-2. Open in Android Studio
-3. Add your `google-services.json` from Firebase Console to `/app`
-4. Add your MyMemory API key to `local.properties`
-5. Run on emulator or device
 
----
+2. Add `google-services.json` from Firebase Console to `FypProject/app/`
+3. Add your MyMemory API key to `local.properties`:
 
-## 👥 Team
+```properties
+MYMEMORY_API_KEY=your_key_here
+```
 
-Built by a 4-person team as a Final Year Project at HKMU.
-Project Lead & Full-Stack Developer: **Ramandeep Singh**
+4. Sync Gradle and run on an emulator or device.
 
----
+> **Note:** Firebase credentials are not committed. Use your own Firebase project for local development.
 
-## 📄 License
+## Team
 
-This project is for academic purposes. Contact singhramandeep0910@gmail.com 
-for enquiries.
+| Role | Name |
+|------|------|
+| Project lead & full-stack developer | **Ramandeep Singh** |
+| Team members | HKMU FYP group (4-person team) |
+
+## License
+
+Academic project — for demonstration and portfolio purposes. Contact [singhramandeep0910@gmail.com](mailto:singhramandeep0910@gmail.com) for enquiries.

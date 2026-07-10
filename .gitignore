@@ -26,5 +26,10 @@ output.json
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
+# OS / archive junk
+.DS_Store
+Thumbs.db
+*.zip
+
 # Android Profiling
 *.hprof

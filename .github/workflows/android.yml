@@ -1,0 +1,32 @@
+name: Android CI
+
+on:
+  push:
+    branches: [main, Raman]
+  pull_request:
+    branches: [main, Raman]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: FypProject
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Use placeholder Firebase config for CI
+        run: cp app/google-services.json.example app/google-services.json
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Assemble debug APK
+        run: ./gradlew assembleDebug --no-daemon
