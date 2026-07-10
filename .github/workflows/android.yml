@@ -29,4 +29,6 @@ jobs:
 
       - name: Gradle wrapper smoke test
         working-directory: FypProject
-        run: ./gradlew --version
+        run: |
+          chmod +x gradlew
+          ./gradlew --version
